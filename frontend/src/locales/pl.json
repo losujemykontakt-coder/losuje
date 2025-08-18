@@ -1,0 +1,218 @@
+{
+  "common": {
+    "loading": "Ładowanie...",
+    "error": "Błąd",
+    "success": "Sukces",
+    "cancel": "Anuluj",
+    "save": "Zapisz",
+    "delete": "Usuń",
+    "edit": "Edytuj",
+    "close": "Zamknij",
+    "back": "Wstecz",
+    "next": "Dalej",
+    "previous": "Poprzedni",
+    "submit": "Wyślij",
+    "confirm": "Potwierdź",
+    "yes": "Tak",
+    "no": "Nie"
+  },
+  "navigation": {
+    "home": "Strona główna",
+    "generator": "Generator",
+    "dreamGenerator": "Generator marzeń",
+    "luckyNumbers": "Szczęśliwe liczby",
+    "numberSelection": "Wybór liczb",
+    "reducedSystems": "Systemy skrócone",
+    "ilpLogic": "Logika ILP",
+    "statistics": "Statystyki",
+    "explanations": "Wyjaśnienia",
+    "myAccount": "Moje konto",
+    "payments": "Płatności",
+    "games": "Gry",
+    "aiUltraPro": "AI Ultra Pro",
+    "harmonicAnalyzer": "Harmonic Analyzer",
+    "logout": "Wyloguj"
+  },
+  "auth": {
+    "login": "Zaloguj się",
+    "register": "Zarejestruj się",
+    "email": "Email",
+    "password": "Hasło",
+    "confirmPassword": "Potwierdź hasło",
+    "forgotPassword": "Zapomniałeś hasła?",
+    "resetPassword": "Zresetuj hasło",
+    "loginSuccess": "Logowanie udane!",
+    "registerSuccess": "Rejestracja udana!",
+    "logoutSuccess": "Wylogowanie udane!",
+    "invalidCredentials": "Nieprawidłowy email lub hasło",
+    "emailRequired": "Email jest wymagany",
+    "passwordRequired": "Hasło jest wymagane",
+    "passwordsDoNotMatch": "Hasła nie pasują do siebie"
+  },
+  "payments": {
+    "premiumPlans": "Plany Premium",
+    "monthlyPlan": "Plan Miesięczny",
+    "yearlyPlan": "Plan Roczny",
+    "bestOffer": "NAJLEPSZA OFERTA",
+    "activatePremium": "Aktywuj Premium",
+    "activateYearly": "Aktywuj Roczny",
+    "cancelAnytime": "Anuluj w dowolnym momencie",
+    "save50Percent": "Oszczędzasz 59,89 PLN (50%)",
+    "features": {
+      "allGenerators": "Wszystkie generatory lotto",
+      "aiLuckyNumbers": "Generator szczęśliwych liczb AI",
+      "dreamGenerator": "Generator marzeń z datami",
+      "reducedSystems": "Systemy skrócone z gwarancją",
+      "unlimitedSets": "Nieograniczone zestawy + PDF",
+      "historyFavorites": "Historia i ulubione zestawy",
+      "prioritySupport": "Priorytetowe wsparcie",
+      "noAds": "Brak reklam",
+      "miniGames": "Mini gry i rozrywka",
+      "advancedAI": "Zaawansowane generatory AI",
+      "exclusiveFeatures": "Ekskluzywne funkcje premium",
+      "fullAccess": "Pełny dostęp do wszystkich funkcji",
+      "bestPrice": "Najlepsza cena - 50% oszczędności"
+    },
+    "subscriptionHistory": "Historia subskrypcji",
+    "status": "Status",
+    "active": "Aktywna",
+    "trial": "Okres próbny",
+    "free": "Darmowa",
+    "startDate": "Data rozpoczęcia",
+    "activationDate": "Data aktywacji",
+    "noActiveSubscription": "Brak aktywnej subskrypcji",
+    "daysLeft": "dni do końca",
+    "subscription": "subskrypcja",
+    "trialEndingWarning": "Uwaga: Okres próbny kończy się za {{days}} dni",
+    "upgradeToPremium": "Wykup plan Premium, aby zachować dostęp",
+    "paymentHistory": "Historia płatności"
+  },
+  "generator": {
+    "title": "Generator Liczb Lotto",
+    "generate": "Generuj",
+    "clear": "Wyczyść",
+    "copy": "Kopiuj",
+    "download": "Pobierz",
+    "numbers": "Liczby",
+    "sets": "Zestawy",
+    "guarantee": "Gwarancja",
+    "statistics": "Statystyki",
+    "favorites": "Ulubione",
+    "history": "Historia"
+  },
+  "statistics": {
+    "title": "Statystyki Lotto",
+    "hotNumbers": "Gorące liczby",
+    "coldNumbers": "Zimne liczby",
+    "frequency": "Częstotliwość",
+    "lastDraw": "Ostatnie losowanie",
+    "nextDraw": "Następne losowanie",
+    "analysis": "Analiza",
+    "trends": "Trendy"
+  },
+  "account": {
+    "profile": "Profil",
+    "settings": "Ustawienia",
+    "subscription": "Subskrypcja",
+    "billing": "Rozliczenia",
+    "security": "Bezpieczeństwo",
+    "notifications": "Powiadomienia",
+    "language": "Język",
+    "theme": "Motyw",
+    "darkMode": "Tryb ciemny",
+    "lightMode": "Tryb jasny"
+  },
+  "language": {
+    "polish": "Polski",
+    "english": "Angielski",
+    "german": "Niemiecki",
+    "selectLanguage": "Wybierz język"
+  },
+  "errors": {
+    "networkError": "Błąd sieci. Sprawdź połączenie.",
+    "serverError": "Błąd serwera. Spróbuj ponownie później.",
+    "notFound": "Strona nie została znaleziona.",
+    "unauthorized": "Nie masz uprawnień do dostępu do tej strony.",
+    "forbidden": "Dostęp zabroniony.",
+    "timeout": "Przekroczono limit czasu żądania. Spróbuj ponownie."
+  },
+  "notifications": {
+    "paymentSuccess": "Płatność udana!",
+    "paymentError": "Płatność nie powiodła się. Spróbuj ponownie.",
+    "subscriptionActivated": "Subskrypcja aktywowana pomyślnie!",
+    "subscriptionExpired": "Twoja subskrypcja wygasła.",
+    "trialExpired": "Twój okres próbny wygasł.",
+    "loginRequired": "Zaloguj się, aby kontynuować.",
+    "emailRequired": "Podaj prawidłowy adres email."
+  },
+  "landing": {
+    "hero": {
+      "title": "Inteligentny Generator Liczb Lotto",
+      "subtitle": "Wykorzystaj AI, prawa matematyczne i statystyki do zwiększenia szans na wygraną",
+      "cta": "Rozpocznij Generowanie",
+      "login": "Zaloguj się",
+      "register": "Zarejestruj się"
+    },
+    "slotMachine": {
+      "title": "🎰 Generator Slot Machine",
+      "subtitle": "Wypróbuj naszą interaktywną maszynę slot!",
+      "spinButton": "🎰 Kręć Bębnami",
+      "copyResults": "📋 Kopiuj Wyniki",
+      "useInGenerator": "🚀 Użyj w Generatorze",
+      "registrationRequired": "🎰 Ta gra wymaga rejestracji! Zarejestruj się, aby uzyskać dostęp do wszystkich generatorów."
+    },
+    "features": {
+      "title": "Dlaczego Wybrać Nasz Generator?",
+      "aiPowered": {
+        "title": "🤖 Napędzany AI",
+        "description": "Zaawansowane algorytmy sztucznej inteligencji"
+      },
+      "statistics": {
+        "title": "📊 Statystyki",
+        "description": "Oparte na analizie danych historycznych"
+      },
+      "multipleGames": {
+        "title": "🎲 Wiele Gier",
+        "description": "Wsparcie dla wszystkich popularnych gier lotto"
+      },
+      "free": {
+        "title": "💰 Darmowy",
+        "description": "Całkowicie darmowy w użyciu"
+      }
+    },
+    "games": {
+      "title": "Obsługiwane Gry",
+      "lotto": "Lotto",
+      "miniLotto": "Mini Lotto",
+      "multiMulti": "Multi Multi",
+      "eurojackpot": "Eurojackpot",
+      "kaskada": "Kaskada",
+      "keno": "Keno"
+    },
+    "sections": {
+      "howItWorks": "Jak to Działa",
+      "statistics": "Statystyki",
+      "results": "Wyniki i Wygrane",
+      "magicSet": "Magiczny Zestaw Dnia",
+      "privacy": "Polityka Prywatności",
+      "terms": "Regulamin"
+    },
+    "buttons": {
+      "learnMore": "Dowiedz się Więcej",
+      "tryNow": "Wypróbuj Teraz",
+      "viewAll": "Zobacz Wszystko",
+      "backToTop": "Powrót do Góry"
+    },
+    "content": {
+      "numberGenerator": "🎯 Generator Liczb",
+      "generatorDescription": "Inteligentny generator analizuje Twoje szczęśliwe liczby i tworzy zrównoważone zestawy. Łączy Twoje preferencje z algorytmami matematycznymi dla optymalnych wyników.",
+      "faqQuestion": "Jak działa generator liczb lotto?",
+      "blogTitle": "Generator Liczb Lotto - Blog | Systemy Skrócone, Algorytmy ILP",
+      "blogName": "Generator Liczb Lotto - Blog",
+      "blogSubtitle": "Generator Liczb Lotto - Blog o Systemach Skróconych",
+      "articleTitle": "🔢 Czy generator liczb Lotto może pomóc Ci wygrać? Sprawdzamy dane",
+      "articleContent": "Tak, nasz inteligentny generator liczb Lotto może pomóc Ci wygrać! W przeciwieństwie do prostych generatorów losowych, nasz generator wykorzystuje zaawansowane algorytmy matematyczne oparte na statystykach historycznych i analizie prawdopodobieństwa.",
+      "articleConclusion": "Nasz inteligentny generator Lotto to więcej niż narzędzie wygody - to zaawansowany system matematyczny, który realnie zwiększa szanse na wygraną poprzez optymalizację i analizę statystyczną."
+    }
+  }
+}

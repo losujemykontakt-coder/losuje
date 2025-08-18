@@ -1,0 +1,218 @@
+{
+  "common": {
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "close": "Schließen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Vorherige",
+    "submit": "Senden",
+    "confirm": "Bestätigen",
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "navigation": {
+    "home": "Startseite",
+    "generator": "Generator",
+    "dreamGenerator": "Traum-Generator",
+    "luckyNumbers": "Glückszahlen",
+    "numberSelection": "Zahlenauswahl",
+    "reducedSystems": "Reduzierte Systeme",
+    "ilpLogic": "ILP-Logik",
+    "statistics": "Statistiken",
+    "explanations": "Erklärungen",
+    "myAccount": "Mein Konto",
+    "payments": "Zahlungen",
+    "games": "Spiele",
+    "aiUltraPro": "AI Ultra Pro",
+    "harmonicAnalyzer": "Harmonic Analyzer",
+    "logout": "Abmelden"
+  },
+  "auth": {
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "forgotPassword": "Passwort vergessen?",
+    "resetPassword": "Passwort zurücksetzen",
+    "loginSuccess": "Anmeldung erfolgreich!",
+    "registerSuccess": "Registrierung erfolgreich!",
+    "logoutSuccess": "Abmeldung erfolgreich!",
+    "invalidCredentials": "Ungültige E-Mail oder Passwort",
+    "emailRequired": "E-Mail ist erforderlich",
+    "passwordRequired": "Passwort ist erforderlich",
+    "passwordsDoNotMatch": "Passwörter stimmen nicht überein"
+  },
+  "payments": {
+    "premiumPlans": "Premium-Pläne",
+    "monthlyPlan": "Monatsplan",
+    "yearlyPlan": "Jahresplan",
+    "bestOffer": "BESTES ANGEBOT",
+    "activatePremium": "Premium aktivieren",
+    "activateYearly": "Jährlich aktivieren",
+    "cancelAnytime": "Jederzeit kündbar",
+    "save50Percent": "Sparen Sie 59,89 PLN (50%)",
+    "features": {
+      "allGenerators": "Alle Lotto-Generatoren",
+      "aiLuckyNumbers": "KI-Glückszahlengenerator",
+      "dreamGenerator": "Traum-Generator mit Daten",
+      "reducedSystems": "Reduzierte Systeme mit Garantie",
+      "unlimitedSets": "Unbegrenzte Sets + PDF",
+      "historyFavorites": "Verlauf und Lieblingssets",
+      "prioritySupport": "Prioritäts-Support",
+      "noAds": "Keine Werbung",
+      "miniGames": "Mini-Spiele und Unterhaltung",
+      "advancedAI": "Erweiterte KI-Generatoren",
+      "exclusiveFeatures": "Exklusive Premium-Funktionen",
+      "fullAccess": "Voller Zugang zu allen Funktionen",
+      "bestPrice": "Bester Preis - 50% Ersparnis"
+    },
+    "subscriptionHistory": "Abonnement-Verlauf",
+    "status": "Status",
+    "active": "Aktiv",
+    "trial": "Testzeitraum",
+    "free": "Kostenlos",
+    "startDate": "Startdatum",
+    "activationDate": "Aktivierungsdatum",
+    "noActiveSubscription": "Kein aktives Abonnement",
+    "daysLeft": "Tage übrig",
+    "subscription": "Abonnement",
+    "trialEndingWarning": "Warnung: Testzeitraum endet in {{days}} Tagen",
+    "upgradeToPremium": "Upgraden Sie auf Premium, um den Zugang zu behalten",
+    "paymentHistory": "Zahlungsverlauf"
+  },
+  "generator": {
+    "title": "Lotto-Zahlengenerator",
+    "generate": "Generieren",
+    "clear": "Löschen",
+    "copy": "Kopieren",
+    "download": "Herunterladen",
+    "numbers": "Zahlen",
+    "sets": "Sets",
+    "guarantee": "Garantie",
+    "statistics": "Statistiken",
+    "favorites": "Favoriten",
+    "history": "Verlauf"
+  },
+  "statistics": {
+    "title": "Lotto-Statistiken",
+    "hotNumbers": "Heiße Zahlen",
+    "coldNumbers": "Kalte Zahlen",
+    "frequency": "Häufigkeit",
+    "lastDraw": "Letzte Ziehung",
+    "nextDraw": "Nächste Ziehung",
+    "analysis": "Analyse",
+    "trends": "Trends"
+  },
+  "account": {
+    "profile": "Profil",
+    "settings": "Einstellungen",
+    "subscription": "Abonnement",
+    "billing": "Abrechnung",
+    "security": "Sicherheit",
+    "notifications": "Benachrichtigungen",
+    "language": "Sprache",
+    "theme": "Design",
+    "darkMode": "Dunkler Modus",
+    "lightMode": "Heller Modus"
+  },
+  "language": {
+    "polish": "Polnisch",
+    "english": "Englisch",
+    "german": "Deutsch",
+    "selectLanguage": "Sprache auswählen"
+  },
+  "errors": {
+    "networkError": "Netzwerkfehler. Überprüfen Sie Ihre Verbindung.",
+    "serverError": "Serverfehler. Versuchen Sie es später erneut.",
+    "notFound": "Seite nicht gefunden.",
+    "unauthorized": "Sie sind nicht berechtigt, auf diese Seite zuzugreifen.",
+    "forbidden": "Zugriff verweigert.",
+    "timeout": "Anfrage-Timeout. Versuchen Sie es erneut."
+  },
+  "notifications": {
+    "paymentSuccess": "Zahlung erfolgreich!",
+    "paymentError": "Zahlung fehlgeschlagen. Versuchen Sie es erneut.",
+    "subscriptionActivated": "Abonnement erfolgreich aktiviert!",
+    "subscriptionExpired": "Ihr Abonnement ist abgelaufen.",
+    "trialExpired": "Ihr Testzeitraum ist abgelaufen.",
+    "loginRequired": "Bitte melden Sie sich an, um fortzufahren.",
+    "emailRequired": "Bitte geben Sie eine gültige E-Mail-Adresse an."
+  },
+  "landing": {
+    "hero": {
+      "title": "Intelligenter Lotto-Zahlengenerator",
+      "subtitle": "Generieren Sie Glückszahlen mit KI und fortschrittlichen Algorithmen",
+      "cta": "Generierung Starten",
+      "login": "Anmelden",
+      "register": "Registrieren"
+    },
+    "slotMachine": {
+      "title": "🎰 Slot-Machine-Generator",
+      "subtitle": "Probieren Sie unseren interaktiven Slot-Machine!",
+      "spinButton": "🎰 Walzen Drehen",
+      "copyResults": "📋 Ergebnisse Kopieren",
+      "useInGenerator": "🚀 Im Generator Verwenden",
+      "registrationRequired": "🎰 Dieses Spiel erfordert eine Registrierung! Registrieren Sie sich, um Zugang zu allen Generatoren zu erhalten."
+    },
+    "features": {
+      "title": "Warum Unseren Generator Wählen?",
+      "aiPowered": {
+        "title": "🤖 KI-gestützt",
+        "description": "Fortschrittliche künstliche Intelligenz-Algorithmen"
+      },
+      "statistics": {
+        "title": "📊 Statistiken",
+        "description": "Basierend auf historischer Datenanalyse"
+      },
+      "multipleGames": {
+        "title": "🎲 Mehrere Spiele",
+        "description": "Unterstützung für alle beliebten Lotto-Spiele"
+      },
+      "free": {
+        "title": "💰 Kostenlos",
+        "description": "Völlig kostenlos zu nutzen"
+      }
+    },
+    "games": {
+      "title": "Unterstützte Spiele",
+      "lotto": "Lotto",
+      "miniLotto": "Mini Lotto",
+      "multiMulti": "Multi Multi",
+      "eurojackpot": "Eurojackpot",
+      "kaskada": "Kaskada",
+      "keno": "Keno"
+    },
+    "sections": {
+      "howItWorks": "Wie es Funktioniert",
+      "statistics": "Statistiken",
+      "results": "Ergebnisse & Gewinne",
+      "magicSet": "Magisches Set des Tages",
+      "privacy": "Datenschutzrichtlinie",
+      "terms": "Nutzungsbedingungen"
+    },
+    "buttons": {
+      "learnMore": "Mehr Erfahren",
+      "tryNow": "Jetzt Probieren",
+      "viewAll": "Alle Anzeigen",
+      "backToTop": "Nach Oben"
+    },
+    "content": {
+      "numberGenerator": "🎯 Zahlengenerator",
+      "generatorDescription": "Intelligenter Generator analysiert Ihre Glückszahlen und erstellt ausgewogene Sets. Kombiniert Ihre Präferenzen mit mathematischen Algorithmen für optimale Ergebnisse.",
+      "faqQuestion": "Wie funktioniert der Lotto-Zahlengenerator?",
+      "blogTitle": "Lotto-Zahlengenerator - Blog | Reduzierte Systeme, ILP-Algorithmen",
+      "blogName": "Lotto-Zahlengenerator - Blog",
+      "blogSubtitle": "Lotto-Zahlengenerator - Blog über reduzierte Systeme",
+      "articleTitle": "🔢 Kann der Lotto-Zahlengenerator Ihnen beim Gewinnen helfen? Wir prüfen die Daten",
+      "articleContent": "Ja, unser intelligenter Lotto-Zahlengenerator kann Ihnen beim Gewinnen helfen! Im Gegensatz zu einfachen Zufallsgeneratoren verwendet unser Generator fortschrittliche mathematische Algorithmen basierend auf historischen Statistiken und Wahrscheinlichkeitsanalyse.",
+      "articleConclusion": "Unser intelligenter Lotto-Generator ist mehr als ein Komfort-Tool - es ist ein fortschrittliches mathematisches System, das Ihre Gewinnchancen durch Optimierung und statistische Analyse tatsächlich erhöht."
+    }
+  }
+}

@@ -1,0 +1,218 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "navigation": {
+    "home": "Home",
+    "generator": "Generator",
+    "dreamGenerator": "Dream Generator",
+    "luckyNumbers": "Lucky Numbers",
+    "numberSelection": "Number Selection",
+    "reducedSystems": "Reduced Systems",
+    "ilpLogic": "ILP Logic",
+    "statistics": "Statistics",
+    "explanations": "Explanations",
+    "myAccount": "My Account",
+    "payments": "Payments",
+    "games": "Games",
+    "aiUltraPro": "AI Ultra Pro",
+    "harmonicAnalyzer": "Harmonic Analyzer",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "loginSuccess": "Login successful!",
+    "registerSuccess": "Registration successful!",
+    "logoutSuccess": "Logout successful!",
+    "invalidCredentials": "Invalid email or password",
+    "emailRequired": "Email is required",
+    "passwordRequired": "Password is required",
+    "passwordsDoNotMatch": "Passwords do not match"
+  },
+  "payments": {
+    "premiumPlans": "Premium Plans",
+    "monthlyPlan": "Monthly Plan",
+    "yearlyPlan": "Yearly Plan",
+    "bestOffer": "BEST OFFER",
+    "activatePremium": "Activate Premium",
+    "activateYearly": "Activate Yearly",
+    "cancelAnytime": "Cancel anytime",
+    "save50Percent": "Save 59.89 PLN (50%)",
+    "features": {
+      "allGenerators": "All lottery generators",
+      "aiLuckyNumbers": "AI lucky number generator",
+      "dreamGenerator": "Dream generator with dates",
+      "reducedSystems": "Reduced systems with guarantee",
+      "unlimitedSets": "Unlimited sets + PDF",
+      "historyFavorites": "History and favorite sets",
+      "prioritySupport": "Priority support",
+      "noAds": "No ads",
+      "miniGames": "Mini games and entertainment",
+      "advancedAI": "Advanced AI generators",
+      "exclusiveFeatures": "Exclusive premium features",
+      "fullAccess": "Full access to all features",
+      "bestPrice": "Best price - 50% savings"
+    },
+    "subscriptionHistory": "Subscription History",
+    "status": "Status",
+    "active": "Active",
+    "trial": "Trial Period",
+    "free": "Free",
+    "startDate": "Start Date",
+    "activationDate": "Activation Date",
+    "noActiveSubscription": "No active subscription",
+    "daysLeft": "days left",
+    "subscription": "subscription",
+    "trialEndingWarning": "Warning: Trial period ends in {{days}} days",
+    "upgradeToPremium": "Upgrade to Premium to maintain access",
+    "paymentHistory": "Payment History"
+  },
+  "generator": {
+    "title": "Lottery Number Generator",
+    "generate": "Generate",
+    "clear": "Clear",
+    "copy": "Copy",
+    "download": "Download",
+    "numbers": "Numbers",
+    "sets": "Sets",
+    "guarantee": "Guarantee",
+    "statistics": "Statistics",
+    "favorites": "Favorites",
+    "history": "History"
+  },
+  "statistics": {
+    "title": "Lottery Statistics",
+    "hotNumbers": "Hot Numbers",
+    "coldNumbers": "Cold Numbers",
+    "frequency": "Frequency",
+    "lastDraw": "Last Draw",
+    "nextDraw": "Next Draw",
+    "analysis": "Analysis",
+    "trends": "Trends"
+  },
+  "account": {
+    "profile": "Profile",
+    "settings": "Settings",
+    "subscription": "Subscription",
+    "billing": "Billing",
+    "security": "Security",
+    "notifications": "Notifications",
+    "language": "Language",
+    "theme": "Theme",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode"
+  },
+  "language": {
+    "polish": "Polish",
+    "english": "English",
+    "german": "German",
+    "selectLanguage": "Select Language"
+  },
+  "errors": {
+    "networkError": "Network error. Please check your connection.",
+    "serverError": "Server error. Please try again later.",
+    "notFound": "Page not found.",
+    "unauthorized": "You are not authorized to access this page.",
+    "forbidden": "Access forbidden.",
+    "timeout": "Request timeout. Please try again."
+  },
+  "notifications": {
+    "paymentSuccess": "Payment successful!",
+    "paymentError": "Payment failed. Please try again.",
+    "subscriptionActivated": "Subscription activated successfully!",
+    "subscriptionExpired": "Your subscription has expired.",
+    "trialExpired": "Your trial period has expired.",
+    "loginRequired": "Please log in to continue.",
+    "emailRequired": "Please provide a valid email address."
+  },
+  "landing": {
+    "hero": {
+      "title": "Intelligent Lottery Number Generator",
+      "subtitle": "Generate lucky numbers using AI and advanced algorithms",
+      "cta": "Start Generating",
+      "login": "Login",
+      "register": "Register"
+    },
+    "slotMachine": {
+      "title": "🎰 Slot Machine Generator",
+      "subtitle": "Try our interactive slot machine!",
+      "spinButton": "🎰 Spin the Reels",
+      "copyResults": "📋 Copy Results",
+      "useInGenerator": "🚀 Use in Generator",
+      "registrationRequired": "🎰 This game requires registration! Register to get access to all generators."
+    },
+    "features": {
+      "title": "Why Choose Our Generator?",
+      "aiPowered": {
+        "title": "🤖 AI-Powered",
+        "description": "Advanced artificial intelligence algorithms"
+      },
+      "statistics": {
+        "title": "📊 Statistics",
+        "description": "Based on historical data analysis"
+      },
+      "multipleGames": {
+        "title": "🎲 Multiple Games",
+        "description": "Support for all popular lottery games"
+      },
+      "free": {
+        "title": "💰 Free",
+        "description": "Completely free to use"
+      }
+    },
+    "games": {
+      "title": "Supported Games",
+      "lotto": "Lotto",
+      "miniLotto": "Mini Lotto",
+      "multiMulti": "Multi Multi",
+      "eurojackpot": "Eurojackpot",
+      "kaskada": "Kaskada",
+      "keno": "Keno"
+    },
+    "sections": {
+      "howItWorks": "How It Works",
+      "statistics": "Statistics",
+      "results": "Results & Winnings",
+      "magicSet": "Magic Set of the Day",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    },
+    "buttons": {
+      "learnMore": "Learn More",
+      "tryNow": "Try Now",
+      "viewAll": "View All",
+      "backToTop": "Back to Top"
+    },
+    "content": {
+      "numberGenerator": "🎯 Number Generator",
+      "generatorDescription": "Intelligent generator analyzes your lucky numbers and creates balanced sets. Combines your preferences with mathematical algorithms for optimal results.",
+      "faqQuestion": "How does the lottery number generator work?",
+      "blogTitle": "Lottery Number Generator - Blog | Reduced Systems, ILP Algorithms",
+      "blogName": "Lottery Number Generator - Blog",
+      "blogSubtitle": "Lottery Number Generator - Blog about Reduced Systems",
+      "articleTitle": "🔢 Can the lottery number generator help you win? We check the data",
+      "articleContent": "Yes, our intelligent lottery number generator can help you win! Unlike simple random generators, our generator uses advanced mathematical algorithms based on historical statistics and probability analysis.",
+      "articleConclusion": "Our intelligent Lotto generator is more than a convenience tool - it's an advanced mathematical system that actually increases your chances of winning through optimization and statistical analysis."
+    }
+  }
+}

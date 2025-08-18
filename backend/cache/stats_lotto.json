@@ -1,0 +1,52 @@
+{
+  "data": {
+    "frequencyData": {
+      "1": 162,
+      "2": 24,
+      "3": 18,
+      "5": 6,
+      "6": 3,
+      "7": 3,
+      "9": 9,
+      "25": 3,
+      "35": 9,
+      "40": 3,
+      "49": 3,
+      "50": 3,
+      "60": 6,
+      "70": 3,
+      "85": 9,
+      "90": 3,
+      "99": 9
+    },
+    "totalDraws": 46,
+    "avgSum": null,
+    "sumRange": [
+      null,
+      null
+    ],
+    "hotNumbers": [
+      1,
+      2,
+      3,
+      9,
+      35
+    ],
+    "coldNumbers": [
+      40,
+      49,
+      50,
+      70,
+      90
+    ],
+    "patterns": {
+      "evenOdd": "45:231",
+      "lowHigh": "225:51",
+      "sumRange": "NaN-NaN"
+    },
+    "euroNumbers": null,
+    "lastUpdated": "2025-08-18T19:00:15.032Z"
+  },
+  "timestamp": "2025-08-18T19:00:15.032Z",
+  "game": "lotto"
+}

@@ -1,0 +1,500 @@
+.robot-chat-animation {
+  width: 100%;
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  perspective: 1000px;
+  overflow: hidden;
+}
+
+.robot-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Robot and Chat Container - Horizontal Layout */
+.robot-chat-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 40px; /* Space between robot and chat bubble */
+  z-index: 10;
+  /* Robot is ALWAYS visible */
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Large Robot Head - LEFT SIDE - ALWAYS VISIBLE */
+.robot-head-large {
+  position: relative;
+  z-index: 10;
+  filter: drop-shadow(0 8px 25px rgba(0, 255, 136, 0.4));
+  /* Robot head is ALWAYS visible */
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+.robot-head-inner-large {
+  position: relative;
+  transform-style: preserve-3d;
+  /* Inner robot is ALWAYS visible */
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.robot-skull-large {
+  width: 120px;
+  height: 160px;
+  background: #2a2a2a;
+  border-radius: 60px 60px 50px 50px;
+  position: relative;
+  border: 3px solid #00ff88;
+  box-shadow: 
+    inset 0 0 20px rgba(0, 255, 136, 0.3),
+    0 0 30px rgba(0, 255, 136, 0.4),
+    0 10px 40px rgba(0, 0, 0, 0.6);
+  /* Robot skull is ALWAYS visible */
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Large Antennas - colored like in image */
+.robot-antenna-large {
+  position: absolute;
+  top: -20px;
+  width: 4px;
+  height: 25px;
+  background: #00ff88;
+  border-radius: 2px;
+  animation: antennaGlowLarge 2s ease-in-out infinite alternate;
+}
+
+.robot-antenna-large.left {
+  left: 25px;
+  animation-delay: 0s;
+}
+
+.robot-antenna-large.right {
+  right: 25px;
+  animation-delay: 1s;
+}
+
+.antenna-tip-large {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px currentColor;
+  animation: antennaPulseLarge 1.5s ease-in-out infinite;
+}
+
+.antenna-tip-large.red {
+  background: #ff4444;
+  color: #ff4444;
+}
+
+.antenna-tip-large.blue {
+  background: #4444ff;
+  color: #4444ff;
+}
+
+/* Large Eyes - LED style like in image */
+.robot-eyes-large {
+  position: absolute;
+  top: 35px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+}
+
+.robot-eye-large {
+  width: 28px;
+  height: 28px;
+  background: #00ffff;
+  border-radius: 50%;
+  position: relative;
+  border: 2px solid #1a1a1a;
+  box-shadow: 
+    inset 0 0 10px rgba(0, 0, 0, 0.6),
+    0 0 15px #00ffff;
+}
+
+.eye-pupil-large {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: #000;
+  border-radius: 50%;
+  border: 1px solid #00ffff;
+}
+
+/* Large Mouth - thin line like in image */
+.robot-mouth-large {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 12px;
+  background: #1a1a1a;
+  border-radius: 0 0 20px 20px;
+  border: 2px solid #00ff88;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.mouth-line-large {
+  width: 25px;
+  height: 2px;
+  background: #00ffff;
+  border-radius: 1px;
+  animation: mouthTalkLarge 0.8s ease-in-out infinite;
+}
+
+/* Large Chat Bubble - RIGHT SIDE of robot */
+.chat-bubble-large {
+  position: relative;
+  max-width: 280px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 18px;
+  padding: 15px 20px;
+  box-shadow: 
+    0 5px 20px rgba(0, 0, 0, 0.3),
+    0 0 15px rgba(0, 255, 136, 0.4);
+  border: 3px solid #00ff88;
+  backdrop-filter: blur(15px);
+  /* Chat bubble appears on the RIGHT side of robot */
+  z-index: 15;
+}
+
+.bubble-content-large {
+  color: #333;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.bubble-tail-large {
+  position: absolute;
+  left: -10px; /* Arrow pointing LEFT towards robot */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid rgba(255, 255, 255, 0.95); /* Arrow pointing left */
+}
+
+/* Final Numbers Display - OVERLAY on top */
+.final-numbers-display {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  border: 3px solid #00ff88;
+  backdrop-filter: blur(15px);
+  z-index: 20;
+  text-align: center;
+}
+
+.final-numbers-title {
+  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.final-numbers-grid {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.final-number {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #00ff88, #00cc6a);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  box-shadow: 
+    0 5px 15px rgba(0, 255, 136, 0.4),
+    0 0 20px rgba(0, 255, 136, 0.3);
+  animation: numberGlow 2s ease-in-out infinite alternate;
+}
+
+/* Robot Status */
+.robot-status {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 15px;
+  padding: 15px 25px;
+  backdrop-filter: blur(10px);
+  border: 2px solid #00ff88;
+  min-width: 300px;
+  z-index: 15;
+}
+
+.status-text {
+  color: #00ff88;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 10px;
+  animation: textGlow 2s ease-in-out infinite alternate;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff88, #00cc6a);
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+/* Animations */
+@keyframes antennaGlowLarge {
+  0% { box-shadow: 0 0 5px #00ff88; }
+  100% { box-shadow: 0 0 15px #00ff88, 0 0 25px #00ff88; }
+}
+
+@keyframes antennaPulseLarge {
+  0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.4); }
+}
+
+@keyframes mouthTalkLarge {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(2); }
+}
+
+@keyframes numberGlow {
+  0% { box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4), 0 0 20px rgba(0, 255, 136, 0.3); }
+  100% { box-shadow: 0 5px 25px rgba(0, 255, 136, 0.6), 0 0 30px rgba(0, 255, 136, 0.5); }
+}
+
+@keyframes textGlow {
+  0% { text-shadow: 0 0 5px #00ff88; }
+  100% { text-shadow: 0 0 15px #00ff88, 0 0 25px #00ff88; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .robot-chat-animation {
+    height: 60vh;
+  }
+  
+  .robot-chat-container {
+    gap: 30px;
+  }
+  
+  .robot-skull-large {
+    width: 100px;
+    height: 130px;
+    border-radius: 50px 50px 40px 40px;
+  }
+  
+  .robot-eyes-large {
+    top: 25px;
+    gap: 15px;
+  }
+  
+  .robot-eye-large {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .eye-pupil-large {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .robot-mouth-large {
+    width: 35px;
+    height: 10px;
+    bottom: 20px;
+  }
+  
+  .mouth-line-large {
+    width: 20px;
+  }
+  
+  .chat-bubble-large {
+    max-width: 220px;
+    padding: 12px 16px;
+  }
+  
+  .bubble-content-large {
+    font-size: 0.9rem;
+  }
+  
+  .final-numbers-display {
+    padding: 20px;
+  }
+  
+  .final-numbers-title {
+    font-size: 1.2rem;
+  }
+  
+  .final-number {
+    width: 50px;
+    height: 50px;
+    font-size: 1.1rem;
+  }
+  
+  .robot-status {
+    min-width: 250px;
+    padding: 12px 20px;
+  }
+  
+  .status-text {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .robot-chat-animation {
+    height: 50vh;
+  }
+  
+  .robot-chat-container {
+    flex-direction: column; /* Stack vertically on small screens */
+    gap: 20px;
+  }
+  
+  .robot-skull-large {
+    width: 80px;
+    height: 100px;
+    border-radius: 40px 40px 30px 30px;
+  }
+  
+  .robot-eyes-large {
+    top: 20px;
+    gap: 12px;
+  }
+  
+  .robot-eye-large {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .eye-pupil-large {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .robot-mouth-large {
+    width: 30px;
+    height: 8px;
+    bottom: 15px;
+  }
+  
+  .mouth-line-large {
+    width: 18px;
+  }
+  
+  .chat-bubble-large {
+    max-width: 180px;
+    padding: 10px 14px;
+    transform: scale(0.8); /* Scale to 80% on small screens */
+  }
+  
+  .bubble-content-large {
+    font-size: 0.8rem;
+  }
+  
+  .final-numbers-display {
+    padding: 15px;
+  }
+  
+  .final-numbers-title {
+    font-size: 1rem;
+  }
+  
+  .final-numbers-grid {
+    gap: 10px;
+  }
+  
+  .final-number {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .robot-status {
+    min-width: 200px;
+    padding: 10px 15px;
+  }
+  
+  .status-text {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .robot-skull-large {
+    width: 70px;
+    height: 90px;
+  }
+  
+  .robot-eyes-large {
+    gap: 10px;
+  }
+  
+  .robot-eye-large {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .chat-bubble-large {
+    max-width: 160px;
+    padding: 8px 12px;
+    transform: scale(0.8);
+  }
+  
+  .final-number {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+  }
+}
