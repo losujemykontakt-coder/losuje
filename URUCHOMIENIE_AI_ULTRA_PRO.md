@@ -229,3 +229,5 @@ Teraz możesz cieszyć się zaawansowanym algorytmem AI, który maksymalizuje Tw
 
 
 
+
+

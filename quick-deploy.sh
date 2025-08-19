@@ -122,3 +122,5 @@ echo ""
 print_warning "Pamiętaj o konfiguracji DNS dla $DOMAIN!"
 
 
+
+

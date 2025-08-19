@@ -16,14 +16,19 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '16'  # React Scripts 4 działa najlepiej na Node 16
         cache: 'npm'
         
     - name: Install frontend deps
       run: |
         cd frontend
-        npm install
+        npm ci  # Używa dokładnych wersji z package-lock.json
         npm run build
+        
+    - name: Security audit
+      run: |
+        cd frontend
+        npm audit --omit=dev
         
     - name: Deploy frontend
       run: |
@@ -32,6 +37,6 @@ jobs:
     - name: Deploy backend
       run: |
         rsync -avz --delete backend/ root@${{ secrets.SERVER_IP }}:/var/www/backend/
-        ssh root@${{ secrets.SERVER_IP }} "cd /var/www/backend && npm install && pm2 restart backend"
+        ssh root@${{ secrets.SERVER_IP }} "cd /var/www/backend && npm ci && pm2 restart backend"
 
 
