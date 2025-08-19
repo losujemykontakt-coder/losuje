@@ -27,6 +27,7 @@ jobs:
     - name: Build frontend
       run: |
         cd frontend
+        export NODE_OPTIONS="--openssl-legacy-provider"
         npm run build
         
     - name: Install backend dependencies
