@@ -16,15 +16,15 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18'
+        node-version: '20'
         cache: 'npm'
         
     - name: Install dependencies
       run: |
         cd frontend
-        npm ci --legacy-peer-deps
+        npm install --legacy-peer-deps
         cd ../backend
-        npm ci
+        npm install
         
     - name: Build frontend
       run: |
