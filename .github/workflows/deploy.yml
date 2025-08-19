@@ -16,7 +16,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '16'  # React Scripts 4 działa najlepiej na Node 16
+        node-version: '18'  # Node 18 + --openssl-legacy-provider
         cache: 'npm'
         
     - name: Install frontend deps
