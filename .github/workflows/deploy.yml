@@ -24,11 +24,13 @@ jobs:
         cd frontend
         npm install --legacy-peer-deps
         cd ../backend
-        npm install
+        npm install --production
         
     - name: Build frontend
       run: |
         cd frontend
+        ls -la
+        ls -la public/
         npm run build
         
     - name: Create deployment package
