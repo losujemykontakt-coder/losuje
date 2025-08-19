@@ -22,7 +22,7 @@ jobs:
     - name: Install frontend deps
       run: |
         cd frontend
-        npm ci  # Używa dokładnych wersji z package-lock.json
+        npm ci --legacy-peer-deps  # Używa dokładnych wersji z package-lock.json
         npm run build
         
     - name: Security audit
