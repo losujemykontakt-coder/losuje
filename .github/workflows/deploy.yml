@@ -1,4 +1,4 @@
-name: Deploy to OVH Server
+name: Deploy to OVH Server - losuje.pl
 
 on:
   push:
@@ -13,30 +13,114 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Setup Node.js
+    - name: Setup Node.js 18
       uses: actions/setup-node@v4
       with:
-        node-version: '18'  # Node 18 + --openssl-legacy-provider
+        node-version: '18'
         cache: 'npm'
         
-    - name: Install frontend deps
+    - name: Install frontend dependencies
       run: |
         cd frontend
-        npm ci --legacy-peer-deps  # Używa dokładnych wersji z package-lock.json
+        npm ci
         npm run build
         
-    - name: Security audit
+    - name: Security audit frontend
       run: |
         cd frontend
         npm audit --omit=dev
         
-    - name: Deploy frontend
+    - name: Install backend dependencies
       run: |
-        rsync -avz --delete frontend/build/ root@${{ secrets.SERVER_IP }}:/var/www/losuje.pl/
+        cd backend
+        npm ci --production
         
-    - name: Deploy backend
+    - name: Security audit backend
       run: |
-        rsync -avz --delete backend/ root@${{ secrets.SERVER_IP }}:/var/www/backend/
-        ssh root@${{ secrets.SERVER_IP }} "cd /var/www/backend && npm ci && pm2 restart backend"
+        cd backend
+        npm audit --omit=dev
+        
+    - name: Deploy to OVH Server
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          echo "🚀 Rozpoczynam deployment na OVH..."
+          
+          # Backup przed aktualizacją
+          BACKUP_DIR="/var/www/losuje.pl/backups/$(date +%Y%m%d_%H%M%S)"
+          mkdir -p "$BACKUP_DIR"
+          
+          if [ -d "/var/www/losuje.pl/lotek" ]; then
+            echo "📦 Tworzę backup..."
+            cp -r /var/www/losuje.pl/lotek "$BACKUP_DIR/"
+            echo "✅ Backup utworzony: $BACKUP_DIR"
+          fi
+          
+          # Aktualizacja kodu
+          cd /var/www/losuje.pl
+          if [ -d "lotek" ]; then
+            cd lotek
+            git fetch origin
+            git reset --hard origin/main
+          else
+            git clone https://github.com/losujemykontakt-coder/losuje.git lotek
+            cd lotek
+          fi
+          
+          # Aktualizacja frontend
+          echo "🔨 Buduję frontend..."
+          cd frontend
+          npm ci
+          npm run build
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ Frontend zbudowany pomyślnie!"
+          else
+            echo "❌ Błąd podczas budowania frontend!"
+            exit 1
+          fi
+          
+          # Aktualizacja backend
+          echo "🔧 Aktualizuję backend..."
+          cd ../backend
+          npm ci --production
+          
+          # Restart aplikacji
+          echo "🔄 Restartuję aplikację..."
+          pm2 restart lotek-backend
+          
+          # Sprawdź status
+          sleep 5
+          if pm2 list | grep -q "lotek-backend.*online"; then
+            echo "✅ Aplikacja zaktualizowana i uruchomiona!"
+          else
+            echo "❌ Błąd podczas uruchamiania aplikacji!"
+            pm2 logs lotek-backend --lines 20
+            exit 1
+          fi
+          
+          # Czyszczenie starych backupów (zostaw ostatnie 5)
+          cd /var/www/losuje.pl/backups
+          ls -t | tail -n +6 | xargs -r rm -rf
+          
+          echo "🎉 Deployment zakończony pomyślnie!"
+          
+    - name: Health check
+      run: |
+        sleep 30
+        curl -f -I https://losuje.pl || exit 1
+        
+    - name: Notify deployment status
+      if: always()
+      run: |
+        if [ ${{ job.status }} == 'success' ]; then
+          echo "✅ Deployment zakończony pomyślnie!"
+          echo "🌐 Aplikacja dostępna na: https://losuje.pl"
+        else
+          echo "❌ Deployment nie powiódł się!"
+        fi
 
 
