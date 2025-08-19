@@ -19,63 +19,19 @@ jobs:
         node-version: '18'
         cache: 'npm'
         
-    - name: Install frontend dependencies
+    - name: Install frontend deps
       run: |
         cd frontend
-        npm install --legacy-peer-deps
-        
-    - name: Build frontend
-      run: |
-        cd frontend
-        export NODE_OPTIONS="--openssl-legacy-provider"
+        npm install
         npm run build
         
-    - name: Install backend dependencies
+    - name: Deploy frontend
       run: |
-        cd backend
-        npm install --production
+        rsync -avz --delete frontend/build/ root@${{ secrets.SERVER_IP }}:/var/www/losuje.pl/
         
-    - name: Deploy frontend to OVH
+    - name: Deploy backend
       run: |
-        rsync -avz --delete frontend/build/ root@${{ secrets.SERVER_IP }}:/var/www/lotek/frontend/
-        
-    - name: Deploy backend to OVH
-      run: |
-        rsync -avz --delete backend/ root@${{ secrets.SERVER_IP }}:/var/www/lotek/backend/
-        
-    - name: Setup and restart backend
-      uses: appleboy/ssh-action@v0.1.5
-      with:
-        host: ${{ secrets.SERVER_IP }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          # Zatrzymaj aplikację
-          pm2 stop lotek-backend 2>/dev/null || true
-          pm2 delete lotek-backend 2>/dev/null || true
-          
-          # Utwórz katalogi jeśli nie istnieją
-          mkdir -p /var/www/lotek/frontend
-          mkdir -p /var/www/lotek/backend
-          
-          # Ustaw uprawnienia
-          chown -R www-data:www-data /var/www/lotek/
-          chmod -R 755 /var/www/lotek/
-          
-          # Zainstaluj zależności backendu
-          cd /var/www/lotek/backend
-          npm install --production
-          
-          # Uruchom aplikację
-          pm2 start index.js --name lotek-backend
-          pm2 save
-          
-          # Restart Nginx
-          systemctl restart nginx
-        
-    - name: Health check
-      run: |
-        sleep 30
-        curl -f https://losuje.pl || exit 1
+        rsync -avz --delete backend/ root@${{ secrets.SERVER_IP }}:/var/www/backend/
+        ssh root@${{ secrets.SERVER_IP }} "cd /var/www/backend && npm install && pm2 restart backend"
 
 
