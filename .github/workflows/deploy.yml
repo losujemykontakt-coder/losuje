@@ -23,6 +23,7 @@ jobs:
       run: |
         cd frontend
         npm install --legacy-peer-deps
+        export NODE_OPTIONS="--openssl-legacy-provider"
         npm run build
         
     - name: Deploy frontend
