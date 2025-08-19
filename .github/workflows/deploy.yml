@@ -22,7 +22,7 @@ jobs:
     - name: Install dependencies
       run: |
         cd frontend
-        npm ci
+        npm ci --legacy-peer-deps
         cd ../backend
         npm ci
         
