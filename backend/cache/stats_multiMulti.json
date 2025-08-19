@@ -1,15 +1,17 @@
 {
   "data": {
     "frequencyData": {
-      "1": 162,
+      "1": 164,
       "2": 24,
       "3": 18,
-      "5": 6,
+      "5": 12,
       "6": 3,
       "7": 3,
+      "8": 6,
       "9": 3,
       "25": 3,
       "35": 9,
+      "36": 6,
       "40": 3,
       "49": 3,
       "50": 3,
@@ -19,7 +21,7 @@
       "90": 3,
       "99": 9
     },
-    "totalDraws": 27,
+    "totalDraws": 29,
     "avgSum": null,
     "sumRange": [
       null,
@@ -29,8 +31,8 @@
       1,
       2,
       3,
-      35,
-      85
+      5,
+      35
     ],
     "coldNumbers": [
       40,
@@ -40,13 +42,13 @@
       90
     ],
     "patterns": {
-      "evenOdd": "45:225",
-      "lowHigh": "234:36",
+      "evenOdd": "57:233",
+      "lowHigh": "254:36",
       "sumRange": "NaN-NaN"
     },
     "euroNumbers": null,
-    "lastUpdated": "2025-08-18T19:00:43.813Z"
+    "lastUpdated": "2025-08-18T19:20:40.628Z"
   },
-  "timestamp": "2025-08-18T19:00:43.813Z",
+  "timestamp": "2025-08-18T19:20:40.628Z",
   "game": "multiMulti"
 }

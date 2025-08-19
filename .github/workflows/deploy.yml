@@ -1,0 +1,93 @@
+name: Deploy to OVH Server
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        cd frontend
+        npm ci
+        cd ../backend
+        npm ci
+        
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm run build
+        
+    - name: Create deployment package
+      run: |
+        tar -czf lotek-app.tar.gz frontend/build/ backend/ deploy.sh
+        
+    - name: Deploy to OVH Server
+      uses: appleboy/ssh-action@v0.1.5
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          # Zatrzymaj aplikację
+          pm2 stop lotek-backend 2>/dev/null || true
+          pm2 delete lotek-backend 2>/dev/null || true
+          
+          # Utwórz katalogi jeśli nie istnieją
+          mkdir -p /var/www/lotek/frontend
+          mkdir -p /var/www/lotek/backend
+          
+          # Rozpakuj archiwum
+          cd /tmp
+          tar -xzf lotek-app.tar.gz
+          
+          # Skopiuj pliki
+          cp -r frontend/build/* /var/www/lotek/frontend/
+          cp -r backend/* /var/www/lotek/backend/
+          
+          # Ustaw uprawnienia
+          chown -R www-data:www-data /var/www/lotek/
+          chmod -R 755 /var/www/lotek/
+          
+          # Zainstaluj zależności
+          cd /var/www/lotek/backend
+          npm install --production
+          
+          # Uruchom aplikację
+          pm2 start index.js --name lotek-backend
+          pm2 save
+          
+          # Restart Nginx
+          systemctl restart nginx
+          
+          # Wyczyść pliki tymczasowe
+          rm -rf /tmp/lotek-app.tar.gz /tmp/frontend /tmp/backend
+          
+    - name: Upload files
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: "lotek-app.tar.gz"
+        target: "/tmp/"
+        
+    - name: Health check
+      run: |
+        sleep 30
+        curl -f https://losuje.pl || exit 1
+
+

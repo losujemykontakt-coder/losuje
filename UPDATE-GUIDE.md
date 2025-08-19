@@ -186,3 +186,5 @@ Po każdej aktualizacji:
 
 **Czas aktualizacji: 2-10 minut**
 
+
+
