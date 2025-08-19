@@ -1,0 +1,50 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Efekt gradient dla "L" -->
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA000;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Gradient dla kuli lotto -->
+    <radialGradient id="ballGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#FFA000;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8C00;stop-opacity:1" />
+    </radialGradient>
+    
+    <!-- Animacja podskakiwania kuli -->
+    <style>
+      @keyframes ballBounce {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+      }
+      
+      .bouncing-ball {
+        animation: ballBounce 2s ease-in-out infinite;
+      }
+    </style>
+  </defs>
+  
+  <!-- "L" złote -->
+  <text x="20" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="url(#goldGradient)">
+    L
+  </text>
+  
+  <!-- Kula lotto w kształcie "O" z animacją -->
+  <g class="bouncing-ball">
+    <circle cx="50" cy="30" r="12" fill="url(#ballGradient)" stroke="#FF8C00" stroke-width="1"/>
+    <circle cx="46" cy="26" r="3" fill="#FFFFFF" opacity="0.8"/>
+  </g>
+  
+  <!-- Reszta tekstu z bardzo małymi odstępami -->
+  <text x="70" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1e3a8a">
+    <tspan dx="0">s</tspan>
+    <tspan dx="0.3">u</tspan>
+    <tspan dx="0.3">j</tspan>
+    <tspan dx="0.3">e</tspan>
+    <tspan dx="0.3">.</tspan>
+    <tspan dx="0.3">p</tspan>
+    <tspan dx="0.3">l</tspan>
+  </text>
+</svg>
