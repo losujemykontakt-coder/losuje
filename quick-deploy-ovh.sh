@@ -185,3 +185,6 @@ echo "   📊 Status: pm2 status"
 echo "   📝 Logi: pm2 logs lotek-backend"
 echo ""
 print_success "Gotowe! 🚀"
+
+
+

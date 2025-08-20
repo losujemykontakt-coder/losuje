@@ -1,10 +1,10 @@
 // Konfiguracja PayPal - centralne zarządzanie
 // Ten plik zapobiega problemom z wielokrotną inicjalizacją SDK
 
-// Klucze PayPal z mcp.json
+// Konfiguracja PayPal z zmiennych środowiskowych
 const PAYPAL_CONFIG = {
-  CLIENT_ID: 'AcLnAD0aCb1hFnw5TDDoe_k1cLkqp-FtcWai8mctRT57oDP4pPi4ukzwdaFCS6JFAkQqfH1MIb0f0s9Z',
-  ENVIRONMENT: 'production',
+  CLIENT_ID: process.env.REACT_APP_PAYPAL_CLIENT_ID || 'AcLnAD0aCb1hFnw5TDDoe_k1cLkqp-FtcWai8mctRT57oDP4pPi4ukzwdaFCS6JFAkQqfH1MIb0f0s9Z',
+  ENVIRONMENT: process.env.REACT_APP_PAYPAL_ENVIRONMENT || 'live',
   CURRENCY: 'PLN',
   INTENT: 'capture'
 };

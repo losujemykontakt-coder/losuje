@@ -281,3 +281,6 @@ echo "  📝 Logi: pm2 logs lotek-backend"
 echo "  🔧 Restart Nginx: systemctl restart nginx"
 echo "  🌐 Test aplikacji: curl -I https://losuje.pl"
 echo ""
+
+
+

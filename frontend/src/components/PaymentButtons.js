@@ -131,7 +131,7 @@ const PaymentButtons = ({
     }, timeoutDuration);
     
     try {
-      const apiUrl = 'http://localhost:3001';
+      const apiUrl = process.env.REACT_APP_API_URL || 'https://losuje.pl';
       
       // Test połączenia z backendem
       console.log('🔄 Test połączenia z backendem...');
@@ -240,7 +240,7 @@ const PaymentButtons = ({
     // Sprawdź status backendu
     const checkBackendStatus = async () => {
       try {
-        const apiUrl = 'http://localhost:3001';
+        const apiUrl = process.env.REACT_APP_API_URL || 'https://losuje.pl';
         const response = await fetch(`${apiUrl}/api/health`, {
           method: 'GET',
           headers: {

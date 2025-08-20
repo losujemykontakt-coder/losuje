@@ -2,14 +2,14 @@
 require('dotenv').config();
 
 const config = {
-  // JWT Secret - klucz z mcp.json
-  JWT_SECRET: 'twoj_silny_jwt_secret_2024_lotek_generator_bezpieczny_123456789',
+  // JWT Secret - z zmiennej środowiskowej lub fallback
+  JWT_SECRET: process.env.JWT_SECRET || 'twoj_silny_jwt_secret_2024_lotek_generator_bezpieczny_123456789',
   
   // Port serwera
   PORT: process.env.PORT || 3001,
   
-  // Środowisko - z mcp.json
-  NODE_ENV: 'production',
+  // Środowisko - z zmiennej środowiskowej
+  NODE_ENV: process.env.NODE_ENV || 'production',
   
   // Konfiguracja email (dla resetowania hasła)
   EMAIL: {
@@ -23,8 +23,8 @@ const config = {
   // Konfiguracja bazy danych
   DB_PATH: process.env.DB_PATH || './users.db',
   
-  // Konfiguracja CORS
-  CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  // Konfiguracja CORS - z zmiennej środowiskowej
+  CORS_ORIGIN: process.env.CORS_ORIGIN || 'https://losuje.pl',
   
   // Konfiguracja bezpieczeństwa
   SECURITY: {
@@ -43,30 +43,31 @@ const config = {
     // Czas wygaśnięcia tokenu resetowania hasła (1 godzina)
     RESET_TOKEN_EXPIRES_IN: '1h',
     
-    // Konfiguracja CORS
+    // Konfiguracja CORS - z zmiennej środowiskowej
     CORS: {
-      ALLOWED_ORIGINS: ['http://localhost:3000', 'http://127.0.0.1:3000']
+      ALLOWED_ORIGINS: [process.env.CORS_ORIGIN || 'https://losuje.pl', 'http://localhost:3000', 'http://127.0.0.1:3000']
     }
   },
   
-  // Konfiguracja PayPal - klucze z mcp.json
+  // Konfiguracja PayPal - z zmiennych środowiskowych
   PAYPAL: {
-    CLIENT_ID: 'AcLnAD0aCb1hFnw5TDDoe_k1cLkqp-FtcWai8mctRT57oDP4pPi4ukzwdaFCS6JFAkQqfH1MIb0f0s9Z',
-    CLIENT_SECRET: 'EEgJI6MgD80kfoghzXocyenIgmhYgoL7otwGmDeOvxKRt-eTmYfbJ6lgxEvQ3DL3J0Nze5pLkRqOrRGt',
-    RETURN_URL: 'http://localhost:3000/payment-success',
-    CANCEL_URL: 'http://localhost:3000/payment-cancel',
-    ENVIRONMENT: 'live' // Używamy live environment z mcp.json
+    CLIENT_ID: process.env.PAYPAL_CLIENT_ID || 'AcLnAD0aCb1hFnw5TDDoe_k1cLkqp-FtcWai8mctRT57oDP4pPi4ukzwdaFCS6JFAkQqfH1MIb0f0s9Z',
+    CLIENT_SECRET: process.env.PAYPAL_CLIENT_SECRET || 'EEgJI6MgD80kfoghzXocyenIgmhYgoL7otwGmDeOvxKRt-eTmYfbJ6lgxEvQ3DL3J0Nze5pLkRqOrRGt',
+    RETURN_URL: process.env.PAYPAL_RETURN_URL || 'https://losuje.pl/payment-success',
+    CANCEL_URL: process.env.PAYPAL_CANCEL_URL || 'https://losuje.pl/payment-cancel',
+    ENVIRONMENT: process.env.PAYPAL_ENVIRONMENT || 'live'
   },
   
-  // Konfiguracja Przelewy24 - klucze z mcp.json
+  // Konfiguracja Przelewy24 - z zmiennych środowiskowych
   PRZELEWY24: {
-    MERCHANT_ID: '269321',
-    POS_ID: '269321',
-    API_KEY: 'aa2aefcd5f59cdb2b56b40470a6d51ae',
-    CRC: '476f49249ee1c6e1',
-    RETURN_URL: 'http://localhost:3000/payment-success',
-    STATUS_URL: 'http://localhost:3001/api/przelewy24/status',
-    ENVIRONMENT: 'production'
+    MERCHANT_ID: process.env.PRZELEWY24_MERCHANT_ID || '269321',
+    POS_ID: process.env.PRZELEWY24_POS_ID || '269321',
+    API_KEY: process.env.PRZELEWY24_API_KEY || 'aa2aefcd5f59cdb2b56b40470a6d51ae',
+    CRC: process.env.PRZELEWY24_CRC || '476f49249ee1c6e1',
+    RETURN_URL: process.env.PRZELEWY24_RETURN_URL || 'https://losuje.pl/payment-success',
+    STATUS_URL: process.env.PRZELEWY24_STATUS_URL || 'https://losuje.pl/api/przelewy24/status',
+    WEBHOOK_URL: process.env.PRZELEWY24_WEBHOOK_URL || 'https://losuje.pl/api/przelewy24/webhook',
+    ENVIRONMENT: process.env.PRZELEWY24_ENVIRONMENT || 'production'
   },
   
 

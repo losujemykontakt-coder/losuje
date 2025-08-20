@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 
 // Funkcja wysyłania emaila resetowania hasła
 const sendPasswordResetEmail = async (email, resetToken, userName) => {
-  const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`;
+  const resetLink = `https://losuje.pl/reset-password?token=${resetToken}`;
   
   const mailOptions = {
     from: config.EMAIL.FROM,

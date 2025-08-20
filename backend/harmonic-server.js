@@ -8,7 +8,7 @@ const PORT = 3001;
 
 // CORS
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: ['https://losuje.pl', 'http://localhost:3000', 'http://127.0.0.1:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With']
@@ -127,6 +127,6 @@ app.listen(PORT, () => {
   console.log(`   GET  /api/health`);
   console.log(`   GET  /api/harmonic/stats`);
   console.log(`   POST /api/harmonic/generate`);
-  console.log(`🌐 CORS: dozwolone origins: http://localhost:3000, http://127.0.0.1:3000`);
+  console.log(`🌐 CORS: dozwolone origins: https://losuje.pl, http://localhost:3000, http://127.0.0.1:3000`);
 });
 

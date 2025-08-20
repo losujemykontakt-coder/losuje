@@ -63,8 +63,8 @@ router.post('/create', async (req, res) => {
     request.requestBody({
       intent: 'CAPTURE',
       application_context: {
-        return_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/payments?status=success&method=paypal&amount=${amount}&plan=${plan}`,
-        cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/payments?status=cancelled&method=paypal`,
+        return_url: `${process.env.FRONTEND_URL || 'https://losuje.pl'}/payments?status=success&method=paypal&amount=${amount}&plan=${plan}`,
+        cancel_url: `${process.env.FRONTEND_URL || 'https://losuje.pl'}/payments?status=cancelled&method=paypal`,
         brand_name: 'Lotek Generator',
         landing_page: 'BILLING',
         user_action: 'PAY_NOW',

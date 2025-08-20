@@ -411,3 +411,6 @@ print_info "Aby skonfigurować SSL:"
 echo "certbot --nginx -d losuje.pl -d www.losuje.pl --non-interactive --agree-tos --email admin@losuje.pl"
 echo ""
 print_success "Gotowe! 🚀"
+
+
+

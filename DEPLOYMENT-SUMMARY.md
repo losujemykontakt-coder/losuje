@@ -225,3 +225,6 @@ Po wdrożeniu Twoja aplikacja będzie dostępna na:
 - **GitHub:** https://github.com/losujemykontakt-coder/losuje
 
 **Powodzenia! 🚀**
+
+
+

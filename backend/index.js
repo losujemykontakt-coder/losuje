@@ -120,7 +120,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Konfiguracja CORS - poprawiona zgodnie z Twoimi wskazówkami
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: ['https://losuje.pl', 'http://localhost:3000', 'http://127.0.0.1:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
@@ -182,7 +182,7 @@ app.get('/api/health', (req, res) => {
   
   // Sprawdź czy CORS działa
   const origin = req.headers.origin;
-  const allowedOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+  const allowedOrigins = ['https://losuje.pl', 'http://localhost:3000', 'http://127.0.0.1:3000'];
   
   if (origin && allowedOrigins.includes(origin)) {
     console.log('✅ CORS: Origin dozwolony:', origin);
@@ -222,7 +222,7 @@ app.post('/api/payment/test', (req, res) => {
   
   // Sprawdź czy CORS działa
   const origin = req.headers.origin;
-  const allowedOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+  const allowedOrigins = ['https://losuje.pl', 'http://localhost:3000', 'http://127.0.0.1:3000'];
   
   if (origin && allowedOrigins.includes(origin)) {
     console.log('✅ CORS: Origin dozwolony:', origin);
@@ -294,25 +294,12 @@ app.get('/api/payment/cancel', (req, res) => {
   const { method } = req.query;
   
   // Przekieruj do frontendu z parametrami anulowania
-  const redirectUrl = `http://localhost:3000/payment-success?status=cancelled&method=${method || 'unknown'}`;
+  const redirectUrl = `https://losuje.pl/payment-success?status=cancelled&method=${method || 'unknown'}`;
   console.log('🔗 Przekierowanie do:', redirectUrl);
   res.redirect(redirectUrl);
 });
 
-// Endpoint do obsługi webhooków Przelewy24 - zgodnie z dokumentacją
-app.post('/api/przelewy24/status', (req, res) => {
-  console.log('=== WEBHOOK PRZELEWY24 ===');
-  console.log('Request body:', req.body);
-  console.log('Headers:', req.headers);
-  
-  const { p24_session_id, p24_order_id, p24_sign, p24_amount, p24_currency } = req.body;
-  
-  // Tutaj dodaj weryfikację podpisu zgodnie z dokumentacją Przelewy24
-  console.log('Webhook Przelewy24:', { p24_session_id, p24_order_id, p24_sign, p24_amount, p24_currency });
-  
-  // Odpowiedź zgodna z dokumentacją Przelewy24
-  res.status(200).send('OK');
-});
+
 
 // Middleware do logowania bezpieczeństwa
 app.use((req, res, next) => {
@@ -2355,10 +2342,10 @@ app.get('/api/payment/success', async (req, res) => {
         
         // Znajdź użytkownika na podstawie tokenu (można dodać mapowanie token->userId)
         // Na razie przekierowujemy bez aktualizacji subskrypcji
-        res.redirect(`http://localhost:3000/payment-success?status=success&method=paypal&amount=${result.amount}&transactionId=${result.transactionId}`);
+        res.redirect(`https://losuje.pl/payment-success?status=success&method=paypal&amount=${result.amount}&transactionId=${result.transactionId}`);
       } else {
         console.log('❌ Błąd finalizacji płatności PayPal:', result.error);
-        res.redirect(`http://localhost:3000/payment-cancel?status=error&method=paypal&error=${encodeURIComponent(result.error)}`);
+                  res.redirect(`https://losuje.pl/payment-cancel?status=error&method=paypal&error=${encodeURIComponent(result.error)}`);
       }
     } else if (method && session && amount) {
       // Weryfikacja płatności Przelewy24
@@ -2381,18 +2368,18 @@ app.get('/api/payment/success', async (req, res) => {
           console.log('✅ Subskrypcja użytkownika aktywowana');
         }
         
-        res.redirect(`http://localhost:3000/payment-success?status=success&method=${method}&amount=${amount}&session=${session}`);
+        res.redirect(`https://losuje.pl/payment-success?status=success&method=${method}&amount=${amount}&session=${session}`);
       } else {
         console.log('❌ Błąd weryfikacji płatności Przelewy24:', result.error);
-        res.redirect(`http://localhost:3000/payment-cancel?status=error&method=${method}&error=${encodeURIComponent(result.error)}`);
+                  res.redirect(`https://losuje.pl/payment-cancel?status=error&method=${method}&error=${encodeURIComponent(result.error)}`);
       }
     } else {
       console.log('❌ Brak wymaganych parametrów');
-      res.redirect(`http://localhost:3000/payment-cancel?status=error&error=${encodeURIComponent('Brak wymaganych parametrów')}`);
+              res.redirect(`https://losuje.pl/payment-cancel?status=error&error=${encodeURIComponent('Brak wymaganych parametrów')}`);
     }
   } catch (error) {
     console.error('❌ Błąd obsługi powrotu z płatności:', error);
-    res.redirect(`http://localhost:3000/payment-cancel?status=error&error=${encodeURIComponent(error.message)}`);
+          res.redirect(`https://losuje.pl/payment-cancel?status=error&error=${encodeURIComponent(error.message)}`);
   }
 });
 
@@ -2402,7 +2389,7 @@ app.get('/api/payment/cancel', (req, res) => {
   console.log('Query params:', req.query);
   
   const { method } = req.query;
-  res.redirect(`http://localhost:3000/payment-cancel?status=cancelled&method=${method || 'unknown'}`);
+      res.redirect(`https://losuje.pl/payment-cancel?status=cancelled&method=${method || 'unknown'}`);
 });
 
 // AI Ultra Pro API routes
@@ -2536,48 +2523,7 @@ app.post('/api/przelewy24/webhook', async (req, res) => {
   }
 });
 
-// Endpoint do weryfikacji płatności Przelewy24
-app.post('/api/przelewy24/verify', async (req, res) => {
-  console.log('=== WERYFIKACJA PŁATNOŚCI PRZELEWY24 ===');
-  console.log('Request body:', req.body);
-  
-  const { sessionId, amount, currency = 'PLN' } = req.body;
-  
-  if (!sessionId || !amount) {
-    return res.status(400).json({ error: 'Session ID i kwota są wymagane' });
-  }
-  
-  try {
-    const result = await przelewy24Service.verifyPayment(sessionId, amount, currency);
-    
-    if (result.success) {
-      // Znajdź użytkownika na podstawie sessionId
-      const sessionParts = sessionId.split('_');
-      const userId = sessionParts[1];
-      
-      if (userId) {
-        // Aktualizuj subskrypcję użytkownika
-        const now = new Date();
-        const endDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 dni
-        
-        await updateSubscription(userId, 'premium', 'active', now.toISOString(), endDate.toISOString());
-        console.log('✅ Subskrypcja użytkownika aktywowana');
-      }
-      
-      res.json({
-        success: true,
-        verified: result.verified,
-        paymentId: result.paymentId,
-        status: result.status
-      });
-    } else {
-      res.status(400).json({ error: result.error });
-    }
-  } catch (error) {
-    console.error('Błąd weryfikacji płatności:', error);
-    res.status(500).json({ error: 'Błąd serwera' });
-  }
-});
+
 
 // Endpoint do sprawdzania statusu subskrypcji użytkownika
 app.get('/api/subscription/status/:userId', async (req, res) => {
