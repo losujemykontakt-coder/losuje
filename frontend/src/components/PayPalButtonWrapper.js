@@ -60,7 +60,7 @@ const PayPalButtonWrapper = ({
   };
 
   const handleCreateOrder = (data, actions) => {
-    const apiUrl = 'http://localhost:3001';
+    const apiUrl = process.env.REACT_APP_API_URL || 'https://losuje.pl';
     return fetch(`${apiUrl}/api/paypal/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -89,7 +89,7 @@ const PayPalButtonWrapper = ({
   };
 
   const handleApprove = (data, actions) => {
-    const apiUrl = 'http://localhost:3001';
+    const apiUrl = process.env.REACT_APP_API_URL || 'https://losuje.pl';
     return fetch(`${apiUrl}/api/paypal/capture/${data.orderID}`, {
       method: "POST",
       headers: {

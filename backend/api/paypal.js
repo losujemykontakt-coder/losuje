@@ -1,11 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const paypal = require('@paypal/checkout-server-sdk');
+const config = require('../config');
 
-// Konfiguracja PayPal
+// Konfiguracja PayPal z prawdziwymi kluczami LIVE
+const clientId = process.env.PAYPAL_CLIENT_ID || 'Affx9V_8v8IOGAfyMHPooVW70t1eAOGMSoCUCTW-9mrjeeTsHw14cwA6RqN8lqzFRSn7sHi9AG75BGlC';
+const clientSecret = process.env.PAYPAL_CLIENT_SECRET || 'EL-rOID1Th-ByzT-IcWGGxUQNkXw1sz9gwlSK_LeYTTG839kTlRqTY6VrDa2iwoLAkY-5F2edJ2kOkbR';
+
 const environment = new paypal.core.LiveEnvironment(
-  process.env.PAYPAL_CLIENT_ID || 'AcLnAD0aCb1hFnw5TDDoe_k1cLkqp-FtcWai8mctRT57oDP4pPi4ukzwdaFCS6JFAkQqfH1MIb0f0s9Z',
-  process.env.PAYPAL_CLIENT_SECRET || 'EEgJI6MgD80kfoghzXocyenIgmhYgoL7otwGmDeOvxKRt-eTmYfbJ6lgxEvQ3DL3J0Nze5pLkRqOrRGt'
+  clientId,
+  clientSecret
 );
 
 const client = new paypal.core.PayPalHttpClient(environment);

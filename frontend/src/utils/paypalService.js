@@ -1,9 +1,17 @@
-const API_BASE_URL = 'http://localhost:3001/api';
+// Dynamiczny URL API - localhost w development, losuje.pl w produkcji
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://losuje.pl/api' 
+  : 'http://localhost:3001/api';
 
 class PayPalService {
   // Tworzenie zamówienia PayPal
   async createOrder(amount, currency = 'PLN', description = 'Plan Premium - Lotek') {
     try {
+      console.log('🔄 [PAYPAL] Tworzenie zamówienia...');
+      console.log('📋 Dane zamówienia:', { amount, currency, description });
+      console.log('🌐 API URL:', `${API_BASE_URL}/paypal/create-order`);
+      console.log('🔧 Environment:', process.env.NODE_ENV);
+      
       const response = await fetch(`${API_BASE_URL}/paypal/create-order`, {
         method: 'POST',
         headers: {
@@ -16,22 +24,51 @@ class PayPalService {
         })
       });
 
+      console.log('📡 [PAYPAL] Status odpowiedzi:', response.status);
+      console.log('📡 [PAYPAL] Headers:', response.headers);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
+      console.log('📤 [PAYPAL] Odpowiedź serwera:', data);
       
       if (data.success) {
+        console.log('✅ [PAYPAL] Zamówienie utworzone pomyślnie');
         return {
           success: true,
           orderId: data.orderId,
           approvalUrl: data.approvalUrl
         };
       } else {
+        console.log('❌ [PAYPAL] Błąd z serwera:', data.error);
         return {
           success: false,
           error: data.error
         };
       }
     } catch (error) {
-      console.error('Błąd tworzenia zamówienia PayPal:', error);
+      console.error('💥 [PAYPAL] Błąd tworzenia zamówienia:', error);
+      console.error('💥 [PAYPAL] Szczegóły błędu:', {
+        message: error.message,
+        name: error.name,
+        stack: error.stack
+      });
+      
+      // Sprawdź typ błędu
+      if (error.message.includes('Failed to fetch')) {
+        return {
+          success: false,
+          error: 'Brak połączenia z serwerem. Sprawdź czy backend jest uruchomiony.'
+        };
+      } else if (error.message.includes('timeout')) {
+        return {
+          success: false,
+          error: 'Timeout - serwer nie odpowiada. Spróbuj ponownie.'
+        };
+      }
+      
       return {
         success: false,
         error: 'Błąd połączenia z serwerem'

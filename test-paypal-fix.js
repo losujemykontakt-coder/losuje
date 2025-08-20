@@ -1,61 +1,48 @@
 const axios = require('axios');
 
-const API_BASE_URL = 'http://localhost:3001';
-
-async function testPayPalIntegration() {
-  console.log('🧪 Test integracji PayPal po naprawach...\n');
-
+// Test napraw PayPal
+async function testPayPalFix() {
+  console.log('=== TEST NAPRAW PAYPAL ===');
+  
+  const API_BASE_URL = 'http://localhost:3001/api';
+  
   try {
     // Test 1: Sprawdź czy backend odpowiada
-    console.log('1️⃣ Test połączenia z backendem...');
-    const healthResponse = await axios.get(`${API_BASE_URL}/api/health`);
-    console.log('✅ Backend odpowiada:', healthResponse.status);
-    console.log('📊 Status:', healthResponse.data);
-
-    // Test 2: Test tworzenia zamówienia PayPal
-    console.log('\n2️⃣ Test tworzenia zamówienia PayPal...');
-    const createOrderResponse = await axios.post(`${API_BASE_URL}/api/paypal/create`, {
+    console.log('\n1️⃣ Test połączenia z backendem...');
+    const healthResponse = await axios.get(`${API_BASE_URL}/health`);
+    console.log('✅ Backend odpowiada:', healthResponse.data);
+    
+    // Test 2: Sprawdź konfigurację PayPal
+    console.log('\n2️⃣ Test konfiguracji PayPal...');
+    const configResponse = await axios.get(`${API_BASE_URL}/paypal/config`);
+    console.log('✅ Konfiguracja PayPal:', configResponse.data);
+    
+    // Test 3: Test tworzenia zamówienia PayPal
+    console.log('\n3️⃣ Test tworzenia zamówienia PayPal...');
+    const orderResponse = await axios.post(`${API_BASE_URL}/paypal/create-order`, {
       amount: 9.99,
       currency: 'PLN',
-      description: 'Test Plan Miesięczny - Lotek Generator',
-      email: 'test@example.com',
-      plan: 'monthly'
+      description: 'Test Plan Premium'
     });
-
-    console.log('✅ Zamówienie utworzone pomyślnie!');
-    console.log('📋 Order ID:', createOrderResponse.data.id);
-    console.log('💰 Kwota:', createOrderResponse.data.amount);
-    console.log('📅 Plan:', createOrderResponse.data.plan);
-    console.log('📊 Status:', createOrderResponse.data.status);
-
-    // Test 3: Sprawdź szczegóły zamówienia
-    console.log('\n3️⃣ Test sprawdzania szczegółów zamówienia...');
-    const orderDetailsResponse = await axios.get(`${API_BASE_URL}/api/paypal/order/${createOrderResponse.data.id}`);
-    console.log('✅ Szczegóły zamówienia pobrane');
-    console.log('📋 Status zamówienia:', orderDetailsResponse.data.status);
-
-    console.log('\n🎉 Wszystkie testy PayPal przeszły pomyślnie!');
-    console.log('✅ PayPal jest poprawnie skonfigurowany i działa.');
-
-  } catch (error) {
-    console.error('\n❌ Błąd podczas testowania PayPal:');
     
-    if (error.response) {
-      console.error('📊 Status:', error.response.status);
-      console.error('📋 Dane:', error.response.data);
-    } else if (error.request) {
-      console.error('🌐 Błąd połączenia:', error.message);
+    console.log('✅ Zamówienie utworzone:', orderResponse.data);
+    
+    if (orderResponse.data.success) {
+      console.log('🎉 Wszystkie testy PayPal przeszły pomyślnie!');
     } else {
-      console.error('💥 Błąd:', error.message);
+      console.log('❌ Błąd tworzenia zamówienia:', orderResponse.data.error);
     }
     
-    console.log('\n🔧 Sprawdź:');
-    console.log('1. Czy backend jest uruchomiony na porcie 3001');
-    console.log('2. Czy PayPal klucze w mcp.json są poprawne');
-    console.log('3. Czy środowisko PayPal jest ustawione na "live"');
+  } catch (error) {
+    console.error('❌ Błąd testu:', error.message);
+    
+    if (error.response) {
+      console.error('Status:', error.response.status);
+      console.error('Data:', error.response.data);
+    }
   }
 }
 
 // Uruchom test
-testPayPalIntegration();
+testPayPalFix();
 

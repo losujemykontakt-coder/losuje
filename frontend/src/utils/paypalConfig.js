@@ -1,30 +1,27 @@
-// Konfiguracja PayPal - centralne zarządzanie
-// Ten plik zapobiega problemom z wielokrotną inicjalizacją SDK
-
-// Konfiguracja PayPal z zmiennych środowiskowych
-const PAYPAL_CONFIG = {
-  CLIENT_ID: process.env.REACT_APP_PAYPAL_CLIENT_ID || 'AcLnAD0aCb1hFnw5TDDoe_k1cLkqp-FtcWai8mctRT57oDP4pPi4ukzwdaFCS6JFAkQqfH1MIb0f0s9Z',
-  ENVIRONMENT: process.env.REACT_APP_PAYPAL_ENVIRONMENT || 'live',
+// Konfiguracja PayPal dla frontend
+const paypalConfig = {
+  CLIENT_ID: process.env.REACT_APP_PAYPAL_CLIENT_ID || 'Affx9V_8v8IOGAfyMHPooVW70t1eAOGMSoCUCTW-9mrjeeTsHw14cwA6RqN8lqzFRSn7sHi9AG75BGlC',
+  ENVIRONMENT: process.env.NODE_ENV === 'production' ? 'live' : 'sandbox',
   CURRENCY: 'PLN',
-  INTENT: 'capture'
+  LOCALE: 'pl_PL'
 };
 
 // Sprawdź czy konfiguracja jest poprawna
 const validatePayPalConfig = () => {
-  if (!PAYPAL_CONFIG.CLIENT_ID) {
+  if (!paypalConfig.CLIENT_ID) {
     console.error('❌ PayPal Client ID jest wymagany');
     return false;
   }
   
-  if (!PAYPAL_CONFIG.ENVIRONMENT || !['live', 'sandbox'].includes(PAYPAL_CONFIG.ENVIRONMENT)) {
+  if (!paypalConfig.ENVIRONMENT || !['live', 'sandbox'].includes(paypalConfig.ENVIRONMENT)) {
     console.error('❌ PayPal Environment musi być "live" lub "sandbox"');
     return false;
   }
   
   console.log('✅ PayPal konfiguracja poprawna:', {
-    clientId: PAYPAL_CONFIG.CLIENT_ID ? 'OK' : 'BRAK',
-    environment: PAYPAL_CONFIG.ENVIRONMENT,
-    currency: PAYPAL_CONFIG.CURRENCY
+    clientId: paypalConfig.CLIENT_ID ? 'OK' : 'BRAK',
+    environment: paypalConfig.ENVIRONMENT,
+    currency: paypalConfig.CURRENCY
   });
   
   return true;
@@ -37,15 +34,16 @@ const getPayPalScriptOptions = () => {
   }
   
   return {
-    'client-id': PAYPAL_CONFIG.CLIENT_ID,
-    currency: PAYPAL_CONFIG.CURRENCY,
-    intent: PAYPAL_CONFIG.INTENT,
+    'client-id': paypalConfig.CLIENT_ID,
+    currency: paypalConfig.CURRENCY,
+    intent: 'capture', // Default intent, can be overridden if needed
     components: 'buttons',
     'data-sdk-integration-source': 'button-factory',
     'enable-funding': 'paylater,venmo',
     'disable-funding': 'card,credit',
     'data-page-type': 'checkout',
-    environment: PAYPAL_CONFIG.ENVIRONMENT
+    environment: paypalConfig.ENVIRONMENT,
+    locale: paypalConfig.LOCALE
   };
 };
 
@@ -91,15 +89,15 @@ const getPayPalSDKStatus = () => {
     loaded: paypalSdkLoaded,
     loading: !!paypalSdkPromise,
     config: {
-      clientId: PAYPAL_CONFIG.CLIENT_ID ? 'OK' : 'BRAK',
-      environment: PAYPAL_CONFIG.ENVIRONMENT,
-      currency: PAYPAL_CONFIG.CURRENCY
+      clientId: paypalConfig.CLIENT_ID ? 'OK' : 'BRAK',
+      environment: paypalConfig.ENVIRONMENT,
+      currency: paypalConfig.CURRENCY
     }
   };
 };
 
 export {
-  PAYPAL_CONFIG,
+  paypalConfig,
   validatePayPalConfig,
   getPayPalScriptOptions,
   initializePayPalSDK,

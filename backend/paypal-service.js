@@ -14,6 +14,11 @@ class PayPalService {
       console.log('Client ID:', config.PAYPAL.CLIENT_ID ? 'OK' : 'BRAK');
       console.log('Client Secret:', config.PAYPAL.CLIENT_SECRET ? 'OK' : 'BRAK');
       
+      // Sprawdź czy client jest dostępny
+      if (!client || !client.execute) {
+        throw new Error('PayPal client nie jest poprawnie skonfigurowany');
+      }
+      
       const request = new paypal.orders.OrdersCreateRequest();
       request.prefer("return=representation");
       request.requestBody({
@@ -40,9 +45,9 @@ class PayPalService {
       console.log('Wysyłanie żądania do PayPal...');
       console.log('Request body:', JSON.stringify(request.requestBody, null, 2));
       
-      // Dodaj timeout do żądania PayPal
+      // Dodaj timeout do żądania PayPal (zwiększony do 30 sekund)
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('PayPal request timeout')), 10000)
+        setTimeout(() => reject(new Error('PayPal request timeout - 30s')), 30000)
       );
       
       const orderPromise = client.execute(request);
@@ -79,8 +84,32 @@ class PayPalService {
         response: error.response?.data,
         status: error.response?.status,
         code: error.code,
-        details: error.details
+        details: error.details,
+        name: error.name
       });
+      
+      // Sprawdź typ błędu
+      if (error.message.includes('timeout')) {
+        return {
+          success: false,
+          error: 'Timeout - PayPal nie odpowiada. Spróbuj ponownie.'
+        };
+      } else if (error.message.includes('Failed to fetch') || error.message.includes('ENOTFOUND')) {
+        return {
+          success: false,
+          error: 'Błąd połączenia z PayPal. Sprawdź konfigurację.'
+        };
+      } else if (error.response?.status === 401) {
+        return {
+          success: false,
+          error: 'Błąd autoryzacji PayPal - sprawdź klucze API.'
+        };
+      } else if (error.response?.status === 400) {
+        return {
+          success: false,
+          error: `Błąd żądania PayPal: ${error.response?.data?.message || error.message}`
+        };
+      }
       
       return {
         success: false,

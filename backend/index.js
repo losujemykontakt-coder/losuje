@@ -8,23 +8,28 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const config = require('./config');
 console.log('🔄 Ładowanie serwisów płatności...');
+let paypalService, paymentService, przelewy24Service;
+
 try {
-  const paypalService = require('./paypal-service');
+  paypalService = require('./paypal-service');
   console.log('✅ PayPal service załadowany');
 } catch (error) {
   console.error('❌ Błąd ładowania PayPal service:', error);
+  paypalService = null;
 }
 try {
-  const paymentService = require('./payment-service');
+  paymentService = require('./payment-service');
   console.log('✅ Payment service załadowany');
 } catch (error) {
   console.error('❌ Błąd ładowania Payment service:', error);
+  paymentService = null;
 }
 try {
-  const przelewy24Service = require('./przelewy24-service');
+  przelewy24Service = require('./przelewy24-service');
   console.log('✅ Przelewy24 service załadowany');
 } catch (error) {
   console.error('❌ Błąd ładowania Przelewy24 service:', error);
+  przelewy24Service = null;
 }
 console.log('✅ Serwisy płatności załadowane');
 const { updateAllStats, updateGameStats, getDefaultStats, scrapeDetailedResults } = require('./scraper');
@@ -1145,7 +1150,7 @@ app.post('/api/paypal/create-order', async (req, res) => {
   const { amount, currency = 'PLN', description = 'Plan Premium - Lotek', email } = req.body;
   
   // Sprawdź czy paypalService jest dostępny
-  if (typeof paypalService === 'undefined') {
+  if (!paypalService) {
     console.error('❌ PayPal service nie jest załadowany');
     return res.status(500).json({
       success: false,
@@ -2957,4 +2962,22 @@ app.post('/api/talismans/add-test-tokens', async (req, res) => {
       details: error.message
     });
   }
+});
+
+// Endpoint do sprawdzenia konfiguracji PayPal
+app.get('/api/paypal/config', (req, res) => {
+  console.log('=== SPRAWDZENIE KONFIGURACJI PAYPAL ===');
+  
+  const config = require('./config');
+  
+  res.json({
+    success: true,
+    environment: config.PAYPAL.ENVIRONMENT,
+    clientId: config.PAYPAL.CLIENT_ID ? 'OK' : 'BRAK',
+    clientSecret: config.PAYPAL.CLIENT_SECRET ? 'OK' : 'BRAK',
+    returnUrl: config.PAYPAL.RETURN_URL,
+    cancelUrl: config.PAYPAL.CANCEL_URL,
+    serviceLoaded: !!paypalService,
+    timestamp: new Date().toISOString()
+  });
 });
