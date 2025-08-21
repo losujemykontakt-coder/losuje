@@ -372,17 +372,7 @@ const MyLuckyNumbersScreen = ({ user, onLogout }) => {
           </button>
           
           <button className="notification-btn" onClick={testLuckyNumbersNotification}>
-            🧪 Test liczb + powiadomienia
-          </button>
-          
-          <button className="notification-btn" onClick={() => {
-            const status = notificationService.getStatus();
-            const browserPermission = Notification.permission;
-            console.log('🔍 Szczegółowy status powiadomień:', status);
-            console.log('🌐 Stan przeglądarki:', browserPermission);
-            alert(`Status powiadomień:\nWspierane: ${status.isSupported}\nPozwolenie: ${status.hasPermission}\nStan: ${status.permission}\n\nPrzeglądarka: ${browserPermission}`);
-          }}>
-            🔍 Sprawdź status
+            🎲 Generuj liczby + powiadomienia
           </button>
         </div>
       </div>
@@ -409,18 +399,28 @@ const MyLuckyNumbersScreen = ({ user, onLogout }) => {
                 </div>
                 <div className="history-actions">
                   <button
-                    className="copy-button"
+                    className="action-button copy-button"
                     onClick={() => copyToClipboard(entry.numbers, entry.gameType)}
                     title="Kopiuj do schowka"
                   >
-                    📋
+                    📋 Kopiuj
                   </button>
                   <button
-                    className="delete-button"
+                    className="action-button favorite-button"
+                    onClick={() => {
+                      // TODO: Dodaj do ulubionych
+                      alert('Funkcja "Dodaj do ulubionych" będzie dostępna wkrótce!');
+                    }}
+                    title="Dodaj do ulubionych"
+                  >
+                    ⭐ Ulubione
+                  </button>
+                  <button
+                    className="action-button delete-button"
                     onClick={() => deleteHistoryEntry(entry.id)}
                     title="Usuń z historii"
                   >
-                    🗑️
+                    🗑️ Usuń
                   </button>
                 </div>
               </div>
