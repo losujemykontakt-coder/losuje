@@ -3172,7 +3172,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
                               label="✨ Magiczny Zestaw"
                               color="#ffd700"
                               isActive={activeTab === 'magiczny-zestaw'}
-                              hasSparkles={true}
+                              hasSparkles={false}
                               isMenuButton={true}
                               onClick={() => {
                                 handleNavigation('magiczny-zestaw');
@@ -3187,7 +3187,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
                               label="🎰 Slot Machine"
                               color="#9c27b0"
                               isActive={activeTab === 'slot-machine'}
-                              hasSparkles={true}
+                              hasSparkles={false}
                               isMenuButton={true}
                               onClick={() => {
                                 handleNavigation('slot-machine');
