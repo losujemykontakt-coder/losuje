@@ -52,7 +52,11 @@ export const loginUser = async (email, password) => {
 
     // Zarejestruj logowanie w backendzie (dla żetonów dziennych)
     try {
-      const response = await fetch('http://localhost:3001/api/auth/register-login', {
+      const backendUrl = process.env.NODE_ENV === 'production' 
+        ? 'https://losuje.pl/api/auth/register-login'
+        : 'http://localhost:3001/api/auth/register-login';
+        
+      const response = await fetch(backendUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -355,7 +359,11 @@ export const loginWithGoogle = async () => {
 
     // Zarejestruj logowanie w backendzie z tokenem Firebase
     try {
-      const response = await fetch('http://localhost:3001/api/auth/firebase-login', {
+      const backendUrl = process.env.NODE_ENV === 'production' 
+        ? 'https://losuje.pl/api/auth/firebase-login'
+        : 'http://localhost:3001/api/auth/firebase-login';
+        
+      const response = await fetch(backendUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
