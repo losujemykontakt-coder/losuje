@@ -2721,6 +2721,38 @@ app.post('/api/auth/firebase-login', async (req, res) => {
   }
 });
 
+// Endpoint testowy Firebase
+app.get('/api/firebase-test', async (req, res) => {
+  try {
+    const { db } = require('./firebase-admin');
+    
+    if (!db) {
+      return res.json({
+        success: false,
+        error: 'Firebase Admin nie jest zainicjalizowany',
+        db: null
+      });
+    }
+    
+    // Test połączenia z Firestore
+    const testDoc = await db.collection('test').doc('connection').get();
+    
+    res.json({
+      success: true,
+      message: 'Firebase Admin działa poprawnie',
+      db: 'connected',
+      firestore: 'working'
+    });
+  } catch (error) {
+    console.error('❌ Test Firebase błąd:', error);
+    res.json({
+      success: false,
+      error: error.message,
+      db: 'error'
+    });
+  }
+});
+
 // Endpoint do rejestrowania logowania (żetony dzienne)
 app.post('/api/auth/register-login', async (req, res) => {
   const { userId } = req.body;

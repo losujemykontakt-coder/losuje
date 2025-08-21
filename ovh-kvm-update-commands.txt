@@ -1,0 +1,60 @@
+# 🚀 KOMPLETNE KOMENDY AKTUALIZACJI SERWERA OVH KVM
+# Wklej te komendy po kolei w KVM Console
+
+# 1️⃣ Przejdź do katalogu aplikacji
+cd /var/www/losuje.pl/lotek
+
+# 2️⃣ Sprawdź aktualny status
+pwd
+ls -la
+
+# 3️⃣ Pobierz najnowsze zmiany z Git
+git fetch origin main
+git reset --hard origin/main
+
+# 4️⃣ Sprawdź czy pliki się zaktualizowały
+git log --oneline -5
+cat frontend/src/utils/firebaseAuth.js | grep "losuje.pl"
+
+# 5️⃣ Sprawdź Firebase Admin
+cat backend/serviceAccountKey.json | head -3
+ls -la backend/serviceAccountKey.json
+
+# 6️⃣ Zaktualizuj frontend
+cd frontend
+npm ci
+npm run build
+
+# 7️⃣ Sprawdź czy build się udał
+ls -la build/
+cat build/static/js/*.js | grep "losuje.pl" | head -1
+
+# 8️⃣ Zaktualizuj backend
+cd ../backend
+npm ci
+
+# 9️⃣ Sprawdź konfigurację PayPal
+cat config.js | grep "PAYPAL_ENVIRONMENT"
+cat config.js | grep "CLIENT_ID"
+
+# 🔟 Zrestartuj aplikację
+pm2 restart lotek-backend
+pm2 status
+
+# 1️⃣1️⃣ Sprawdź logi
+pm2 logs lotek-backend --lines 20
+
+# 1️⃣2️⃣ Test Firebase i żetonów
+curl -X GET http://localhost:3001/api/firebase-test
+curl -X POST http://localhost:3001/api/auth/register-login -H "Content-Type: application/json" -d '{"userId":"test_user_123"}'
+
+# 1️⃣3️⃣ Sprawdź czy aplikacja działa
+curl -I https://losuje.pl
+curl -I https://losuje.pl/api/health
+
+# ✅ GOTOWE! Wszystkie zmiany zostały zaktualizowane:
+# - Google Auth z dynamicznymi URL-ami
+# - PayPal LIVE klucze
+# - Language switcher na końcu menu
+# - Usunięte animacje iskier
+# - Test Firebase i żetonów
