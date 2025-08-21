@@ -30,65 +30,40 @@ code {
   line-height: 1;
   display: block;
   text-align: center;
+  font-size: 2.5rem; /* Domyślnie dla małych ekranów */
 }
 
-/* Konkretne rozmiary dla każdego breakpointu */
-.talisman-icon {
-  font-size: 3rem !important; /* Domyślnie dla małych ekranów */
-}
-
-/* Małe ekrany (320px - 480px) */
-@media (max-width: 480px) {
-  .talisman-icon {
-    font-size: 3rem !important;
-  }
-}
-
-/* Średnie-małe ekrany (480px - 640px) */
-@media (min-width: 481px) and (max-width: 639px) {
-  .talisman-icon {
-    font-size: 3.2rem !important;
-  }
-}
-
-/* Bardzo małe ekrany (poniżej 360px) */
-@media (max-width: 360px) {
-  .talisman-icon {
-    font-size: 2.5rem !important;
-  }
-}
-
-/* Ekstremalnie małe ekrany (poniżej 400px) */
+/* Bardzo małe ekrany (poniżej 400px) */
 @media (max-width: 400px) {
   .talisman-icon {
-    font-size: 2.2rem !important;
+    font-size: 2rem;
   }
 }
 
-/* Średnie ekrany (640px+) */
-@media (min-width: 640px) {
+/* Małe ekrany (400px - 640px) */
+@media (min-width: 401px) and (max-width: 640px) {
   .talisman-icon {
-    font-size: 3.5rem !important;
+    font-size: 2.5rem;
   }
 }
 
-/* Duże ekrany (768px+) */
-@media (min-width: 768px) {
+/* Średnie ekrany (640px - 768px) */
+@media (min-width: 641px) and (max-width: 768px) {
   .talisman-icon {
-    font-size: 4rem !important;
+    font-size: 3rem;
+  }
+}
+
+/* Duże ekrany (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .talisman-icon {
+    font-size: 3.5rem;
   }
 }
 
 /* Bardzo duże ekrany (1024px+) */
-@media (min-width: 1024px) {
+@media (min-width: 1025px) {
   .talisman-icon {
-    font-size: 4.5rem !important;
-  }
-}
-
-/* Ekstremalnie duże ekrany (1280px+) */
-@media (min-width: 1280px) {
-  .talisman-icon {
-    font-size: 5rem !important;
+    font-size: 4rem;
   }
 }

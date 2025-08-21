@@ -563,15 +563,15 @@ const Talizmany = ({ user, talismanDefinitions }) => {
               onClick={() => setSelectedTalisman(talisman)}
             >
               <div className={`
-                relative bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 text-center
+                relative bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-5 md:p-6 text-center
                 border-2 transition-all duration-300 hover:scale-105
                 ${owned ? 'border-yellow-400 shadow-lg shadow-yellow-400/20' : 'border-gray-600'}
                 ${active ? 'ring-4 ring-purple-400 ring-opacity-50' : ''}
               `}>
                 {/* Ikona talizmanu */}
-                <div className="mb-4 flex justify-center items-center min-h-[100px] sm:min-h-[120px] md:min-h-[140px] lg:min-h-[160px]">
+                <div className="mb-4 flex justify-center items-center min-h-[6rem] sm:min-h-[7rem] md:min-h-[8rem] lg:min-h-[9rem]">
                   {talisman.icon === '⊃' ? (
-                    <img src="/horseshoe.png" alt="Podkowa" className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 mx-auto" />
+                    <img src="/horseshoe.png" alt="Podkowa" className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 mx-auto" />
                   ) : (
                     <span className="talisman-icon">
                       {talisman.icon}
@@ -580,10 +580,10 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                 </div>
                 
                 {/* Nazwa */}
-                <h3 className="font-bold text-white text-xs sm:text-sm md:text-base mb-1">{talisman.name}</h3>
+                <h3 className="font-bold text-white text-sm sm:text-base md:text-lg mb-1">{talisman.name}</h3>
                 
                 {/* Wymaganie */}
-                <div className="text-xs sm:text-sm text-white/70 mb-2">
+                <div className="text-xs sm:text-sm md:text-base text-white/70 mb-2">
                   {talisman.requirement} żetonów
                 </div>
                 
@@ -696,7 +696,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
             >
               <div className="text-center">
                 <div className="mb-4">
-                  <span className="talisman-icon" style={{ fontSize: '4rem' }}>{selectedTalisman.icon}</span>
+                  <span className="talisman-icon" style={{ fontSize: '3rem' }}>{selectedTalisman.icon}</span>
                 </div>
                 <h2 className="text-2xl font-bold text-white mb-2">{selectedTalisman.name}</h2>
                 <p className="text-white/80 mb-4">{selectedTalisman.description}</p>
