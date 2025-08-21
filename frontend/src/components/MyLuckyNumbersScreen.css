@@ -406,12 +406,14 @@
 
   .history-header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+    align-items: center;
+    gap: 15px;
+    text-align: center;
   }
 
   .history-actions {
-    align-self: flex-end;
+    align-self: center;
+    width: 100%;
   }
 
   .history-footer {
@@ -528,19 +530,25 @@
 
   .notification-controls {
     flex-direction: column;
+    align-items: center;
+    gap: 12px;
   }
 
   .notification-btn {
     width: 100%;
+    max-width: 250px;
   }
 
   .history-actions {
     flex-direction: column;
     gap: 6px;
+    align-items: center;
+    width: 100%;
   }
 
   .action-button {
     width: 100%;
+    max-width: 200px;
     justify-content: center;
     padding: 10px 16px;
     font-size: 1rem;

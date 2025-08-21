@@ -372,7 +372,7 @@ const MyLuckyNumbersScreen = ({ user, onLogout }) => {
           </button>
           
           <button className="notification-btn" onClick={testLuckyNumbersNotification}>
-            🎲 Generuj liczby + powiadomienia
+            🎲 Generuj
           </button>
         </div>
       </div>
@@ -405,16 +405,16 @@ const MyLuckyNumbersScreen = ({ user, onLogout }) => {
                   >
                     📋 Kopiuj
                   </button>
-                  <button
-                    className="action-button favorite-button"
-                    onClick={() => {
-                      // TODO: Dodaj do ulubionych
-                      alert('Funkcja "Dodaj do ulubionych" będzie dostępna wkrótce!');
-                    }}
-                    title="Dodaj do ulubionych"
-                  >
-                    ⭐ Ulubione
-                  </button>
+                                     <button
+                     className="action-button favorite-button"
+                     onClick={() => {
+                       // TODO: Dodaj do ulubionych
+                       alert('Funkcja "Dodaj do ulubionych" będzie dostępna wkrótce!');
+                     }}
+                     title="Dodaj do ulubionych"
+                   >
+                     ❤️ Ulubione
+                   </button>
                   <button
                     className="action-button delete-button"
                     onClick={() => deleteHistoryEntry(entry.id)}
