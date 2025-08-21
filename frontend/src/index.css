@@ -30,40 +30,6 @@ code {
   line-height: 1;
   display: block;
   text-align: center;
-  font-size: 2.5rem; /* Domyślnie dla małych ekranów */
-}
-
-/* Bardzo małe ekrany (poniżej 400px) */
-@media (max-width: 400px) {
-  .talisman-icon {
-    font-size: 2rem;
-  }
-}
-
-/* Małe ekrany (400px - 640px) */
-@media (min-width: 401px) and (max-width: 640px) {
-  .talisman-icon {
-    font-size: 2.5rem;
-  }
-}
-
-/* Średnie ekrany (640px - 768px) */
-@media (min-width: 641px) and (max-width: 768px) {
-  .talisman-icon {
-    font-size: 3rem;
-  }
-}
-
-/* Duże ekrany (768px - 1024px) */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .talisman-icon {
-    font-size: 3.5rem;
-  }
-}
-
-/* Bardzo duże ekrany (1024px+) */
-@media (min-width: 1025px) {
-  .talisman-icon {
-    font-size: 4rem;
-  }
+  /* Płynne skalowanie - minimum 2rem, maksimum 5rem, skalowanie z szerokością viewport */
+  font-size: clamp(2rem, 8vw, 5rem);
 }
