@@ -24,29 +24,40 @@ code {
   vertical-align: middle;
 }
 
-/* Zapewnia że emoji są wyświetlane w pełnym rozmiarze */
-.emoji-large {
-  font-size: 4rem !important;
-  line-height: 1 !important;
-  display: block !important;
-  text-align: center !important;
+/* Responsywne style dla talizmanów */
+.talisman-icon {
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+  line-height: 1;
+  display: block;
+  text-align: center;
 }
 
-/* Responsywne rozmiary emoji dla różnych ekranów */
-@media (max-width: 640px) {
-  .emoji-large {
-    font-size: 3rem !important;
+/* Zapewnia że emoji są wyświetlane w pełnym rozmiarze na wszystkich ekranach */
+.talisman-icon {
+  font-size: clamp(2rem, 8vw, 4rem) !important;
+}
+
+/* Dodatkowe breakpointy dla lepszej kontroli */
+@media (min-width: 640px) {
+  .talisman-icon {
+    font-size: clamp(2.5rem, 6vw, 3.5rem) !important;
   }
 }
 
-@media (max-width: 480px) {
-  .emoji-large {
-    font-size: 2.5rem !important;
+@media (min-width: 768px) {
+  .talisman-icon {
+    font-size: clamp(3rem, 5vw, 4rem) !important;
   }
 }
 
-@media (max-width: 360px) {
-  .emoji-large {
-    font-size: 2rem !important;
+@media (min-width: 1024px) {
+  .talisman-icon {
+    font-size: clamp(3.5rem, 4vw, 4.5rem) !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .talisman-icon {
+    font-size: clamp(4rem, 3vw, 5rem) !important;
   }
 }

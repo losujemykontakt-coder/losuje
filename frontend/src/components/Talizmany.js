@@ -563,27 +563,27 @@ const Talizmany = ({ user, talismanDefinitions }) => {
               onClick={() => setSelectedTalisman(talisman)}
             >
               <div className={`
-                relative bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center
+                relative bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 text-center
                 border-2 transition-all duration-300 hover:scale-105
                 ${owned ? 'border-yellow-400 shadow-lg shadow-yellow-400/20' : 'border-gray-600'}
                 ${active ? 'ring-4 ring-purple-400 ring-opacity-50' : ''}
               `}>
                 {/* Ikona talizmanu */}
-                <div className="mb-4 flex justify-center items-center" style={{ minHeight: window.innerWidth < 640 ? '80px' : '100px' }}>
+                <div className="mb-4 flex justify-center items-center min-h-[80px] sm:min-h-[100px]">
                   {talisman.icon === '⊃' ? (
-                    <img src="/horseshoe.png" alt="Podkowa" className="w-16 h-16 sm:w-20 sm:h-20 mx-auto" />
+                    <img src="/horseshoe.png" alt="Podkowa" className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 mx-auto" />
                   ) : (
-                    <span className="emoji emoji-large">
+                    <span className="talisman-icon">
                       {talisman.icon}
                     </span>
                   )}
                 </div>
                 
                 {/* Nazwa */}
-                <h3 className="font-bold text-white text-xs sm:text-sm mb-1">{talisman.name}</h3>
+                <h3 className="font-bold text-white text-xs sm:text-sm md:text-base mb-1">{talisman.name}</h3>
                 
                 {/* Wymaganie */}
-                <div className="text-xs text-white/70 mb-2">
+                <div className="text-xs sm:text-sm text-white/70 mb-2">
                   {talisman.requirement} żetonów
                 </div>
                 
@@ -696,7 +696,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
             >
               <div className="text-center">
                 <div className="mb-4">
-                  <span className="emoji emoji-large">{selectedTalisman.icon}</span>
+                  <span className="talisman-icon" style={{ fontSize: 'clamp(3rem, 10vw, 6rem)' }}>{selectedTalisman.icon}</span>
                 </div>
                 <h2 className="text-2xl font-bold text-white mb-2">{selectedTalisman.name}</h2>
                 <p className="text-white/80 mb-4">{selectedTalisman.description}</p>
