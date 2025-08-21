@@ -577,9 +577,9 @@ function App() {
   // Ładuj aktywny talizman
   useEffect(() => {
     const loadActiveTalisman = async () => {
-      if (user) {
+      if (user && user.uid) {
         try {
-          const response = await fetch(`/api/talismans/${user.id}`);
+          const response = await fetch(`/api/talismans/${user.uid}`);
           const data = await response.json();
           
           if (data.success && data.activeTalisman) {

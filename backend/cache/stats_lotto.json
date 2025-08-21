@@ -17,9 +17,10 @@
       "70": 3,
       "85": 9,
       "90": 3,
+      "98": 6,
       "99": 9
     },
-    "totalDraws": 45,
+    "totalDraws": 46,
     "avgSum": null,
     "sumRange": [
       null,
@@ -40,13 +41,13 @@
       90
     ],
     "patterns": {
-      "evenOdd": "45:225",
-      "lowHigh": "219:51",
+      "evenOdd": "51:225",
+      "lowHigh": "219:57",
       "sumRange": "NaN-NaN"
     },
     "euroNumbers": null,
-    "lastUpdated": "2025-08-21T11:30:11.580Z"
+    "lastUpdated": "2025-08-21T16:22:44.391Z"
   },
-  "timestamp": "2025-08-21T11:30:11.580Z",
+  "timestamp": "2025-08-21T16:22:44.391Z",
   "game": "lotto"
 }
