@@ -1,13 +1,13 @@
 {
   "data": {
     "frequencyData": {
-      "1": 165,
+      "1": 162,
       "2": 24,
       "3": 18,
       "5": 6,
       "6": 3,
       "7": 3,
-      "9": 20,
+      "9": 3,
       "25": 3,
       "35": 9,
       "40": 3,
@@ -19,7 +19,7 @@
       "90": 3,
       "99": 9
     },
-    "totalDraws": 58,
+    "totalDraws": 54,
     "avgSum": null,
     "sumRange": [
       null,
@@ -28,9 +28,9 @@
     "hotNumbers": [
       1,
       2,
-      9,
       3,
-      35
+      35,
+      85
     ],
     "coldNumbers": [
       40,
@@ -40,13 +40,13 @@
       90
     ],
     "patterns": {
-      "evenOdd": "45:245",
-      "lowHigh": "239:51",
+      "evenOdd": "45:225",
+      "lowHigh": "219:51",
       "sumRange": "NaN-NaN"
     },
     "euroNumbers": null,
-    "lastUpdated": "2025-08-21T10:30:25.673Z"
+    "lastUpdated": "2025-08-21T10:32:58.084Z"
   },
-  "timestamp": "2025-08-21T10:30:25.673Z",
+  "timestamp": "2025-08-21T10:32:58.084Z",
   "game": "miniLotto"
 }

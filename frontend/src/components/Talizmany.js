@@ -569,9 +569,9 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                 ${active ? 'ring-4 ring-purple-400 ring-opacity-50' : ''}
               `}>
                 {/* Ikona talizmanu */}
-                <div className="mb-4 flex justify-center items-center min-h-[80px] sm:min-h-[100px]">
+                <div className="mb-4 flex justify-center items-center min-h-[100px] sm:min-h-[120px] md:min-h-[140px] lg:min-h-[160px]">
                   {talisman.icon === '⊃' ? (
-                    <img src="/horseshoe.png" alt="Podkowa" className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 mx-auto" />
+                    <img src="/horseshoe.png" alt="Podkowa" className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 xl:w-36 xl:h-36 mx-auto" />
                   ) : (
                     <span className="talisman-icon">
                       {talisman.icon}
@@ -696,7 +696,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
             >
               <div className="text-center">
                 <div className="mb-4">
-                  <span className="talisman-icon" style={{ fontSize: 'clamp(3rem, 10vw, 6rem)' }}>{selectedTalisman.icon}</span>
+                  <span className="talisman-icon" style={{ fontSize: '4rem' }}>{selectedTalisman.icon}</span>
                 </div>
                 <h2 className="text-2xl font-bold text-white mb-2">{selectedTalisman.name}</h2>
                 <p className="text-white/80 mb-4">{selectedTalisman.description}</p>
