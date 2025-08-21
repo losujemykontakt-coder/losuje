@@ -15,3 +15,19 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Style dla emoji - zapewniają lepsze wyświetlanie */
+.emoji {
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+  font-size: inherit;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+/* Zapewnia że emoji są wyświetlane w pełnym rozmiarze */
+.emoji-large {
+  font-size: 4rem !important;
+  line-height: 1 !important;
+  display: block !important;
+  text-align: center !important;
+}

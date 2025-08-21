@@ -569,11 +569,13 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                 ${active ? 'ring-4 ring-purple-400 ring-opacity-50' : ''}
               `}>
                 {/* Ikona talizmanu */}
-                <div className="text-4xl mb-2">
+                <div className="mb-4 flex justify-center items-center" style={{ minHeight: '100px' }}>
                   {talisman.icon === '⊃' ? (
-                    <img src="/horseshoe.png" alt="Podkowa" className="w-8 h-8 mx-auto" />
+                    <img src="/horseshoe.png" alt="Podkowa" className="w-20 h-20 mx-auto" />
                   ) : (
-                    talisman.icon
+                    <span className="emoji emoji-large">
+                      {talisman.icon}
+                    </span>
                   )}
                 </div>
                 
@@ -693,7 +695,9 @@ const Talizmany = ({ user, talismanDefinitions }) => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="text-center">
-                <div className="text-6xl mb-4">{selectedTalisman.icon}</div>
+                <div className="mb-4">
+                  <span className="emoji emoji-large">{selectedTalisman.icon}</span>
+                </div>
                 <h2 className="text-2xl font-bold text-white mb-2">{selectedTalisman.name}</h2>
                 <p className="text-white/80 mb-4">{selectedTalisman.description}</p>
                 
