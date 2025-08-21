@@ -545,7 +545,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       </motion.div>
 
       {/* Siatka talizmanów */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 max-w-6xl mx-auto">
         {finalTalismanDefinitions.map((talisman, index) => {
           const owned = isTalismanOwned(talisman.id);
           const active = isTalismanActive(talisman.id);
@@ -569,9 +569,9 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                 ${active ? 'ring-4 ring-purple-400 ring-opacity-50' : ''}
               `}>
                 {/* Ikona talizmanu */}
-                <div className="mb-4 flex justify-center items-center" style={{ minHeight: '100px' }}>
+                <div className="mb-4 flex justify-center items-center" style={{ minHeight: window.innerWidth < 640 ? '80px' : '100px' }}>
                   {talisman.icon === '⊃' ? (
-                    <img src="/horseshoe.png" alt="Podkowa" className="w-20 h-20 mx-auto" />
+                    <img src="/horseshoe.png" alt="Podkowa" className="w-16 h-16 sm:w-20 sm:h-20 mx-auto" />
                   ) : (
                     <span className="emoji emoji-large">
                       {talisman.icon}
@@ -580,7 +580,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                 </div>
                 
                 {/* Nazwa */}
-                <h3 className="font-bold text-white text-sm mb-1">{talisman.name}</h3>
+                <h3 className="font-bold text-white text-xs sm:text-sm mb-1">{talisman.name}</h3>
                 
                 {/* Wymaganie */}
                 <div className="text-xs text-white/70 mb-2">

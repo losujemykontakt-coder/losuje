@@ -58,3 +58,4 @@ curl -I https://losuje.pl/api/health
 # - Language switcher na końcu menu
 # - Usunięte animacje iskier
 # - Test Firebase i żetonów
+# - 🎨 POWIĘKSZONE IKONY TALIZMANÓW (4rem)

@@ -31,3 +31,22 @@ code {
   display: block !important;
   text-align: center !important;
 }
+
+/* Responsywne rozmiary emoji dla różnych ekranów */
+@media (max-width: 640px) {
+  .emoji-large {
+    font-size: 3rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .emoji-large {
+    font-size: 2.5rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .emoji-large {
+    font-size: 2rem !important;
+  }
+}
