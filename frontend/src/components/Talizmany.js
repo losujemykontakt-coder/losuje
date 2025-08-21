@@ -423,9 +423,9 @@ const Talizmany = ({ user, talismanDefinitions }) => {
     console.log('🔍 Pokazuję loading screen');
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-4 flex justify-center items-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-500 mx-auto mb-4"></div>
-          <p className="text-white text-lg">Ładowanie talizmanów...</p>
+        <div className="text-center px-4">
+          <div className="animate-spin rounded-full h-24 w-24 sm:h-32 sm:w-32 border-b-2 border-purple-500 mx-auto mb-4"></div>
+          <p className="text-white text-base sm:text-lg">Ładowanie talizmanów...</p>
           <p className="text-white text-sm mt-2">Sprawdzanie połączenia z serwerem...</p>
         </div>
       </div>
@@ -436,9 +436,9 @@ const Talizmany = ({ user, talismanDefinitions }) => {
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-4 flex justify-center items-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-4">❌ Błąd</h1>
-          <p className="text-white">Brak danych użytkownika. Spróbuj się zalogować ponownie.</p>
+        <div className="text-center px-4">
+          <h1 className="text-xl sm:text-2xl font-bold text-white mb-4">❌ Błąd</h1>
+          <p className="text-white text-sm sm:text-base">Brak danych użytkownika. Spróbuj się zalogować ponownie.</p>
         </div>
       </div>
     );
@@ -447,16 +447,16 @@ const Talizmany = ({ user, talismanDefinitions }) => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-1 sm:p-2 md:p-4">
       {/* Debug info - tylko w trybie deweloperskim */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="text-center mb-4 p-2 bg-black/20 rounded">
-          <p className="text-white text-sm">DEBUG: User ID: {user?.id || 'Brak'}</p>
-          <p className="text-white text-sm">DEBUG: User UID: {user?.uid || 'Brak'}</p>
-          <p className="text-white text-sm">DEBUG: Loading: {loading.toString()}</p>
-          <p className="text-white text-sm">DEBUG: Talismans count: {talismans.length}</p>
-          <p className="text-white text-sm">DEBUG: Active talisman: {activeTalisman ? 'Tak' : 'Nie'}</p>
-          <p className="text-white text-sm">DEBUG: Streak: {streak.current_streak} dni, {streak.total_tokens} żetonów</p>
+        <div className="text-center mb-2 sm:mb-4 p-1 sm:p-2 bg-black/20 rounded text-xs sm:text-sm">
+          <p className="text-white text-xs sm:text-sm break-all">DEBUG: User ID: {user?.id || 'Brak'}</p>
+          <p className="text-white text-xs sm:text-sm break-all">DEBUG: User UID: {user?.uid || 'Brak'}</p>
+          <p className="text-white text-xs sm:text-sm">DEBUG: Loading: {loading.toString()}</p>
+          <p className="text-white text-xs sm:text-sm">DEBUG: Talismans count: {talismans.length}</p>
+          <p className="text-white text-xs sm:text-sm">DEBUG: Active talisman: {activeTalisman ? 'Tak' : 'Nie'}</p>
+          <p className="text-white text-xs sm:text-sm break-all">DEBUG: Streak: {streak.current_streak} dni, {streak.total_tokens} żetonów</p>
           
 
         </div>
@@ -464,13 +464,13 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       
       {/* Fallback gdy brak danych */}
       {!hasBasicData && !loading && (
-        <div className="text-center py-8">
-          <h1 className="text-2xl font-bold text-white mb-4">✨ Talizmany</h1>
-          <p className="text-white mb-4">Nie udało się załadować danych talizmanów.</p>
-          <p className="text-white text-sm mb-4">Debug: user.uid = {user?.uid}</p>
+        <div className="text-center py-2 sm:py-4 md:py-8">
+          <h1 className="text-xl sm:text-2xl font-bold text-white mb-4">✨ Talizmany</h1>
+          <p className="text-white mb-4 text-sm sm:text-base">Nie udało się załadować danych talizmanów.</p>
+          <p className="text-white text-xs sm:text-sm mb-4 break-all">Debug: user.uid = {user?.uid}</p>
           <button 
             onClick={() => loadTalismansWithUID(user.uid)}
-            className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+            className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1.5 sm:py-2 px-3 sm:px-4 rounded text-sm sm:text-base"
           >
             Spróbuj ponownie
           </button>
@@ -484,40 +484,40 @@ const Talizmany = ({ user, talismanDefinitions }) => {
         <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-8"
+        className="text-center mb-4 sm:mb-8"
       >
-        <h1 className="text-4xl font-bold text-white mb-4">✨ Talizmany ✨</h1>
+        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 sm:mb-4">✨ Talizmany ✨</h1>
         {showFallback && (
-          <div className="bg-yellow-500/20 border border-yellow-500 rounded-lg p-3 mb-4">
-            <p className="text-yellow-200 text-sm">
+          <div className="bg-yellow-500/20 border border-yellow-500 rounded-lg p-1.5 sm:p-2 md:p-3 mb-1.5 sm:mb-2 md:mb-4">
+            <p className="text-yellow-200 text-xs sm:text-sm">
               ⚠️ Nie udało się połączyć z serwerem. Pokazuję demo talizmanów.
             </p>
             {process.env.NODE_ENV === 'development' && (
-              <p className="text-yellow-200 text-xs mt-1">
+              <p className="text-yellow-200 text-xs mt-1 break-all">
                 Debug: showFallback = true, user.uid = {user?.uid}
               </p>
             )}
           </div>
         )}
-                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 max-w-md mx-auto">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 sm:p-3 md:p-4 max-w-sm sm:max-w-md mx-auto">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-white">Seria logowań: {streak?.current_streak || 0} dni</span>
-              <span className="text-yellow-300 font-bold">🎯 {streak?.total_tokens || 0} żetonów</span>
+              <span className="text-white text-xs sm:text-sm md:text-base truncate">Seria: {streak?.current_streak || 0} dni</span>
+              <span className="text-yellow-300 font-bold text-xs sm:text-sm md:text-base ml-2">🎯 {streak?.total_tokens || 0}</span>
             </div>
             {process.env.NODE_ENV === 'development' && (
-              <div className="text-xs text-white/60 mt-1">
+              <div className="text-xs text-white/60 mt-1 break-all">
                 Debug: streak = {JSON.stringify(streak)}
               </div>
             )}
                       {progress && (
               <div className="mb-2">
-                <div className="flex justify-between text-sm text-white/80 mb-1">
-                  <span>Następny talizman: {progress.current}/{progress.required}</span>
-                  <span>{Math.round(progress.progress)}%</span>
+                <div className="flex justify-between text-xs sm:text-sm text-white/80 mb-1">
+                  <span className="truncate">Następny: {progress.current}/{progress.required}</span>
+                  <span className="ml-1 sm:ml-2">{Math.round(progress.progress)}%</span>
                 </div>
-                <div className="w-full bg-gray-700 rounded-full h-2">
+                <div className="w-full bg-gray-700 rounded-full h-1.5 sm:h-2">
                   <motion.div
-                    className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 rounded-full"
+                    className="bg-gradient-to-r from-yellow-400 to-orange-500 h-1.5 sm:h-2 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${progress.progress}%` }}
                     transition={{ duration: 1 }}
@@ -527,15 +527,15 @@ const Talizmany = ({ user, talismanDefinitions }) => {
             )}
             {showFallback && (
               <div className="mb-2">
-                <div className="flex justify-between text-sm text-white/80 mb-1">
-                  <span>Demo: 0/8</span>
-                  <span>0%</span>
+                <div className="flex justify-between text-xs sm:text-sm text-white/80 mb-1">
+                  <span className="truncate">Demo: 0/8</span>
+                  <span className="ml-1 sm:ml-2">0%</span>
                 </div>
-                <div className="w-full bg-gray-700 rounded-full h-2">
-                  <div className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 rounded-full" style={{ width: '0%' }} />
+                <div className="w-full bg-gray-700 rounded-full h-1.5 sm:h-2">
+                  <div className="bg-gradient-to-r from-yellow-400 to-orange-500 h-1.5 sm:h-2 rounded-full" style={{ width: '0%' }} />
                 </div>
                 {process.env.NODE_ENV === 'development' && (
-                  <div className="text-xs text-white/60 mt-1">
+                  <div className="text-xs text-white/60 mt-1 break-all">
                     Debug: showFallback = true, demo progress
                   </div>
                 )}
@@ -545,7 +545,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       </motion.div>
 
       {/* Siatka talizmanów */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 md:gap-4 lg:gap-6 max-w-6xl mx-auto px-1 sm:px-2 md:px-4">
         {finalTalismanDefinitions.map((talisman, index) => {
           const owned = isTalismanOwned(talisman.id);
           const active = isTalismanActive(talisman.id);
@@ -563,25 +563,18 @@ const Talizmany = ({ user, talismanDefinitions }) => {
               onClick={() => setSelectedTalisman(talisman)}
             >
               <div className={`
-                relative bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-5 md:p-6 text-center
+                relative bg-white/10 backdrop-blur-sm rounded-xl p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6 text-center
                 border-2 transition-all duration-300 hover:scale-105
                 ${owned ? 'border-yellow-400 shadow-lg shadow-yellow-400/20' : 'border-gray-600'}
                 ${active ? 'ring-4 ring-purple-400 ring-opacity-50' : ''}
               `}>
                 {/* Ikona talizmanu */}
-                <div 
-                  className="mb-4 flex justify-center items-center"
-                  style={{ minHeight: 'clamp(5rem, 12vw, 10rem)' }}
-                >
+                <div className="talisman-icon-container mb-4">
                   {talisman.icon === '⊃' ? (
                     <img 
                       src="/horseshoe.png" 
                       alt="Podkowa" 
-                      className="mx-auto"
-                      style={{
-                        width: 'clamp(3rem, 8vw, 6rem)',
-                        height: 'clamp(3rem, 8vw, 6rem)'
-                      }}
+                      className="talisman-image"
                     />
                   ) : (
                     <span className="talisman-icon">
@@ -591,31 +584,25 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                 </div>
                 
                 {/* Nazwa */}
-                <h3 
-                  className="font-bold text-white mb-1"
-                  style={{ fontSize: 'clamp(0.875rem, 2.5vw, 1.25rem)' }}
-                >
+                <h3 className="font-bold text-white mb-1 text-xs sm:text-sm md:text-base lg:text-lg">
                   {talisman.name}
                 </h3>
                 
                 {/* Wymaganie */}
-                <div 
-                  className="text-white/70 mb-2"
-                  style={{ fontSize: 'clamp(0.75rem, 2vw, 1rem)' }}
-                >
+                <div className="text-white/70 mb-2 text-xs sm:text-sm md:text-base">
                   {talisman.requirement} żetonów
                 </div>
                 
                 {/* Status */}
                 {owned && (
-                  <div className="absolute top-2 right-2">
-                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                  <div className="absolute top-1 sm:top-2 right-1 sm:right-2">
+                    <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-400 rounded-full animate-pulse"></div>
                   </div>
                 )}
                 
                 {active && (
-                  <div className="absolute top-2 left-2">
-                    <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
+                  <div className="absolute top-1 sm:top-2 left-1 sm:left-2">
+                    <div className="w-2 h-2 sm:w-3 sm:h-3 bg-purple-400 rounded-full animate-pulse"></div>
                   </div>
                 )}
                 
@@ -628,7 +615,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                       e.stopPropagation();
                       grantTalisman(talisman.id);
                     }}
-                    className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold py-2 px-3 rounded-lg text-xs hover:from-yellow-300 hover:to-orange-400 transition-all"
+                    className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold py-1 sm:py-1.5 md:py-2 px-1.5 sm:px-2 md:px-3 rounded-lg text-xs sm:text-sm hover:from-yellow-300 hover:to-orange-400 transition-all"
                   >
                     Odbierz!
                   </motion.button>
@@ -642,7 +629,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                       e.stopPropagation();
                       toggleTalisman(talisman.id, true);
                     }}
-                    className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-2 px-3 rounded-lg text-xs hover:from-purple-400 hover:to-blue-400 transition-all"
+                    className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-1 sm:py-1.5 md:py-2 px-1.5 sm:px-2 md:px-3 rounded-lg text-xs sm:text-sm hover:from-purple-400 hover:to-blue-400 transition-all"
                   >
                     Aktywuj
                   </motion.button>
@@ -656,7 +643,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                       e.stopPropagation();
                       toggleTalisman(talisman.id, false);
                     }}
-                    className="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold py-2 px-3 rounded-lg text-xs hover:from-red-400 hover:to-pink-400 transition-all"
+                    className="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold py-1 sm:py-1.5 md:py-2 px-1.5 sm:px-2 md:px-3 rounded-lg text-xs sm:text-sm hover:from-red-400 hover:to-pink-400 transition-all"
                   >
                     Deaktywuj
                   </motion.button>
@@ -669,7 +656,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                   {[...Array(6)].map((_, i) => (
                     <motion.div
                       key={i}
-                      className="absolute w-1 h-1 bg-yellow-400 rounded-full"
+                      className="absolute w-0.5 h-0.5 sm:w-1 sm:h-1 bg-yellow-400 rounded-full"
                       animate={{
                         x: [0, Math.random() * 100 - 50],
                         y: [0, Math.random() * 100 - 50],
@@ -710,42 +697,42 @@ const Talizmany = ({ user, talismanDefinitions }) => {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              className="bg-gradient-to-br from-purple-800 to-blue-900 rounded-2xl p-6 max-w-md w-full"
+              className="bg-gradient-to-br from-purple-800 to-blue-900 rounded-2xl p-3 sm:p-4 md:p-6 max-w-sm sm:max-w-md w-full mx-2 sm:mx-4 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="text-center">
-                <div className="mb-4">
-                  <span className="talisman-icon" style={{ fontSize: 'clamp(3rem, 10vw, 6rem)' }}>{selectedTalisman.icon}</span>
+              <div className="text-center px-1 sm:px-2">
+                <div className="talisman-icon-container mb-4">
+                  <span className="talisman-icon">{selectedTalisman.icon}</span>
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">{selectedTalisman.name}</h2>
-                <p className="text-white/80 mb-4">{selectedTalisman.description}</p>
+                                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">{selectedTalisman.name}</h2>
+                                  <p className="text-white/80 mb-4 text-sm sm:text-base">{selectedTalisman.description}</p>
                 
-                <div className="bg-white/10 rounded-lg p-3 mb-4">
-                  <div className="text-white/70 text-sm">Wymagane żetony:</div>
-                  <div className="text-yellow-300 font-bold">{selectedTalisman.requirement}</div>
-                </div>
+                                                                     <div className="bg-white/10 rounded-lg p-2 sm:p-3 mb-3 sm:mb-4">
+                     <div className="text-white/70 text-xs sm:text-sm">Wymagane żetony:</div>
+                     <div className="text-yellow-300 font-bold text-sm sm:text-base">{selectedTalisman.requirement}</div>
+                   </div>
                 
-                <div className="bg-white/10 rounded-lg p-3 mb-4">
-                  <div className="text-white/70 text-sm">Status:</div>
-                  <div className="text-white">
-                    {isTalismanOwned(selectedTalisman.id) ? (
-                      isTalismanActive(selectedTalisman.id) ? (
-                        <span className="text-green-400">✓ Aktywny</span>
-                      ) : (
-                        <span className="text-yellow-400">✓ Posiadany</span>
-                      )
-                    ) : (
-                      <span className="text-gray-400">✗ Nie posiadany</span>
-                    )}
-                  </div>
-                </div>
+                                                                     <div className="bg-white/10 rounded-lg p-2 sm:p-3 mb-3 sm:mb-4">
+                     <div className="text-white/70 text-xs sm:text-sm">Status:</div>
+                     <div className="text-white text-sm sm:text-base">
+                       {isTalismanOwned(selectedTalisman.id) ? (
+                         isTalismanActive(selectedTalisman.id) ? (
+                           <span className="text-green-400">✓ Aktywny</span>
+                         ) : (
+                           <span className="text-yellow-400">✓ Posiadany</span>
+                         )
+                       ) : (
+                         <span className="text-gray-400">✗ Nie posiadany</span>
+                       )}
+                     </div>
+                   </div>
                 
-                <button
-                  onClick={() => setSelectedTalisman(null)}
-                  className="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-lg transition-all"
-                >
-                  Zamknij
-                </button>
+                                                                     <button
+                     onClick={() => setSelectedTalisman(null)}
+                     className="bg-white/20 hover:bg-white/30 text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-lg transition-all text-xs sm:text-sm md:text-base"
+                   >
+                     Zamknij
+                   </button>
               </div>
             </motion.div>
           </motion.div>
@@ -759,11 +746,11 @@ const Talizmany = ({ user, talismanDefinitions }) => {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-3 rounded-full shadow-lg z-50"
+            className="fixed bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-blue-500 text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-3 rounded-full shadow-lg z-50 text-xs sm:text-sm md:text-base"
           >
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-2">
               <span>🎉</span>
-              <span>{notificationMessage}</span>
+              <span className="truncate">{notificationMessage}</span>
             </div>
           </motion.div>
         )}

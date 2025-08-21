@@ -26,10 +26,167 @@ code {
 
 /* Responsywne style dla talizmanów */
 .talisman-icon {
-  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
-  line-height: 1;
-  display: block;
-  text-align: center;
-  /* Płynne skalowanie - minimum 2rem, maksimum 5rem, skalowanie z szerokością viewport */
-  font-size: clamp(2rem, 8vw, 5rem);
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif !important;
+  line-height: 1 !important;
+  display: block !important;
+  text-align: center !important;
+  /* Responsywne skalowanie - różne rozmiary dla różnych urządzeń */
+  font-size: 4rem !important;
+  min-width: 2.5rem !important;
+  min-height: 2.5rem !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 6rem !important;
+  max-height: 6rem !important;
+  margin: 0 auto !important;
+}
+
+/* Media queries dla lepszego skalowania na różnych urządzeniach */
+@media (max-width: 773px) {
+  .talisman-icon {
+    font-size: 4rem !important;
+    max-width: 5rem !important;
+    max-height: 5rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .talisman-icon {
+    font-size: 3.5rem !important;
+    max-width: 4.5rem !important;
+    max-height: 4.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .talisman-icon {
+    font-size: 3rem !important;
+    max-width: 4rem !important;
+    max-height: 4rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .talisman-icon {
+    font-size: 2.8rem !important;
+    max-width: 4rem !important;
+    max-height: 4rem !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .talisman-icon {
+    font-size: 2.5rem !important;
+    max-width: 3.5rem !important;
+    max-height: 3.5rem !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .talisman-icon {
+    font-size: 4.5rem !important;
+    max-width: 5rem !important;
+    max-height: 5rem !important;
+  }
+}
+
+@media (min-width: 1025px) {
+  .talisman-icon {
+    font-size: 5rem !important;
+    max-width: 6rem !important;
+    max-height: 6rem !important;
+  }
+}
+
+/* Kontener dla ikon talizmanów - zapewnia odpowiednie proporcje */
+.talisman-icon-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 6rem !important;
+  width: 100% !important;
+  padding: 0.5rem !important;
+}
+
+/* Responsywne style dla kontenera ikon */
+@media (max-width: 773px) {
+  .talisman-icon-container {
+    min-height: 5rem;
+    padding: 0.3rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .talisman-icon-container {
+    min-height: 4.5rem;
+    padding: 0.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .talisman-icon-container {
+    min-height: 4rem;
+    padding: 0.1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .talisman-icon-container {
+    min-height: 4.5rem;
+    padding: 0.1rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .talisman-icon-container {
+    min-height: 4rem;
+    padding: 0.1rem;
+  }
+}
+
+/* Style dla obrazów talizmanów (np. podkowa) */
+.talisman-image {
+  width: 100%;
+  height: auto;
+  max-width: clamp(3rem, 8vw, 6rem);
+  max-height: clamp(3rem, 8vw, 6rem);
+  min-width: 2.2rem;
+  min-height: 2.2rem;
+  object-fit: contain;
+}
+
+/* Responsywne style dla obrazów talizmanów */
+@media (max-width: 773px) {
+  .talisman-image {
+    max-width: 4rem;
+    max-height: 4rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .talisman-image {
+    max-width: 3.5rem;
+    max-height: 3.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .talisman-image {
+    max-width: 3rem;
+    max-height: 3rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .talisman-image {
+    max-width: 2.8rem;
+    max-height: 2.8rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .talisman-image {
+    max-width: 2.5rem;
+    max-height: 2.5rem;
+  }
 }
