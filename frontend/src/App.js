@@ -9933,7 +9933,15 @@ function App() {
           🎲 Moje szczęśliwe liczby
         </button>
         
-        {/* Przełącznik języka w menu mobilnym */}
+        <button 
+          className="mobile-menu-btn"
+          onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
+          style={{ color: '#d32f2f', fontWeight: 'bold' }}
+        >
+          🚪 {t('navigation.logout')}
+        </button>
+        
+        {/* Przełącznik języka - na końcu menu mobilnego */}
         <div style={{ 
           padding: '16px 25px', 
           borderTop: '1px solid #e0e0e0',
@@ -9945,14 +9953,6 @@ function App() {
         }}>
           <LanguageSwitcher variant="menu" />
         </div>
-        
-        <button 
-          className="mobile-menu-btn"
-          onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
-          style={{ color: '#d32f2f', fontWeight: 'bold' }}
-        >
-          🚪 {t('navigation.logout')}
-        </button>
         </div>
       )}
       
@@ -9991,12 +9991,12 @@ function App() {
         <button className="menu-btn" style={menuBtn(isActivePath("/my-lucky-numbers"))}
           onClick={() => navigate("/my-lucky-numbers")}>🎲 Moje szczęśliwe liczby</button>
         
-        {/* Przełącznik języka */}
+        <button className="menu-btn" style={menuBtn(false)} onClick={handleLogout}>{t('navigation.logout')}</button>
+        
+        {/* Przełącznik języka - na końcu menu */}
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
           <LanguageSwitcher variant="menu" />
         </div>
-        
-        <button className="menu-btn" style={menuBtn(false)} onClick={handleLogout}>{t('navigation.logout')}</button>
       </nav>
       
       <div className="main-panel" style={{...mainStyle, touchAction: "manipulation"}}>

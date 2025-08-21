@@ -1,0 +1,5 @@
+[33ma4607ed[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m  Naprawa PayPal - dodanie prawdziwych kluczy LIVE i poprawki płatności
+[33m6798c8a[m Naprawiono konfigurację płatności - PayPal live, Przelewy24, URL-e na losuje.pl
+[33m145ccd9[m Update application files - latest changes and improvements
+[33m9c37be9[m fix: switch to Node 18 for --openssl-legacy-provider support
+[33md88abee[m fix: add --legacy-peer-deps and downgrade testing libraries for Node 16 compatibility

@@ -1,0 +1,85 @@
+=== KOMENDY DO WYKONANIA PRZEZ OVH KVM ===
+
+1. Zaloguj się do OVH KVM (Konsola) dla serwera 51.77.220.61
+2. Zaloguj się jako root na serwerze
+3. Wykonaj poniższe komendy po kolei:
+
+=== AKTUALIZACJA APLIKACJI ===
+
+# Przejdź do katalogu aplikacji
+cd /var/www/losuje.pl/lotek
+
+# Pobierz najnowsze zmiany z GitHub
+git fetch origin
+git reset --hard origin/main
+
+# Aktualizuj frontend
+cd frontend
+npm ci --production=false
+npm run build
+
+# Aktualizuj backend
+cd ../backend
+npm ci --production
+
+# Restartuj aplikację
+pm2 restart lotek-backend
+
+# Sprawdź status
+pm2 status
+pm2 logs lotek-backend --lines 10
+
+=== SPRAWDZENIE KONFIGURACJI PAYPAL ===
+
+# Sprawdź czy klucze PayPal są poprawne
+cd /var/www/losuje.pl/lotek/backend
+node -e "
+const config = require('./config');
+console.log('PayPal Environment:', config.PAYPAL.ENVIRONMENT);
+console.log('PayPal Client ID:', config.PAYPAL.CLIENT_ID ? 'OK' : 'BRAK');
+console.log('PayPal Client Secret:', config.PAYPAL.CLIENT_SECRET ? 'OK' : 'BRAK');
+"
+
+=== TEST PŁATNOŚCI ===
+
+# Test endpointu PayPal
+curl -X GET http://localhost:3001/api/paypal/config
+
+# Test tworzenia zamówienia PayPal
+curl -X POST http://localhost:3001/api/paypal/create-order \
+  -H "Content-Type: application/json" \
+  -d '{"amount": 9.99, "currency": "PLN", "description": "Test Plan Premium"}'
+
+=== SPRAWDZENIE APLIKACJI ===
+
+# Sprawdź czy aplikacja działa
+curl -I https://losuje.pl
+
+# Sprawdź logi Nginx
+tail -n 20 /var/log/nginx/losuje.pl.error.log
+
+# Sprawdź logi aplikacji
+pm2 logs lotek-backend --lines 20
+
+=== PRZYDATNE KOMENDY ===
+
+# Status PM2
+pm2 status
+
+# Restart aplikacji
+pm2 restart lotek-backend
+
+# Logi aplikacji
+pm2 logs lotek-backend
+
+# Status Nginx
+systemctl status nginx
+
+# Restart Nginx
+systemctl restart nginx
+
+# Sprawdź porty
+netstat -tlnp | grep :3001
+netstat -tlnp | grep :80
+netstat -tlnp | grep :443
+

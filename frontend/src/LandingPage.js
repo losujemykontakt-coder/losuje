@@ -3201,18 +3201,6 @@ const LandingPage = ({ onLogin, onRegister }) => {
             {/* Hidden tabs - removed as requested */}
             
             {/* Language Switcher */}
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'center', 
-              alignItems: 'center',
-              margin: '8px 0',
-              padding: '8px 0',
-              borderTop: window.innerWidth <= 768 ? '1px solid #e0e0e0' : 'none',
-              borderBottom: window.innerWidth <= 768 ? '1px solid #e0e0e0' : 'none'
-            }}>
-              <LanguageSwitcher />
-            </div>
-            
             {/* Login and Register buttons */}
             <NavButton
                               label={t('landing.hero.login')}
@@ -3234,6 +3222,18 @@ const LandingPage = ({ onLogin, onRegister }) => {
               }}
               style={{ margin: '4px 0' }}
             />
+            
+            {/* Language Switcher - na końcu menu */}
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center',
+              margin: '8px 0',
+              padding: '8px 0',
+              borderTop: window.innerWidth <= 768 ? '1px solid #e0e0e0' : 'none'
+            }}>
+              <LanguageSwitcher />
+            </div>
           </nav>
         </div>
       </header>
