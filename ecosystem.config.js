@@ -3,8 +3,7 @@ module.exports = {
     {
       name: "lotek-backend",
       cwd: "/var/www/losuje.pl/lotek/backend",
-      script: "node_modules/.bin/dotenv",
-      args: "-e /var/www/losuje.pl/lotek/backend/.env -- node index.js",
+      script: "index.js",
       watch: false,
       autorestart: true,
       instances: 1,
@@ -20,8 +19,8 @@ module.exports = {
     {
       name: "lotek-frontend",
       cwd: "/var/www/losuje.pl/lotek/frontend",
-      script: "node_modules/.bin/dotenv",
-      args: "-e /var/www/losuje.pl/lotek/frontend/.env -- npm start",
+      script: "npm",
+      args: "start",
       watch: false,
       autorestart: true,
       instances: 1,
