@@ -192,7 +192,7 @@ const LanguageSwitcher = ({ variant = 'landing' }) => {
       )}
       
       {/* CSS Animation */}
-      <style jsx>{`
+      <style>{`
         @keyframes slideDown {
           from {
             opacity: 0;

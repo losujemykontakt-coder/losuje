@@ -444,18 +444,25 @@ function InfoModal({ isOpen, onClose, title, content }) {
 function App() {
   // Konfiguracja PayPal - memoizowana
   const paypalOptions = useMemo(() => {
+    const clientId = process.env.REACT_APP_PAYPAL_CLIENT_ID;
+    const envFromFile = process.env.REACT_APP_PAYPAL_ENVIRONMENT || 'live';
+    
+    // PayPal SDK oczekuje "production" zamiast "live"
+    const environment = envFromFile === 'live' ? 'production' : envFromFile;
+    
     console.log('🔧 Konfiguracja PayPal w App.js:', {
-      clientId: 'AcLnAD0aCb1hFnw5TDDoe_k1cLkqp-FtcWai8mctRT57oDP4pPi4ukzwdaFCS6JFAkQqfH1MIb0f0s9Z' ? 'OK' : 'BRAK',
-      environment: 'production',
+      clientId: clientId ? 'OK' : 'BRAK',
+      environment: environment,
+      originalEnv: envFromFile,
       currency: 'PLN'
     });
     
     return {
-      'client-id': 'AcLnAD0aCb1hFnw5TDDoe_k1cLkqp-FtcWai8mctRT57oDP4pPi4ukzwdaFCS6JFAkQqfH1MIb0f0s9Z',
+      'client-id': clientId,
       currency: 'PLN',
       intent: 'capture',
       components: 'buttons',
-      environment: 'production'
+      environment: environment
     };
   }, []);
   // Hook i18n
@@ -773,7 +780,7 @@ function App() {
   useEffect(() => {
     const fetchPaymentMethods = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/payment/methods');
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/payment/methods`);
         const data = await response.json();
         
         if (data.success) {
@@ -1050,7 +1057,7 @@ function App() {
     console.log(`🔄 Pobieram statystyki dla ${game}...`);
     
     try {
-      const response = await fetch(`http://localhost:3001/api/statistics/${game}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/statistics/${game}`);
       console.log(`📊 Status odpowiedzi: ${response.status}`);
       
       if (response.ok) {

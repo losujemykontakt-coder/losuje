@@ -54,7 +54,7 @@ export const loginUser = async (email, password) => {
     try {
       const backendUrl = process.env.NODE_ENV === 'production' 
         ? 'https://losuje.pl/api/auth/register-login'
-        : 'http://localhost:3001/api/auth/register-login';
+        : `${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/auth/register-login`;
         
       const response = await fetch(backendUrl, {
         method: 'POST',
@@ -361,7 +361,7 @@ export const loginWithGoogle = async () => {
     try {
       const backendUrl = process.env.NODE_ENV === 'production' 
         ? 'https://losuje.pl/api/auth/firebase-login'
-        : 'http://localhost:3001/api/auth/firebase-login';
+        : `${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/auth/firebase-login`;
         
       const response = await fetch(backendUrl, {
         method: 'POST',

@@ -1,10 +1,21 @@
 // Konfiguracja PayPal dla frontend
 const paypalConfig = {
-  CLIENT_ID: process.env.REACT_APP_PAYPAL_CLIENT_ID || 'Affx9V_8v8IOGAfyMHPooVW70t1eAOGMSoCUCTW-9mrjeeTsHw14cwA6RqN8lqzFRSn7sHi9AG75BGlC',
-  ENVIRONMENT: process.env.NODE_ENV === 'production' ? 'live' : 'sandbox',
+  CLIENT_ID: process.env.REACT_APP_PAYPAL_CLIENT_ID,
+  ENVIRONMENT: (() => {
+    const envFromFile = process.env.REACT_APP_PAYPAL_ENVIRONMENT || 'live';
+    // PayPal SDK oczekuje "production" zamiast "live"
+    return envFromFile === 'live' ? 'production' : envFromFile;
+  })(),
   CURRENCY: 'PLN',
   LOCALE: 'pl_PL'
 };
+
+// Debug: Sprawdź wartości zmiennych środowiskowych
+console.log('🔍 PayPal Environment Variables Debug:', {
+  REACT_APP_PAYPAL_CLIENT_ID: process.env.REACT_APP_PAYPAL_CLIENT_ID,
+  REACT_APP_PAYPAL_ENVIRONMENT: process.env.REACT_APP_PAYPAL_ENVIRONMENT,
+  NODE_ENV: process.env.NODE_ENV
+});
 
 // Sprawdź czy konfiguracja jest poprawna
 const validatePayPalConfig = () => {
@@ -13,8 +24,8 @@ const validatePayPalConfig = () => {
     return false;
   }
   
-  if (!paypalConfig.ENVIRONMENT || !['live', 'sandbox'].includes(paypalConfig.ENVIRONMENT)) {
-    console.error('❌ PayPal Environment musi być "live" lub "sandbox"');
+  if (!paypalConfig.ENVIRONMENT || !['production', 'sandbox'].includes(paypalConfig.ENVIRONMENT)) {
+    console.error('❌ PayPal Environment musi być "production" lub "sandbox"');
     return false;
   }
   
