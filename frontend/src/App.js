@@ -586,7 +586,7 @@ function App() {
     const loadActiveTalisman = async () => {
       if (user && user.uid) {
         try {
-          const response = await fetch(`/api/talismans/${user.uid}`);
+          const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/talismans/${user.uid}`);
           const data = await response.json();
           
           if (data.success && data.activeTalisman) {
