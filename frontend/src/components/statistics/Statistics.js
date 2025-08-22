@@ -194,7 +194,7 @@ const Statistics = ({ selectedGame, onGameChange }) => {
         console.log(`Pobieranie statystyk dla gry: ${selectedGame}`);
         
         // Szybkie żądanie - backend zwraca cache lub domyślne dane
-        const response = await fetch(`http://localhost:3001/api/statistics/${selectedGame}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/statistics/${selectedGame}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -897,7 +897,7 @@ const Statistics = ({ selectedGame, onGameChange }) => {
               setUpdatingStats(true);
               try {
                 console.log(`🔄 Rozpoczynam aktualizację statystyk dla ${currentGame}...`);
-                const response = await fetch(`http://localhost:3001/api/update-stats/${selectedGame}`, { 
+                const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/update-stats/${selectedGame}`, { 
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'
@@ -913,7 +913,7 @@ const Statistics = ({ selectedGame, onGameChange }) => {
                   setTimeout(() => {
                     const fetchUpdatedStats = async () => {
                       try {
-                        const response = await fetch(`http://localhost:3001/api/statistics/${selectedGame}`);
+                        const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/statistics/${selectedGame}`);
                         if (response.ok) {
                           const data = await response.json();
                           if (data.success) {
@@ -966,7 +966,7 @@ const Statistics = ({ selectedGame, onGameChange }) => {
               setUpdatingAllStats(true);
               try {
                 console.log('🔄 Rozpoczynam aktualizację wszystkich statystyk...');
-                const response = await fetch('http://localhost:3001/api/refresh-stats', { 
+                                  const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/refresh-stats`, { 
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'
@@ -981,7 +981,7 @@ const Statistics = ({ selectedGame, onGameChange }) => {
                   setTimeout(() => {
                     const fetchUpdatedStats = async () => {
                       try {
-                        const response = await fetch(`http://localhost:3001/api/statistics/${selectedGame}`);
+                        const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/statistics/${selectedGame}`);
                         if (response.ok) {
                           const data = await response.json();
                           if (data.success) {

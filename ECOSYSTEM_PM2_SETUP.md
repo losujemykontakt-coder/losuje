@@ -205,3 +205,4 @@ kill -9 <PID>
 ✅ Aplikacje uruchamiane są w trybie produkcyjnym  
 ✅ PM2 automatycznie restartuje aplikacje po awarii
 
+

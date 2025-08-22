@@ -1,13 +1,12 @@
 {
   "data": {
     "frequencyData": {
-      "1": 162,
+      "1": 180,
       "2": 24,
       "3": 18,
       "5": 6,
       "6": 3,
       "7": 3,
-      "8": 6,
       "9": 3,
       "25": 3,
       "35": 9,
@@ -20,7 +19,7 @@
       "90": 3,
       "99": 9
     },
-    "totalDraws": 46,
+    "totalDraws": 48,
     "avgSum": null,
     "sumRange": [
       null,
@@ -41,13 +40,13 @@
       90
     ],
     "patterns": {
-      "evenOdd": "51:225",
-      "lowHigh": "225:51",
+      "evenOdd": "45:243",
+      "lowHigh": "237:51",
       "sumRange": "NaN-NaN"
     },
     "euroNumbers": null,
-    "lastUpdated": "2025-08-22T08:06:35.074Z"
+    "lastUpdated": "2025-08-22T11:42:42.689Z"
   },
-  "timestamp": "2025-08-22T08:06:35.074Z",
+  "timestamp": "2025-08-22T11:42:42.689Z",
   "game": "lotto"
 }

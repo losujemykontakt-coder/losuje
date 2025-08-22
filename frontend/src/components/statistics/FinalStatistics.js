@@ -179,7 +179,7 @@ const FinalStatistics = ({ selectedGame, onGameChange }) => {
           7: 156, 13: 142, 23: 138, 31: 134, 37: 132, 42: 128, 45: 125, 49: 122,
           3: 118, 11: 115, 17: 112, 29: 108, 35: 105, 41: 102, 43: 98, 47: 95,
           5: 92, 19: 89, 25: 86, 33: 83, 39: 80, 44: 77, 48: 74,
-          1: 71, 2: 68, 8: 65, 15: 62, 20: 59, 30: 53, 40: 47
+          1: 71, 2: 68, 8: 65, 15: 62, 20: 59, 25: 56, 30: 53, 35: 50, 40: 47, 44: 44, 47: 41, 48: 38
         },
         totalDraws: 2850,
         avgSum: 140,
@@ -193,7 +193,7 @@ const FinalStatistics = ({ selectedGame, onGameChange }) => {
         frequencyData: {
           3: 89, 7: 85, 11: 82, 17: 79, 23: 76, 29: 73, 35: 70, 41: 67,
           5: 64, 13: 61, 19: 58, 25: 55, 31: 52, 37: 49, 42: 46,
-          1: 43, 2: 40, 9: 34
+          1: 43, 2: 40, 5: 37, 9: 34, 13: 31, 19: 28, 25: 25, 31: 22, 37: 19, 42: 16
         },
         totalDraws: 1850,
         avgSum: 105,
@@ -208,7 +208,7 @@ const FinalStatistics = ({ selectedGame, onGameChange }) => {
           7: 234, 11: 228, 17: 222, 23: 216, 29: 210, 35: 204, 41: 198, 47: 192, 53: 186, 59: 180,
           65: 174, 71: 168, 77: 162, 3: 156, 13: 150, 19: 144, 31: 138, 37: 132, 43: 126, 61: 120,
           5: 114, 15: 108, 21: 102, 27: 96, 33: 90, 39: 84, 45: 78, 51: 72, 57: 66, 63: 60,
-          1: 54, 2: 48, 9: 36
+          1: 54, 2: 48, 5: 42, 9: 36, 15: 30, 21: 24, 27: 18, 33: 12, 39: 6, 45: 0
         },
         totalDraws: 3200,
         avgSum: 405,
@@ -223,7 +223,7 @@ const FinalStatistics = ({ selectedGame, onGameChange }) => {
           7: 145, 11: 141, 17: 137, 23: 133, 29: 129, 35: 125, 41: 121, 47: 117,
           3: 113, 13: 109, 19: 105, 31: 101, 37: 97, 43: 93,
           5: 89, 15: 85, 21: 81, 27: 77, 33: 73, 39: 69, 45: 65, 49: 61,
-          1: 57, 2: 53, 9: 45, 4: 13, 8: 9, 12: 5, 16: 1
+          1: 57, 2: 53, 5: 49, 9: 45, 15: 41, 21: 37, 27: 33, 33: 29, 39: 25, 45: 21, 49: 17, 4: 13, 8: 9, 12: 5, 16: 1
         },
         totalDraws: 2100,
         avgSum: 140,
@@ -233,12 +233,12 @@ const FinalStatistics = ({ selectedGame, onGameChange }) => {
         patterns: { evenOdd: "3:2", lowHigh: "3:2", sumRange: "110-170" },
         euroNumbers: {
           mainNumbers: {
-                    frequencyData: {
-          7: 156, 13: 142, 23: 138, 31: 134, 37: 132, 42: 128, 45: 125, 49: 122,
-          3: 118, 11: 115, 17: 112, 29: 108, 35: 105, 41: 102, 43: 98, 47: 95,
-          5: 92, 19: 89, 25: 86, 33: 83, 39: 80, 44: 77, 48: 74,
-          1: 71, 2: 68, 8: 65, 15: 62, 20: 59, 30: 53, 40: 47
-        },
+            frequencyData: {
+              7: 156, 13: 142, 23: 138, 31: 134, 37: 132, 42: 128, 45: 125, 49: 122,
+              3: 118, 11: 115, 17: 112, 29: 108, 35: 105, 41: 102, 43: 98, 47: 95,
+              5: 92, 19: 89, 25: 86, 33: 83, 39: 80, 44: 77, 48: 74,
+              1: 71, 2: 68, 8: 65, 15: 62, 20: 59, 25: 56, 30: 53, 35: 50, 40: 47, 44: 44, 47: 41, 48: 38
+            },
             mostFrequent: [7, 13, 23, 31, 37],
             leastFrequent: [1, 2, 8, 15, 20],
             totalDraws: 2100
@@ -279,7 +279,7 @@ const FinalStatistics = ({ selectedGame, onGameChange }) => {
           7: 312, 11: 308, 17: 304, 23: 300, 29: 296, 35: 292, 41: 288, 47: 284, 53: 280, 59: 276,
           65: 272, 71: 268, 77: 264, 3: 260, 13: 256, 19: 252, 31: 248, 37: 244, 43: 240, 61: 236,
           5: 232, 15: 228, 21: 224, 27: 220, 33: 216, 39: 212, 45: 208, 51: 204, 57: 200, 63: 196,
-          1: 192, 2: 188, 9: 180, 4: 128, 8: 124, 12: 120, 16: 116
+          1: 192, 2: 188, 5: 184, 9: 180, 15: 176, 21: 172, 27: 168, 33: 164, 39: 160, 45: 156, 51: 152, 57: 148, 63: 144, 69: 140, 75: 136, 79: 132, 4: 128, 8: 124, 12: 120, 16: 116
         },
         totalDraws: 4500,
         avgSum: 810,
@@ -314,7 +314,7 @@ const FinalStatistics = ({ selectedGame, onGameChange }) => {
         const controller = new AbortController();
         timeoutId = setTimeout(() => controller.abort(), 10000);
         
-        const response = await fetch(`http://localhost:3001/api/statistics/${gameType}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/statistics/${gameType}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -390,7 +390,7 @@ const FinalStatistics = ({ selectedGame, onGameChange }) => {
       
       // Próbuj aktualizować przez backend
       try {
-        const response = await fetch(`http://localhost:3001/api/statistics/update`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/statistics/update`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

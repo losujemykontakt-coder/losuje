@@ -274,7 +274,7 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
     
     try {
       console.log('🔄 Pobieranie statystyk harmonicznych...');
-      const response = await fetch('/api/harmonic/stats', { 
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/harmonic/stats`, { 
         signal: abortControllerRef.current.signal 
       });
       
@@ -413,7 +413,7 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
         
         // Sprawdź czy backend jest dostępny
         try {
-          const healthResponse = await fetch('/api/health', { 
+          const healthResponse = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/health`, { 
             signal: abortControllerRef.current.signal
           });
           if (!healthResponse.ok) {
@@ -425,7 +425,7 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
           throw new Error('Backend nie odpowiada');
         }
         
-        const response = await fetch('/api/harmonic/generate', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/harmonic/generate`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

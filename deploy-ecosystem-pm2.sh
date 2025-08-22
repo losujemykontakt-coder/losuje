@@ -80,3 +80,4 @@ echo "- Sprawdź logi PM2 jeśli coś nie działa: pm2 logs"
 echo "- Restartuj aplikację: pm2 restart lotek-backend"
 echo "- Sprawdź status: pm2 status"
 
+

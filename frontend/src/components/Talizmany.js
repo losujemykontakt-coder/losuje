@@ -197,7 +197,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 sekundy timeout
       
-      const response = await fetch(`/api/talismans/${uid}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/talismans/${uid}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
