@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { checkUserAccess as checkUserAccessFirebase } from '../utils/firebaseAuth';
 import { handleAccessError } from '../utils/auth';
+import SchonheimGenerator from './SchonheimGenerator';
 
 
 const GryPoZalogowaniu = ({ user, userSubscription }) => {
@@ -35,7 +36,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
   const [mysticalGlow, setMysticalGlow] = useState(false);
   
   // Nowy stan dla głównej sekcji
-  const [activeSection, setActiveSection] = useState('magic-ball'); // 'magic-ball', 'slot-machine', 'mystical-drawing', 'catch-ball', 'wheel-fortune', 'aim-select'
+  const [activeSection, setActiveSection] = useState('magic-ball'); // 'magic-ball', 'slot-machine', 'mystical-drawing', 'catch-ball', 'wheel-fortune', 'schonheim-generator', 'aim-select'
   
   // Nowe stany dla Złap szczęśliwą kulę
   const [catchBallNumbers, setCatchBallNumbers] = useState([]);
@@ -46,6 +47,10 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
   const [wheelNumbers, setWheelNumbers] = useState([]);
   const [isWheelSpinning, setIsWheelSpinning] = useState(false);
   const [wheelAngle, setWheelAngle] = useState(0);
+  
+  // Nowe stany dla Wybór Liczb
+  const [revealedBalls, setRevealedBalls] = useState({});
+  const [luckyNumbers, setLuckyNumbers] = useState([]);
   
 
   
@@ -82,6 +87,421 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
 
 
 
+  // Funkcje pomocnicze dla Wyboru Liczb - PRZENIESIONE NA POCZĄTEK
+  const getGameRange = (game) => {
+    switch (game) {
+      case 'lotto':
+        return { min: 1, max: 49, count: 6 };
+      case 'mini-lotto':
+        return { min: 1, max: 42, count: 5 };
+      case 'multi-multi':
+        return { min: 1, max: 80, count: 10 };
+      case 'eurojackpot':
+        return { min: 1, max: 50, count: 5 };
+      case 'ekstra-pensja':
+        return { min: 1, max: 35, count: 5 };
+      case 'kaskada':
+        return { min: 1, max: 40, count: 6 };
+      case 'keno':
+        return { min: 1, max: 70, count: 10 };
+      default:
+        return { min: 1, max: 49, count: 6 };
+    }
+  };
+
+  const generateNumberWithTalisman = (max) => {
+    // Uproszczona funkcja generowania liczby
+    return Math.floor(Math.random() * max) + 1;
+  };
+
+  const addLuckyNumber = (number) => {
+    if (!luckyNumbers.includes(number)) {
+      setLuckyNumbers(prev => [...prev, number]);
+    }
+  };
+
+  const removeLuckyNumber = (number) => {
+    setLuckyNumbers(prev => prev.filter(n => n !== number));
+  };
+
+    const handleNumberPickerBallClick = (ballId) => {
+    if (!revealedBalls[ballId]) {
+      // Sprawdź czy nie przekroczono maksymalnej liczby liczb
+      const range = getGameRange(selectedGame);
+      const maxNumbers = selectedGame === "eurojackpot" ? 7 : selectedGame === "ekstra-pensja" ? 6 : range.count;
+      
+      if (luckyNumbers.length >= maxNumbers) {
+        // Już wybrano maksymalną liczbę liczb - nie pozwól na więcej
+        return;
+      }
+      
+      if (selectedGame === "eurojackpot") {
+        // Obsługa Eurojackpot - oddzielne liczby główne i Euro
+        if (ballId.startsWith('main-')) {
+          // Sprawdź czy nie przekroczono 5 liczb głównych
+          // Liczby główne to tylko te, które zostały wybrane z kul main-*
+          const mainNumbersCount = Object.keys(revealedBalls).filter(key => key.startsWith('main-')).length;
+          if (mainNumbersCount >= 5) {
+            return; // Już wybrano 5 liczb głównych
+          }
+          
+          // Liczby główne (1-50)
+          const availableMainNumbers = [];
+          for (let i = 1; i <= 50; i++) {
+            if (!luckyNumbers.includes(i)) {
+              availableMainNumbers.push(i);
+            }
+          }
+          
+          if (availableMainNumbers.length > 0) {
+            const randomNumber = generateNumberWithTalisman(50);
+            if (availableMainNumbers.includes(randomNumber)) {
+              setRevealedBalls(prev => ({ ...prev, [ballId]: randomNumber }));
+              addLuckyNumber(randomNumber);
+              
+              // Sprawdź czy osiągnięto pełną liczbę liczb dla Eurojackpot (5 głównych + 2 Euro)
+              const newLuckyNumbers = [...luckyNumbers, randomNumber];
+              if (newLuckyNumbers.length === 7) {
+                // Generuj dużo konfetti!
+                setTimeout(() => {
+                  const newConfetti = [];
+                  const colors = ['#FFD700', '#FFA500', '#FF6347', '#FF4500', '#FF8C00', '#FFD700', '#FFFF00'];
+                  
+                  for (let i = 0; i < 200; i++) {
+                    newConfetti.push({
+                      id: Date.now() + i,
+                      x: Math.random() * 100,
+                      y: Math.random() * 100,
+                      color: colors[Math.floor(Math.random() * colors.length)],
+                      size: Math.random() * 8 + 4,
+                      rotation: Math.random() * 360,
+                      delay: Math.random() * 2
+                    });
+                  }
+                  setConfetti(prev => [...prev, ...newConfetti]);
+                }, 100);
+              }
+            } else {
+              // Jeśli wygenerowana liczba nie jest dostępna, wybierz losowo z dostępnych
+              const fallbackNumber = availableMainNumbers[Math.floor(Math.random() * availableMainNumbers.length)];
+              setRevealedBalls(prev => ({ ...prev, [ballId]: fallbackNumber }));
+              addLuckyNumber(fallbackNumber);
+              
+              // Sprawdź czy osiągnięto pełną liczbę liczb dla Eurojackpot
+              const newLuckyNumbers2 = [...luckyNumbers, fallbackNumber];
+              if (newLuckyNumbers2.length === 7) {
+                setTimeout(() => {
+                  const newConfetti = [];
+                  const colors = ['#FFD700', '#FFA500', '#FF6347', '#FF4500', '#FF8C00', '#FFD700', '#FFFF00'];
+                  
+                  for (let i = 0; i < 200; i++) {
+                    newConfetti.push({
+                      id: Date.now() + i,
+                      x: Math.random() * 100,
+                      y: Math.random() * 100,
+                      color: colors[Math.floor(Math.random() * colors.length)],
+                      size: Math.random() * 8 + 4,
+                      rotation: Math.random() * 360,
+                      delay: Math.random() * 2
+                    });
+                  }
+                  setConfetti(prev => [...prev, ...newConfetti]);
+                }, 100);
+              }
+            }
+          }
+        } else if (ballId.startsWith('euro-')) {
+          // Sprawdź czy nie przekroczono 2 liczb Euro
+          // Liczby Euro to tylko te, które zostały wybrane z kul euro-*
+          const euroNumbersCount = Object.keys(revealedBalls).filter(key => key.startsWith('euro-')).length;
+          if (euroNumbersCount >= 2) {
+            return; // Już wybrano 2 liczby Euro
+          }
+          
+          // Liczby Euro (1-12)
+          const availableEuroNumbers = [];
+          for (let i = 1; i <= 12; i++) {
+            if (!luckyNumbers.includes(i)) {
+              availableEuroNumbers.push(i);
+            }
+          }
+          
+          if (availableEuroNumbers.length > 0) {
+            const randomNumber = generateNumberWithTalisman(12);
+            if (availableEuroNumbers.includes(randomNumber)) {
+              setRevealedBalls(prev => ({ ...prev, [ballId]: randomNumber }));
+              addLuckyNumber(randomNumber);
+              
+              // Sprawdź czy osiągnięto pełną liczbę liczb dla Eurojackpot
+              const newLuckyNumbers3 = [...luckyNumbers, randomNumber];
+              if (newLuckyNumbers3.length === 7) {
+                setTimeout(() => {
+                  const newConfetti = [];
+                  const colors = ['#FFD700', '#FFA500', '#FF6347', '#FF4500', '#FF8C00', '#FFD700', '#FFFF00'];
+                  
+                  for (let i = 0; i < 200; i++) {
+                    newConfetti.push({
+                      id: Date.now() + i,
+                      x: Math.random() * 100,
+                      y: Math.random() * 100,
+                      color: colors[Math.floor(Math.random() * colors.length)],
+                      size: Math.random() * 8 + 4,
+                      rotation: Math.random() * 360,
+                      delay: Math.random() * 2
+                    });
+                  }
+                  setConfetti(prev => [...prev, ...newConfetti]);
+                }, 100);
+              }
+                          } else {
+                // Jeśli wygenerowana liczba nie jest dostępna, wybierz losowo z dostępnych
+                const fallbackNumber = availableEuroNumbers[Math.floor(Math.random() * availableEuroNumbers.length)];
+                setRevealedBalls(prev => ({ ...prev, [ballId]: fallbackNumber }));
+                addLuckyNumber(fallbackNumber);
+                
+                // Sprawdź czy osiągnięto pełną liczbę liczb dla Eurojackpot
+                const newLuckyNumbers4 = [...luckyNumbers, fallbackNumber];
+                if (newLuckyNumbers4.length === 7) {
+                  setTimeout(() => {
+                    const newConfetti = [];
+                    const colors = ['#FFD700', '#FFA500', '#FF6347', '#FF4500', '#FF8C00', '#FFD700', '#FFFF00'];
+                    
+                    for (let i = 0; i < 200; i++) {
+                      newConfetti.push({
+                        id: Date.now() + i,
+                        x: Math.random() * 100,
+                        y: Math.random() * 100,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        size: Math.random() * 8 + 4,
+                        rotation: Math.random() * 360,
+                        delay: Math.random() * 2
+                      });
+                    }
+                    setConfetti(prev => [...prev, ...newConfetti]);
+                  }, 100);
+                }
+              }
+          }
+        }
+      } else if (selectedGame === "ekstra-pensja") {
+        // Obsługa Ekstra Pensja - oddzielne liczby główne i dodatkowe
+        if (ballId.startsWith('main-')) {
+          // Sprawdź czy nie przekroczono 5 liczb głównych
+          const mainNumbersCount = luckyNumbers.filter(num => num <= 35).length;
+          if (mainNumbersCount >= 5) {
+            return; // Już wybrano 5 liczb głównych
+          }
+          
+          // Liczby główne (1-35)
+          const availableMainNumbers = [];
+          for (let i = 1; i <= 35; i++) {
+            if (!luckyNumbers.includes(i)) {
+              availableMainNumbers.push(i);
+            }
+          }
+          
+          if (availableMainNumbers.length > 0) {
+            const randomNumber = generateNumberWithTalisman(35);
+            if (availableMainNumbers.includes(randomNumber)) {
+              setRevealedBalls(prev => ({ ...prev, [ballId]: randomNumber }));
+              addLuckyNumber(randomNumber);
+              
+              // Sprawdź czy osiągnięto pełną liczbę liczb dla Ekstra Pensja (5 głównych + 1 dodatkowa)
+              if (luckyNumbers.length + 1 === 6) {
+                setTimeout(() => {
+                  const newConfetti = [];
+                  const colors = ['#FFD700', '#FFA500', '#FF6347', '#FF4500', '#FF8C00', '#FFD700', '#FFFF00'];
+                  
+                  for (let i = 0; i < 200; i++) {
+                    newConfetti.push({
+                      id: Date.now() + i,
+                      x: Math.random() * 100,
+                      y: Math.random() * 100,
+                      color: colors[Math.floor(Math.random() * colors.length)],
+                      size: Math.random() * 8 + 4,
+                      rotation: Math.random() * 360,
+                      delay: Math.random() * 2
+                    });
+                  }
+                  setConfetti(prev => [...prev, ...newConfetti]);
+                }, 100);
+              }
+            } else {
+              const fallbackNumber = availableMainNumbers[Math.floor(Math.random() * availableMainNumbers.length)];
+              setRevealedBalls(prev => ({ ...prev, [ballId]: fallbackNumber }));
+              addLuckyNumber(fallbackNumber);
+              
+              if (luckyNumbers.length + 1 === 6) {
+                setTimeout(() => {
+                  const newConfetti = [];
+                  const colors = ['#FFD700', '#FFA500', '#FF6347', '#FF4500', '#FF8C00', '#FFD700', '#FFFF00'];
+                  
+                  for (let i = 0; i < 200; i++) {
+                    newConfetti.push({
+                      id: Date.now() + i,
+                      x: Math.random() * 100,
+                      y: Math.random() * 100,
+                      color: colors[Math.floor(Math.random() * colors.length)],
+                      size: Math.random() * 8 + 4,
+                      rotation: Math.random() * 360,
+                      delay: Math.random() * 2
+                    });
+                  }
+                  setConfetti(prev => [...prev, ...newConfetti]);
+                }, 100);
+              }
+            }
+          }
+        } else if (ballId.startsWith('extra-')) {
+          // Sprawdź czy nie przekroczono 1 liczby dodatkowej
+          const extraNumbersCount = luckyNumbers.filter(num => num > 35).length;
+          if (extraNumbersCount >= 1) {
+            return; // Już wybrano 1 liczbę dodatkową
+          }
+          
+          // Liczby dodatkowe (1-4)
+          const availableExtraNumbers = [];
+          for (let i = 1; i <= 4; i++) {
+            if (!luckyNumbers.includes(i)) {
+              availableExtraNumbers.push(i);
+            }
+          }
+          
+          if (availableExtraNumbers.length > 0) {
+            const randomNumber = generateNumberWithTalisman(4);
+            if (availableExtraNumbers.includes(randomNumber)) {
+              setRevealedBalls(prev => ({ ...prev, [ballId]: randomNumber }));
+              addLuckyNumber(randomNumber);
+              
+              // Sprawdź czy osiągnięto pełną liczbę liczb dla Ekstra Pensja
+              if (luckyNumbers.length + 1 === 6) {
+                setTimeout(() => {
+                  const newConfetti = [];
+                  const colors = ['#FFD700', '#FFA500', '#FF6347', '#FF4500', '#FF8C00', '#FFD700', '#FFFF00'];
+                  
+                  for (let i = 0; i < 200; i++) {
+                    newConfetti.push({
+                      id: Date.now() + i,
+                      x: Math.random() * 100,
+                      y: Math.random() * 100,
+                      color: colors[Math.floor(Math.random() * colors.length)],
+                      size: Math.random() * 8 + 4,
+                      rotation: Math.random() * 360,
+                      delay: Math.random() * 2
+                    });
+                  }
+                  setConfetti(prev => [...prev, ...newConfetti]);
+                }, 100);
+              }
+            } else {
+              const fallbackNumber = availableExtraNumbers[Math.floor(Math.random() * availableExtraNumbers.length)];
+              setRevealedBalls(prev => ({ ...prev, [ballId]: fallbackNumber }));
+              addLuckyNumber(fallbackNumber);
+              
+              if (luckyNumbers.length + 1 === 6) {
+                setTimeout(() => {
+                  const newConfetti = [];
+                  const colors = ['#FFD700', '#FFA500', '#FF6347', '#FF4500', '#FF8C00', '#FFD700', '#FFFF00'];
+                  
+                  for (let i = 0; i < 200; i++) {
+                    newConfetti.push({
+                      id: Date.now() + i,
+                      x: Math.random() * 100,
+                      y: Math.random() * 100,
+                      color: colors[Math.floor(Math.random() * colors.length)],
+                      size: Math.random() * 8 + 4,
+                      rotation: Math.random() * 360,
+                      delay: Math.random() * 2
+                    });
+                  }
+                  setConfetti(prev => [...prev, ...newConfetti]);
+                }, 100);
+              }
+            }
+          }
+        }
+      } else {
+        // Standardowa obsługa dla innych gier
+        const availableNumbers = [];
+        for (let i = range.min; i <= range.max; i++) {
+          if (!luckyNumbers.includes(i)) {
+            availableNumbers.push(i);
+          }
+        }
+        
+        if (availableNumbers.length > 0) {
+          const randomNumber = generateNumberWithTalisman(range.max);
+          if (availableNumbers.includes(randomNumber)) {
+            setRevealedBalls(prev => ({ ...prev, [ballId]: randomNumber }));
+            addLuckyNumber(randomNumber);
+            
+            // Sprawdź czy osiągnięto pełną liczbę liczb dla danej gry
+            if (luckyNumbers.length + 1 === range.count) {
+              // Generuj dużo konfetti!
+              setTimeout(() => {
+                const newConfetti = [];
+                const colors = ['#FFD700', '#FFA500', '#FF6347', '#FF4500', '#FF8C00', '#FFD700', '#FFFF00'];
+                
+                for (let i = 0; i < 200; i++) {
+                  newConfetti.push({
+                    id: Date.now() + i,
+                    x: Math.random() * 100,
+                    y: Math.random() * 100,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 8 + 4,
+                    rotation: Math.random() * 360,
+                    delay: Math.random() * 2
+                  });
+                }
+                setConfetti(prev => [...prev, ...newConfetti]);
+              }, 100);
+            }
+          } else {
+            // Jeśli wygenerowana liczba nie jest dostępna, wybierz losowo z dostępnych
+            const fallbackNumber = availableNumbers[Math.floor(Math.random() * availableNumbers.length)];
+            setRevealedBalls(prev => ({ ...prev, [ballId]: fallbackNumber }));
+            addLuckyNumber(fallbackNumber);
+            
+            // Sprawdź czy osiągnięto pełną liczbę liczb dla danej gry
+            if (luckyNumbers.length + 1 === range.count) {
+              setTimeout(() => {
+                const newConfetti = [];
+                const colors = ['#FFD700', '#FFA500', '#FF6347', '#FF4500', '#FF8C00', '#FFD700', '#FFFF00'];
+                
+                for (let i = 0; i < 200; i++) {
+                  newConfetti.push({
+                    id: Date.now() + i,
+                    x: Math.random() * 100,
+                    y: Math.random() * 100,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 8 + 4,
+                    rotation: Math.random() * 360,
+                    delay: Math.random() * 2
+                  });
+                }
+                setConfetti(prev => [...prev, ...newConfetti]);
+              }, 100);
+            }
+          }
+        }
+      }
+    } else {
+      // Drugi klik - usuń liczbę
+      const number = revealedBalls[ballId];
+      removeLuckyNumber(number);
+      setRevealedBalls(prev => {
+        const newRevealed = { ...prev };
+        delete newRevealed[ballId];
+        return newRevealed;
+      });
+    }
+  };
+
+  const resetNumberPickerBalls = () => {
+    setRevealedBalls({});
+    setLuckyNumbers([]);
+  };
+
   // Funkcja resetująca liczby po zmianie gry
   const resetNumbers = () => {
     setNumbers([]);
@@ -108,8 +528,18 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
     setIsWheelSpinning(false);
     setWheelAngle(0);
     
+    // Reset Wybór Liczb
+    setRevealedBalls({});
+    setLuckyNumbers([]);
+    
     // Nie resetuj activeSection - pozwól zostać w aktualnej sekcji
   };
+
+  // Reset Wybór Liczb przy zmianie gry
+  useEffect(() => {
+    setRevealedBalls({});
+    setLuckyNumbers([]);
+  }, [selectedGame]);
 
   // Funkcja generująca liczby dla slot machine
   const generateSlotNumbers = (maxNumbers = 6) => {
@@ -572,7 +1002,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
           onClick={(e) => e.stopPropagation()}
         >
           <div className="text-center">
-            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-4">🔒 Dostęp wymagany</h3>
+            <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white mb-2 sm:mb-4">🔒 Dostęp wymagany</h3>
             <p className="text-gray-300 mb-4 sm:mb-6 text-xs sm:text-sm md:text-base">
               Twój okres próbny wygasł. Wykup subskrypcję za 9.99 zł, aby kontynuować korzystanie z wszystkich funkcji.
             </p>
@@ -851,7 +1281,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
             className="mb-4"
           >
             <div className="bg-green-500/20 border border-green-400/30 rounded-lg p-3 inline-block">
-              <p className="text-green-200 text-sm font-medium">
+              <p className="text-green-200 text-xs sm:text-sm font-medium">
                 ✅ Dostęp aktywny - {trialDaysLeft > 0 ? `${trialDaysLeft} dni trial` : 'Plan Premium'}
               </p>
             </div>
@@ -864,7 +1294,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
             className="mb-4"
           >
             <div className="bg-red-500/20 border border-red-400/30 rounded-lg p-3 inline-block">
-              <p className="text-red-200 text-sm font-medium">
+              <p className="text-red-200 text-xs sm:text-sm font-medium">
                 ⚠️ Dostęp wygasł - wymagana płatność 9.99
               </p>
             </div>
@@ -878,7 +1308,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
           transition={{ duration: 0.8 }}
           className="mb-8"
         >
-          <p className="text-yellow-200 text-lg md:text-xl italic font-light drop-shadow-lg">
+          <p className="text-yellow-200 text-sm sm:text-base md:text-lg lg:text-xl italic font-light drop-shadow-lg">
             "{quote}"
           </p>
         </motion.div>
@@ -888,7 +1318,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="text-3xl md:text-5xl font-bold text-white mb-8 drop-shadow-lg"
+          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-8 drop-shadow-lg"
         >
           Pełny zestaw szczęścia
         </motion.h1>
@@ -913,7 +1343,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
             whileTap={{ scale: 0.98 }}
           >
             <div>
-              <h2 className="text-sm lg:text-base xl:text-lg font-bold text-yellow-200 mb-2 leading-tight">
+              <h2 className="text-xs sm:text-sm lg:text-base xl:text-lg font-bold text-yellow-200 mb-2 leading-tight">
                 🎱 Gra z magiczną kulą
               </h2>
               <p className="text-yellow-100 text-xs lg:text-sm mb-2 leading-relaxed">
@@ -939,7 +1369,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
             whileTap={{ scale: 0.98 }}
           >
             <div>
-              <h2 className="text-sm lg:text-base xl:text-lg font-bold text-purple-200 mb-2 leading-tight">
+              <h2 className="text-xs sm:text-sm lg:text-base xl:text-lg font-bold text-purple-200 mb-2 leading-tight">
                 🎰 Slot Machine Lotto
               </h2>
               <p className="text-purple-100 text-xs lg:text-sm mb-2 leading-relaxed">
@@ -965,7 +1395,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
             whileTap={{ scale: 0.98 }}
           >
             <div>
-              <h2 className="text-sm lg:text-base xl:text-lg font-bold text-cyan-200 mb-2 leading-tight">
+              <h2 className="text-xs sm:text-sm lg:text-base xl:text-lg font-bold text-cyan-200 mb-2 leading-tight">
                 🔮 Magiczne losowanie
               </h2>
               <p className="text-cyan-100 text-xs lg:text-sm mb-2 leading-relaxed">
@@ -991,7 +1421,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
             whileTap={{ scale: 0.98 }}
           >
             <div>
-              <h2 className="text-sm lg:text-base xl:text-lg font-bold text-green-200 mb-2 leading-tight">
+              <h2 className="text-xs sm:text-sm lg:text-base xl:text-lg font-bold text-green-200 mb-2 leading-tight">
                 🖱️ Złap szczęśliwą kulę
               </h2>
               <p className="text-green-100 text-xs lg:text-sm mb-2 leading-relaxed">
@@ -1017,7 +1447,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
             whileTap={{ scale: 0.98 }}
           >
             <div>
-              <h2 className="text-sm lg:text-base xl:text-lg font-bold text-red-200 mb-2 leading-tight">
+              <h2 className="text-xs sm:text-sm lg:text-base xl:text-lg font-bold text-red-200 mb-2 leading-tight">
                 🎡 Kręć Kołem Liczb
               </h2>
               <p className="text-red-100 text-xs lg:text-sm mb-2 leading-relaxed">
@@ -1030,6 +1460,60 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
               </p>
             </div>
           </motion.div>
+
+          {/* Sekcja Wybór Liczb */}
+          <motion.div
+            className={`bg-gradient-to-br from-orange-500/20 to-yellow-500/20 rounded-lg p-4 border-2 transition-all duration-300 cursor-pointer min-h-[120px] flex flex-col justify-between ${
+              activeSection === 'number-picker' 
+                ? 'border-orange-400 scale-105 shadow-lg' 
+                : 'border-orange-300/30 hover:scale-105'
+            }`}
+            onClick={() => setActiveSection('number-picker')}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <div>
+              <h2 className="text-xs sm:text-sm lg:text-base xl:text-lg font-bold text-orange-200 mb-2 leading-tight">
+                🎯 Wybór Liczb
+              </h2>
+              <p className="text-orange-100 text-xs lg:text-sm mb-2 leading-relaxed">
+                Interaktywny wybór liczb z animowanymi kulami
+              </p>
+            </div>
+            <div className="bg-orange-500/20 rounded p-2 border border-orange-400/30">
+              <p className="text-orange-200 text-xs lg:text-sm font-medium">
+                {activeSection === 'number-picker' ? '✅ Aktywna' : '🎯 Kliknij'}
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Sekcja Generator Systemów Schönheima - UKRYTA */}
+          {false && (
+            <motion.div
+              className={`bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-lg p-4 border-2 transition-all duration-300 cursor-pointer min-h-[120px] flex flex-col justify-between ${
+                activeSection === 'schonheim-generator' 
+                  ? 'border-indigo-400 scale-105 shadow-lg' 
+                  : 'border-indigo-300/30 hover:scale-105'
+              }`}
+              onClick={() => setActiveSection('schonheim-generator')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div>
+                <h2 className="text-xs sm:text-sm lg:text-base xl:text-lg font-bold text-indigo-200 mb-2 leading-tight">
+                  🧮 Generator Schönheima
+                </h2>
+                <p className="text-indigo-100 text-xs lg:text-sm mb-2 leading-relaxed">
+                  Systemy skrócone Lotto
+                </p>
+              </div>
+              <div className="bg-indigo-500/20 rounded p-2 border border-indigo-400/30">
+                <p className="text-indigo-200 text-xs lg:text-sm font-medium">
+                  {activeSection === 'schonheim-generator' ? '✅ Aktywna' : '🧮 Kliknij'}
+                </p>
+              </div>
+            </motion.div>
+          )}
 
 
 
@@ -1046,7 +1530,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="mb-8"
           >
-            <p className="text-yellow-300 text-lg md:text-xl font-medium drop-shadow-lg">
+            <p className="text-yellow-300 text-sm sm:text-base md:text-lg lg:text-xl font-medium drop-shadow-lg">
               Wybrana gra: {selectedGame === 'lotto' ? '🎰 Lotto' : 
                 selectedGame === 'mini-lotto' ? '🍀 Mini Lotto' :
                 selectedGame === 'multi-multi' ? '🎲 Multi Multi' :
@@ -1290,7 +1774,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                   exit={{ opacity: 0, y: 20, scale: 0.8 }}
                   transition={{ duration: 0.6, delay: 0.5, type: "spring" }}
                   onClick={copyNumbers}
-                  className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold text-base rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border border-yellow-300 backdrop-blur-sm"
+                  className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold text-sm sm:text-base rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border border-yellow-300 backdrop-blur-sm"
                   whileHover={{ 
                     scale: 1.05,
                     boxShadow: "0 0 30px rgba(255, 193, 7, 0.5)"
@@ -1310,7 +1794,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 1 }}
-            className="text-yellow-200 text-sm md:text-base mt-8 max-w-md mx-auto drop-shadow-lg"
+            className="text-yellow-200 text-xs sm:text-sm md:text-base mt-8 max-w-md mx-auto drop-shadow-lg"
           >
             Kliknij w magiczną kulę, aby otrzymać dzisiejszy zestaw szczęścia. 
             Liczby są generowane specjalnym algorytmem, który uwzględnia 
@@ -1330,7 +1814,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.4 }}
-              className="text-2xl md:text-3xl font-bold text-white mb-8 text-center drop-shadow-lg"
+              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-8 text-center drop-shadow-lg"
             >
               🎯 Wszystkie gry Lotto
             </motion.h2>
@@ -1346,8 +1830,8 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                 resetNumbers();
               }}
             >
-              <h3 className="text-xl font-bold text-yellow-200 mb-2">🎰 Lotto</h3>
-              <p className="text-yellow-100 text-sm mb-3">6 liczb z 49</p>
+              <h3 className="text-lg sm:text-xl font-bold text-yellow-200 mb-2">🎰 Lotto</h3>
+              <p className="text-yellow-100 text-xs sm:text-sm mb-3">6 liczb z 49</p>
               <p className="text-yellow-200/80 text-xs">Klasyczna gra Lotto - wybierz 6 liczb z zakresu 1-49</p>
               <div className="mt-2 p-2 bg-green-500/20 rounded border border-green-400/30">
                 <p className="text-green-200 text-xs font-medium">✅ Dostępne</p>
@@ -1365,8 +1849,8 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                 resetNumbers();
               }}
             >
-              <h3 className="text-xl font-bold text-green-200 mb-2">🍀 Mini Lotto</h3>
-              <p className="text-green-100 text-sm mb-3">5 liczb z 42</p>
+              <h3 className="text-lg sm:text-xl font-bold text-green-200 mb-2">🍀 Mini Lotto</h3>
+              <p className="text-green-100 text-xs sm:text-sm mb-3">5 liczb z 42</p>
               <p className="text-green-200/80 text-xs">Mniejsza gra z większymi szansami na wygraną</p>
               <div className="mt-2 p-2 bg-green-500/20 rounded border border-green-400/30">
                 <p className="text-green-200 text-xs font-medium">✅ Dostępne</p>
@@ -1384,8 +1868,8 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                 resetNumbers();
               }}
             >
-              <h3 className="text-xl font-bold text-pink-200 mb-2">🎲 Multi Multi</h3>
-              <p className="text-pink-100 text-sm mb-3">10 liczb z 80</p>
+              <h3 className="text-lg sm:text-xl font-bold text-pink-200 mb-2">🎲 Multi Multi</h3>
+              <p className="text-pink-100 text-xs sm:text-sm mb-3">10 liczb z 80</p>
               <p className="text-pink-200/80 text-xs">Wybierz 10 liczb z 80 dostępnych</p>
               <div className="mt-2 p-2 bg-green-500/20 rounded border border-green-400/30">
                 <p className="text-green-200 text-xs font-medium">✅ Dostępne</p>
@@ -1403,8 +1887,8 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                 resetNumbers();
               }}
             >
-              <h3 className="text-xl font-bold text-indigo-200 mb-2">💰 Ekstra Pensja</h3>
-              <p className="text-indigo-100 text-sm mb-3">5 liczb z 35</p>
+              <h3 className="text-lg sm:text-xl font-bold text-indigo-200 mb-2">💰 Ekstra Pensja</h3>
+              <p className="text-indigo-100 text-xs sm:text-sm mb-3">5 liczb z 35</p>
               <p className="text-indigo-200/80 text-xs">Gra z gwarantowaną wygraną w każdym losowaniu</p>
               <div className="mt-2 p-2 bg-green-500/20 rounded border border-green-400/30">
                 <p className="text-green-200 text-xs font-medium">✅ Dostępne</p>
@@ -1422,8 +1906,8 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                 resetNumbers();
               }}
             >
-              <h3 className="text-xl font-bold text-cyan-200 mb-2">🌊 Kaskada</h3>
-              <p className="text-cyan-100 text-sm mb-3">6 liczb z 40</p>
+              <h3 className="text-lg sm:text-xl font-bold text-cyan-200 mb-2">🌊 Kaskada</h3>
+              <p className="text-cyan-100 text-xs sm:text-sm mb-3">6 liczb z 40</p>
               <p className="text-cyan-200/80 text-xs">Gra z rosnącymi nagrodami w kolejnych losowaniach</p>
               <div className="mt-2 p-2 bg-green-500/20 rounded border border-green-400/30">
                 <p className="text-green-200 text-xs font-medium">✅ Dostępne</p>
@@ -1441,8 +1925,8 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                 resetNumbers();
               }}
             >
-              <h3 className="text-xl font-bold text-purple-200 mb-2">🎯 Keno</h3>
-              <p className="text-purple-100 text-sm mb-3">10 liczb z 80</p>
+              <h3 className="text-lg sm:text-xl font-bold text-purple-200 mb-2">🎯 Keno</h3>
+              <p className="text-purple-100 text-xs sm:text-sm mb-3">10 liczb z 80</p>
               <p className="text-purple-200/80 text-xs">Gra podobna do Multi Multi - wybierz 10 liczb</p>
               <div className="mt-2 p-2 bg-green-500/20 rounded border border-green-400/30">
                 <p className="text-green-200 text-xs font-medium">✅ Dostępne</p>
@@ -1460,8 +1944,8 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                 resetNumbers();
               }}
             >
-              <h3 className="text-xl font-bold text-red-200 mb-2">🇪🇺 Eurojackpot</h3>
-              <p className="text-red-100 text-sm mb-3">5+2 liczb</p>
+              <h3 className="text-lg sm:text-xl font-bold text-red-200 mb-2">🇪🇺 Eurojackpot</h3>
+              <p className="text-red-100 text-xs sm:text-sm mb-3">5+2 liczb</p>
               <p className="text-red-200/80 text-xs">5 liczb z 50 + 2 Euro liczby z 12</p>
               <div className="mt-2 p-2 bg-green-500/20 rounded border border-green-400/30">
                 <p className="text-green-200 text-xs font-medium">✅ Dostępne</p>
@@ -1480,8 +1964,8 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
             className="mb-8 w-full max-w-[500px] mx-auto sm:scale-100 scale-90 min-w-[320px] min-h-[300px] overflow-hidden"
           >
             <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl p-8 border border-purple-300/30 backdrop-blur-sm">
-              <h3 className="text-2xl font-bold text-purple-200 mb-4 text-center">🎰 Slot Machine Lotto</h3>
-              <p className="text-purple-100 text-center mb-6">Jednoręki bandyta z animowanymi bębnami</p>
+              <h3 className="text-xl sm:text-2xl font-bold text-purple-200 mb-4 text-center">🎰 Slot Machine Lotto</h3>
+              <p className="text-purple-100 text-sm sm:text-base text-center mb-6">Jednoręki bandyta z animowanymi bębnami</p>
               
               {/* Slot Machine Interface */}
               <div className="flex justify-center mb-6">
@@ -1563,7 +2047,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                 <motion.button
                   onClick={handleSlotMachine}
                   disabled={isSlotSpinning}
-                  className={`px-8 py-4 text-xl font-bold rounded-full shadow-lg transition-all duration-300 border-2 ${
+                  className={`px-6 sm:px-8 py-3 sm:py-4 text-lg sm:text-xl font-bold rounded-full shadow-lg transition-all duration-300 border-2 ${
                     isSlotSpinning
                       ? 'bg-gray-500 text-gray-300 cursor-not-allowed'
                       : 'bg-gradient-to-r from-purple-500 to-pink-600 text-white hover:from-purple-600 hover:to-pink-700 border-purple-300 hover:scale-105'
@@ -2390,6 +2874,249 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                 </motion.div>
               )}
             </div>
+          </motion.div>
+        )}
+
+        {/* Wybór Liczb Section */}
+        {activeSection === 'number-picker' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mb-8"
+          >
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold text-orange-200 mb-4">🎯 Wybór Liczb</h3>
+              <p className="text-orange-100 mb-6">Interaktywny wybór liczb z animowanymi kulami</p>
+            </div>
+
+            {/* Instrukcje */}
+            <div className="bg-gradient-to-br from-orange-500/20 to-yellow-500/20 rounded-lg p-6 mb-8 border-2 border-orange-400">
+              <h4 className="text-orange-200 font-bold text-center mb-4">🎲 Kliknij w zakryte kule, aby odkryć szczęśliwe liczby!</h4>
+              <p className="text-orange-100 text-sm mb-3">
+                <strong>Jak to działa:</strong> Wybierz grę, a następnie kliknij w zakryte kule, aby odkryć losowe liczby. 
+                Kliknij ponownie, aby usunąć liczbę z wybranych.
+              </p>
+              <p className="text-orange-100 text-sm">
+                <strong>💡 Wskazówka:</strong> Odkryte liczby automatycznie dodają się do sekcji "Szczęśliwe liczby"!
+              </p>
+            </div>
+
+            {/* Wybór gry */}
+            <div className="mb-8">
+              <label className="block text-orange-200 font-bold mb-4 text-center">Wybierz grę:</label>
+              <select 
+                value={selectedGame} 
+                onChange={e => setSelectedGame(e.target.value)} 
+                className="w-full max-w-md mx-auto px-4 py-3 bg-gray-900 border-2 border-orange-400 rounded-lg text-white focus:outline-none focus:border-orange-300 appearance-none cursor-pointer"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23f97316' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
+                  backgroundPosition: 'right 0.75rem center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: '1.5em 1.5em',
+                  paddingRight: '2.5rem'
+                }}
+              >
+                <option value="lotto" className="bg-gray-900 text-white py-2">🎯 Lotto (6 z 49)</option>
+                <option value="mini-lotto" className="bg-gray-900 text-white py-2">🍀 Mini Lotto (5 z 42)</option>
+                <option value="multi-multi" className="bg-gray-900 text-white py-2">🎰 Multi Multi (10 z 80)</option>
+                <option value="eurojackpot" className="bg-gray-900 text-white py-2">🇪🇺 Eurojackpot (5 z 50 + 2 z 12)</option>
+                <option value="ekstra-pensja" className="bg-gray-900 text-white py-2">💰 Ekstra Pensja (5 z 35 + 1 z 4)</option>
+                <option value="kaskada" className="bg-gray-900 text-white py-2">🌊 Kaskada (6 z 40)</option>
+                <option value="keno" className="bg-gray-900 text-white py-2">🎯 Keno (10 z 70)</option>
+              </select>
+            </div>
+
+            {/* Kule z liczbami */}
+            <div className="mb-8">
+              {selectedGame === "eurojackpot" ? (
+                <>
+                  <h4 className="text-orange-200 font-bold text-center mb-6">🎯 Liczby główne (1-50) - wybierz 5</h4>
+                  <div className="grid grid-cols-10 gap-2 max-w-2xl mx-auto mb-8">
+                    {Array.from({ length: 50 }, (_, index) => (
+                      <motion.button
+                        key={`main-${index}`}
+                        onClick={() => handleNumberPickerBallClick(`main-${index}`)}
+                        className={`w-10 h-10 rounded-full border-2 font-bold text-sm transition-all duration-300 ${
+                          revealedBalls[`main-${index}`] 
+                            ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-black border-yellow-300 shadow-lg' 
+                            : 'bg-gradient-to-br from-orange-400/30 to-yellow-400/30 text-orange-200 border-orange-300 hover:scale-110'
+                        }`}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {revealedBalls[`main-${index}`] ? revealedBalls[`main-${index}`] : "?"}
+                      </motion.button>
+                    ))}
+                  </div>
+                  
+                  <h4 className="text-orange-200 font-bold text-center mb-6">🇪🇺 Liczby Euro (1-12) - wybierz 2</h4>
+                  <div className="grid grid-cols-6 gap-2 max-w-md mx-auto">
+                    {Array.from({ length: 12 }, (_, index) => (
+                      <motion.button
+                        key={`euro-${index}`}
+                        onClick={() => handleNumberPickerBallClick(`euro-${index}`)}
+                        className={`w-10 h-10 rounded-full border-2 font-bold text-sm transition-all duration-300 ${
+                          revealedBalls[`euro-${index}`] 
+                            ? 'bg-gradient-to-br from-purple-600 to-purple-700 text-white border-purple-500 shadow-lg' 
+                            : 'bg-gradient-to-br from-purple-500/30 to-purple-600/30 text-purple-200 border-purple-400 hover:scale-110'
+                        }`}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {revealedBalls[`euro-${index}`] ? revealedBalls[`euro-${index}`] : "?"}
+                      </motion.button>
+                    ))}
+                  </div>
+                </>
+              ) : selectedGame === "ekstra-pensja" ? (
+                <>
+                  <h4 className="text-orange-200 font-bold text-center mb-6">💰 Liczby główne (1-35) - wybierz 5</h4>
+                  <div className="grid grid-cols-10 gap-2 max-w-2xl mx-auto mb-8">
+                    {Array.from({ length: 35 }, (_, index) => (
+                      <motion.button
+                        key={`main-${index}`}
+                        onClick={() => handleNumberPickerBallClick(`main-${index}`)}
+                        className={`w-10 h-10 rounded-full border-2 font-bold text-sm transition-all duration-300 ${
+                          revealedBalls[`main-${index}`] 
+                            ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-black border-yellow-300 shadow-lg' 
+                            : 'bg-gradient-to-br from-orange-400/30 to-yellow-400/30 text-orange-200 border-orange-300 hover:scale-110'
+                        }`}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {revealedBalls[`main-${index}`] ? revealedBalls[`main-${index}`] : "?"}
+                      </motion.button>
+                    ))}
+                  </div>
+                  
+                  <h4 className="text-orange-200 font-bold text-center mb-6">💰 Liczba dodatkowa (1-4) - wybierz 1</h4>
+                  <div className="grid grid-cols-4 gap-2 max-w-md mx-auto">
+                    {Array.from({ length: 4 }, (_, index) => (
+                      <motion.button
+                        key={`extra-${index}`}
+                        onClick={() => handleNumberPickerBallClick(`extra-${index}`)}
+                        className={`w-10 h-10 rounded-full border-2 font-bold text-sm transition-all duration-300 ${
+                          revealedBalls[`extra-${index}`] 
+                            ? 'bg-gradient-to-br from-green-400 to-green-500 text-white border-green-300 shadow-lg' 
+                            : 'bg-gradient-to-br from-green-400/30 to-green-500/30 text-green-200 border-green-300 hover:scale-110'
+                        }`}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {revealedBalls[`extra-${index}`] ? revealedBalls[`extra-${index}`] : "?"}
+                      </motion.button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h4 className="text-orange-200 font-bold text-center mb-6">
+                    🎯 Liczby (1-{getGameRange(selectedGame).max}) - wybierz {getGameRange(selectedGame).count}
+                  </h4>
+                  <div className="grid grid-cols-10 gap-2 max-w-2xl mx-auto">
+                    {Array.from({ length: getGameRange(selectedGame).max }, (_, index) => (
+                      <motion.button
+                        key={index}
+                        onClick={() => handleNumberPickerBallClick(index)}
+                        className={`w-10 h-10 rounded-full border-2 font-bold text-sm transition-all duration-300 ${
+                          revealedBalls[index] 
+                            ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-black border-yellow-300 shadow-lg' 
+                            : 'bg-gradient-to-br from-orange-400/30 to-yellow-400/30 text-orange-200 border-orange-300 hover:scale-110'
+                        }`}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {revealedBalls[index] ? revealedBalls[index] : "?"}
+                      </motion.button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Wybrane liczby */}
+            {luckyNumbers.length > 0 && (
+              <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-lg p-6 border-2 border-green-400">
+                <h4 className="text-green-200 font-bold text-center mb-4">🎯 Twoje wybrane liczby:</h4>
+                <div className="flex flex-wrap justify-center gap-3">
+                  {luckyNumbers.map((num, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center text-black font-bold text-lg shadow-lg border-2 border-yellow-300"
+                    >
+                      {num}
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Przycisk reset */}
+            <div className="text-center mt-8">
+              <motion.button
+                onClick={resetNumberPickerBalls}
+                className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-lg font-bold hover:from-red-600 hover:to-red-700 transition-all duration-300"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                🔄 Resetuj wybór
+              </motion.button>
+            </div>
+
+            {/* Konfetti dla Wybór Liczb */}
+            {confetti.length > 0 && (
+              <div className="absolute inset-0 pointer-events-none">
+                {confetti.map((piece) => (
+                  <motion.div
+                    key={`confetti-${piece.id}`}
+                    className="absolute"
+                    style={{
+                      left: `${piece.x}%`,
+                      top: `${piece.y}%`,
+                      width: `${piece.size || 8}px`,
+                      height: `${piece.size || 8}px`,
+                      backgroundColor: piece.color,
+                      transform: `rotate(${piece.rotation}deg)`,
+                    }}
+                    initial={{ 
+                      opacity: 0, 
+                      scale: 0,
+                      y: 0,
+                      x: 0,
+                      rotate: piece.rotation
+                    }}
+                    animate={{ 
+                      opacity: [0, 1, 0],
+                      scale: [0, 1, 0],
+                      y: [-20, -300],
+                      x: [0, (Math.random() - 0.5) * 400],
+                      rotate: [piece.rotation, piece.rotation + 360]
+                    }}
+                    transition={{ 
+                      duration: 3,
+                      delay: piece.delay || 0,
+                      ease: "easeOut"
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* Generator Systemów Schönheima Section */}
+        {activeSection === 'schonheim-generator' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mb-8"
+          >
+            <SchonheimGenerator />
           </motion.div>
         )}
 

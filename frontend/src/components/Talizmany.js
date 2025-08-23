@@ -9,6 +9,84 @@ const Talizmany = ({ user, talismanDefinitions }) => {
   console.log('🔍 Talizmany component is rendering!');
   
   const { t } = useTranslation();
+  
+  // Responsive styles - podobne do Harmonic Analyzer
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
+  const isMobile = windowWidth <= 768;
+  const isSmallMobile = windowWidth <= 480;
+  const isExtraSmall = windowWidth <= 300;
+
+  const containerStyle = {
+    width: "100%",
+    maxWidth: "100%",
+    padding: isExtraSmall ? "5px" : isSmallMobile ? "10px" : isMobile ? "15px" : "20px",
+    boxSizing: "border-box",
+    overflowX: "hidden"
+  };
+
+  const titleStyle = {
+    fontSize: isExtraSmall ? "16px" : isSmallMobile ? "18px" : isMobile ? "20px" : "24px",
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: isExtraSmall ? "10px" : isSmallMobile ? "12px" : isMobile ? "15px" : "20px",
+    textAlign: "center"
+  };
+
+  const talismanGridStyle = {
+    display: "grid",
+    gridTemplateColumns: isExtraSmall ? "repeat(2, 1fr)" : isSmallMobile ? "repeat(2, 1fr)" : isMobile ? "repeat(3, 1fr)" : "repeat(4, 1fr)",
+    gap: isExtraSmall ? "4px" : isSmallMobile ? "6px" : isMobile ? "8px" : "10px",
+    marginBottom: isExtraSmall ? "10px" : isSmallMobile ? "12px" : isMobile ? "15px" : "20px",
+    justifyItems: "stretch",
+    alignItems: "stretch",
+    width: "100%"
+  };
+
+  const talismanCardStyle = {
+    background: "transparent",
+    borderRadius: "6px",
+    padding: isExtraSmall ? "4px" : isSmallMobile ? "6px" : isMobile ? "10px" : "8px",
+    boxShadow: "none",
+    textAlign: "center",
+    minHeight: isExtraSmall ? "100px" : isSmallMobile ? "120px" : isMobile ? "150px" : "140px",
+    maxHeight: isExtraSmall ? "120px" : isSmallMobile ? "140px" : isMobile ? "180px" : "160px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    transition: "transform 0.3s ease",
+    position: "relative",
+    cursor: "pointer",
+    width: "100%",
+    height: "100%"
+  };
+
+  const talismanIconStyle = {
+    fontSize: isExtraSmall ? "12rem" : isSmallMobile ? "11rem" : isMobile ? "10rem" : "8rem",
+    marginBottom: isExtraSmall ? "4px" : isSmallMobile ? "6px" : isMobile ? "8px" : "8px",
+    lineHeight: "1",
+    display: "block"
+  };
+
+  const talismanNameStyle = {
+    fontSize: isExtraSmall ? "1.8rem" : isSmallMobile ? "2rem" : isMobile ? "2.2rem" : "1.8rem",
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: isExtraSmall ? "2px" : isSmallMobile ? "3px" : isMobile ? "4px" : "6px",
+    lineHeight: "1.2"
+  };
+
+  const talismanRequirementStyle = {
+    fontSize: isExtraSmall ? "1.6rem" : isSmallMobile ? "1.8rem" : isMobile ? "2rem" : "1.4rem",
+    color: "rgba(255, 255, 255, 0.8)",
+    lineHeight: "1.2"
+  };
   const [talismans, setTalismans] = useState([]);
   const [streak, setStreak] = useState({ current_streak: 0, total_tokens: 0 });
   const [eligibility, setEligibility] = useState({});
@@ -19,6 +97,8 @@ const Talizmany = ({ user, talismanDefinitions }) => {
   const [notificationMessage, setNotificationMessage] = useState('');
   const [selectedTalisman, setSelectedTalisman] = useState(null);
   const [isLoadingData, setIsLoadingData] = useState(false); // Dodaj flagę dla loadTalismansWithUID
+  const [forceFallback, setForceFallback] = useState(false); // Dodaj state dla wymuszenia trybu fallback
+  const [confetti, setConfetti] = useState([]); // Dodaj state dla confetti
 
   // Sprawdź czy talismanDefinitions są przekazane, jeśli nie - użyj domyślnych
   const defaultTalismanDefinitions = [
@@ -119,6 +199,30 @@ const Talizmany = ({ user, talismanDefinitions }) => {
     return talismanDefinitions || defaultTalismanDefinitions;
   }, [talismanDefinitions]);
 
+  // Funkcja do generowania confetti
+  const generateConfetti = () => {
+    const newConfetti = [];
+    const colors = ['#FFD700', '#FFA500', '#FF6347', '#FF4500', '#FF8C00', '#FFD700', '#FFFF00'];
+
+    for (let i = 0; i < 150; i++) {
+      newConfetti.push({
+        id: Date.now() + i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: Math.random() * 8 + 4,
+        rotation: Math.random() * 360,
+        delay: Math.random() * 2
+      });
+    }
+    setConfetti(prev => [...prev, ...newConfetti]);
+    
+    // Usuń confetti po 3 sekundach
+    setTimeout(() => {
+      setConfetti(prev => prev.filter(c => !newConfetti.includes(c)));
+    }, 3000);
+  };
+
   // Debug useEffect dla user i talismanDefinitions
   useEffect(() => {
     console.log("📦 user or defs changed:", user, talismanDefinitions);
@@ -185,12 +289,17 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       try {
         const testResponse = await fetch('/api/test', {
           method: 'GET',
-          signal: AbortSignal.timeout(2000) // 2 sekundy timeout
+          signal: AbortSignal.timeout(3000) // 3 sekundy timeout
         });
         console.log('✅ Backend odpowiada na /api/test');
       } catch (testError) {
         console.error('❌ Backend nie odpowiada na /api/test:', testError);
-        throw new Error('Backend nie działa');
+        console.log('⚠️ Przechodzę w tryb fallback - demo mode');
+        // Nie rzucaj błędu, tylko przejdź w tryb fallback
+        setForceFallback(true);
+        setLoading(false);
+        setIsLoadingData(false);
+        return;
       }
       
       // Dodaj timeout do fetch
@@ -277,7 +386,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
 
   // Sprawdź czy mamy podstawowe dane i czy powinniśmy pokazać fallback
   const hasBasicData = streak && eligibility && talismans;
-  const showFallback = !hasBasicData && !loading;
+  const showFallback = (!hasBasicData && !loading) || forceFallback;
 
   // Automatyczne przełączenie na fallback po 3 sekundach
   React.useEffect(() => {
@@ -302,7 +411,12 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       // W trybie fallback pokaż powiadomienie demo
       setNotificationMessage(`Demo: Gratulacje! Zdobyłeś ${finalTalismanDefinitions[talismanId - 1].name}!`);
       setShowNotification(true);
-      setTimeout(() => setShowNotification(false), 3000);
+      setTimeout(() => setShowNotification(false), 4000);
+      generateConfetti(); // Dodaj confetti
+      // Aktualizuj aktywny talizman w App.js
+      if (window.updateActiveTalisman) {
+        window.updateActiveTalisman(talismanId);
+      }
       return;
     }
     
@@ -321,9 +435,10 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       const data = await response.json();
       
       if (data.success) {
-        setNotificationMessage(`Gratulacje! Zdobyłeś ${finalTalismanDefinitions[talismanId - 1].name}!`);
+        setNotificationMessage(`🎉 Gratulacje! Zdobyłeś ${finalTalismanDefinitions[talismanId - 1].name}! 🎉`);
         setShowNotification(true);
-        setTimeout(() => setShowNotification(false), 3000);
+        setTimeout(() => setShowNotification(false), 4000);
+        generateConfetti(); // Dodaj confetti
         loadTalismansWithUID(user.uid); // Odśwież dane
       }
     } catch (error) {
@@ -334,9 +449,17 @@ const Talizmany = ({ user, talismanDefinitions }) => {
   const toggleTalisman = async (talismanId, active) => {
     if (showFallback) {
       // W trybie fallback pokaż powiadomienie demo
-      setNotificationMessage(`Demo: Talizman ${active ? 'aktywowany' : 'deaktywowany'}!`);
+      const message = active ? `Demo: 🎉 Talizman aktywowany! 🎉` : `Demo: Talizman deaktywowany!`;
+      setNotificationMessage(message);
       setShowNotification(true);
-      setTimeout(() => setShowNotification(false), 2000);
+      setTimeout(() => setShowNotification(false), 3000);
+      if (active) {
+        generateConfetti(); // Dodaj confetti tylko przy aktywacji
+        // Aktualizuj aktywny talizman w App.js
+        if (window.updateActiveTalisman) {
+          window.updateActiveTalisman(talismanId);
+        }
+      }
       return;
     }
     
@@ -356,9 +479,11 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       const data = await response.json();
       
       if (data.success) {
-        setNotificationMessage(data.message);
+        const message = active ? `🎉 ${data.message} 🎉` : data.message;
+        setNotificationMessage(message);
         setShowNotification(true);
-        setTimeout(() => setShowNotification(false), 2000);
+        setTimeout(() => setShowNotification(false), 3000);
+        if (active) generateConfetti(); // Dodaj confetti tylko przy aktywacji
         loadTalismansWithUID(user.uid); // Odśwież dane
       }
     } catch (error) {
@@ -447,7 +572,13 @@ const Talizmany = ({ user, talismanDefinitions }) => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-1 sm:p-2 md:p-4">
+    <div style={{
+      minHeight: "100vh",
+      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      padding: isExtraSmall ? "5px" : isSmallMobile ? "10px" : isMobile ? "15px" : "20px",
+      boxSizing: "border-box",
+      overflowX: "hidden"
+    }}>
       {/* Debug info - tylko w trybie deweloperskim */}
       {process.env.NODE_ENV === 'development' && (
         <div className="text-center mb-2 sm:mb-4 p-1 sm:p-2 bg-black/20 rounded text-xs sm:text-sm">
@@ -486,7 +617,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-4 sm:mb-8"
       >
-        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 sm:mb-4">✨ Talizmany ✨</h1>
+        <h1 style={titleStyle}>✨ Talizmany ✨</h1>
         {showFallback && (
           <div className="bg-yellow-500/20 border border-yellow-500 rounded-lg p-1.5 sm:p-2 md:p-3 mb-1.5 sm:mb-2 md:mb-4">
             <p className="text-yellow-200 text-xs sm:text-sm">
@@ -545,7 +676,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       </motion.div>
 
       {/* Siatka talizmanów */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 md:gap-4 lg:gap-6 max-w-6xl mx-auto px-1 sm:px-2 md:px-4">
+      <div style={talismanGridStyle}>
         {finalTalismanDefinitions.map((talisman, index) => {
           const owned = isTalismanOwned(talisman.id);
           const active = isTalismanActive(talisman.id);
@@ -562,35 +693,59 @@ const Talizmany = ({ user, talismanDefinitions }) => {
               }`}
               onClick={() => setSelectedTalisman(talisman)}
             >
-              <div className={`
-                relative bg-white/10 backdrop-blur-sm rounded-xl p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6 text-center
-                border-2 transition-all duration-300 hover:scale-105
-                ${owned ? 'border-yellow-400 shadow-lg shadow-yellow-400/20' : 'border-gray-600'}
-                ${active ? 'ring-4 ring-purple-400 ring-opacity-50' : ''}
-              `}>
-                {/* Ikona talizmanu */}
-                <div className="talisman-icon-container mb-4">
-                  {talisman.icon === '⊃' ? (
-                    <img 
-                      src="/horseshoe.png" 
-                      alt="Podkowa" 
-                      className="talisman-image"
-                    />
-                  ) : (
-                    <span className="talisman-icon">
-                      {talisman.icon}
-                    </span>
-                  )}
-                </div>
-                
-                {/* Nazwa */}
-                <h3 className="font-bold text-white mb-1 text-xs sm:text-sm md:text-base lg:text-lg">
-                  {talisman.name}
-                </h3>
-                
-                {/* Wymaganie */}
-                <div className="text-white/70 mb-2 text-xs sm:text-sm md:text-base">
-                  {talisman.requirement} żetonów
+              <div style={{
+                ...talismanCardStyle,
+                border: owned ? "2px solid #fbbf24" : "2px solid #4b5563",
+                boxShadow: owned ? "0 4px 15px rgba(251, 191, 36, 0.2)" : "0 4px 15px rgba(0, 0, 0, 0.2)",
+                outline: active ? "4px solid rgba(168, 85, 247, 0.5)" : "none"
+              }}>
+                {/* Górna część - ikona i teksty */}
+                <div style={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                  {/* Ikona talizmanu */}
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: isExtraSmall ? "4px" : isSmallMobile ? "6px" : isMobile ? "8px" : "10px"
+                  }}>
+                    {talisman.icon === '🐎' ? (
+                      <img 
+                        src="/horseshoe.png" 
+                        alt="Podkowa" 
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                          maxWidth: isExtraSmall ? "2rem" : isSmallMobile ? "2.5rem" : isMobile ? "3.5rem" : "3rem"
+                        }}
+                      />
+                    ) : (
+                      <span style={{
+                        ...talismanIconStyle,
+                        fontSize: isExtraSmall ? "2rem" : isSmallMobile ? "2.5rem" : isMobile ? "3.5rem" : "3rem"
+                      }}>
+                        {talisman.icon}
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* Nazwa */}
+                  <h3 style={{
+                    ...talismanNameStyle,
+                    fontSize: isExtraSmall ? "0.6rem" : isSmallMobile ? "0.7rem" : isMobile ? "0.8rem" : "0.75rem",
+                    marginBottom: isExtraSmall ? "1px" : isSmallMobile ? "2px" : isMobile ? "3px" : "2px",
+                    lineHeight: "1.1"
+                  }}>
+                    {talisman.name}
+                  </h3>
+                  
+                  {/* Wymaganie */}
+                  <div style={{
+                    ...talismanRequirementStyle,
+                    fontSize: isExtraSmall ? "0.5rem" : isSmallMobile ? "0.6rem" : isMobile ? "0.7rem" : "0.65rem",
+                    marginBottom: isExtraSmall ? "2px" : isSmallMobile ? "4px" : isMobile ? "6px" : "4px"
+                  }}>
+                    {talisman.requirement} żetonów
+                  </div>
                 </div>
                 
                 {/* Status */}
@@ -606,48 +761,72 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                   </div>
                 )}
                 
-                {/* Przycisk akcji */}
-                {canGrant && (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      grantTalisman(talisman.id);
-                    }}
-                    className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold py-1 sm:py-1.5 md:py-2 px-1.5 sm:px-2 md:px-3 rounded-lg text-xs sm:text-sm hover:from-yellow-300 hover:to-orange-400 transition-all"
-                  >
-                    Odbierz!
-                  </motion.button>
-                )}
-                
-                {owned && !active && (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleTalisman(talisman.id, true);
-                    }}
-                    className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-1 sm:py-1.5 md:py-2 px-1.5 sm:px-2 md:px-3 rounded-lg text-xs sm:text-sm hover:from-purple-400 hover:to-blue-400 transition-all"
-                  >
-                    Aktywuj
-                  </motion.button>
-                )}
-                
-                {active && (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleTalisman(talisman.id, false);
-                    }}
-                    className="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold py-1 sm:py-1.5 md:py-2 px-1.5 sm:px-2 md:px-3 rounded-lg text-xs sm:text-sm hover:from-red-400 hover:to-pink-400 transition-all"
-                  >
-                    Deaktywuj
-                  </motion.button>
-                )}
+                {/* Dolna część - przyciski akcji */}
+                <div style={{ 
+                  minHeight: isExtraSmall ? "18px" : isSmallMobile ? "22px" : isMobile ? "26px" : "24px",
+                  display: "flex",
+                  alignItems: "flex-end"
+                }}>
+                  {canGrant && (
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        grantTalisman(talisman.id);
+                      }}
+                      className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold rounded hover:from-yellow-300 hover:to-orange-400 transition-all"
+                      style={{
+                        padding: isExtraSmall ? "2px 3px" : isSmallMobile ? "3px 4px" : isMobile ? "4px 6px" : "4px 5px",
+                        fontSize: isExtraSmall ? "0.5rem" : isSmallMobile ? "0.55rem" : isMobile ? "0.6rem" : "0.55rem",
+                        height: isExtraSmall ? "16px" : isSmallMobile ? "20px" : isMobile ? "24px" : "22px",
+                        lineHeight: "1"
+                      }}
+                    >
+                      Odbierz!
+                    </motion.button>
+                  )}
+                  
+                  {owned && !active && (
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleTalisman(talisman.id, true);
+                      }}
+                      className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold rounded hover:from-purple-400 hover:to-blue-400 transition-all"
+                      style={{
+                        padding: isExtraSmall ? "2px 3px" : isSmallMobile ? "3px 4px" : isMobile ? "4px 6px" : "4px 5px",
+                        fontSize: isExtraSmall ? "0.5rem" : isSmallMobile ? "0.55rem" : isMobile ? "0.6rem" : "0.55rem",
+                        height: isExtraSmall ? "16px" : isSmallMobile ? "20px" : isMobile ? "24px" : "22px",
+                        lineHeight: "1"
+                      }}
+                    >
+                      Aktywuj
+                    </motion.button>
+                  )}
+                  
+                  {active && (
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleTalisman(talisman.id, false);
+                      }}
+                      className="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold rounded hover:from-red-400 hover:to-pink-400 transition-all"
+                      style={{
+                        padding: isExtraSmall ? "2px 3px" : isSmallMobile ? "3px 4px" : isMobile ? "4px 6px" : "4px 5px",
+                        fontSize: isExtraSmall ? "0.5rem" : isSmallMobile ? "0.55rem" : isMobile ? "0.6rem" : "0.55rem",
+                        height: isExtraSmall ? "16px" : isSmallMobile ? "20px" : isMobile ? "24px" : "22px",
+                        lineHeight: "1"
+                      }}
+                    >
+                      Deaktywuj
+                    </motion.button>
+                  )}
+                </div>
               </div>
               
               {/* Efekt iskier dla aktywnego talizmanu */}
@@ -739,6 +918,45 @@ const Talizmany = ({ user, talismanDefinitions }) => {
         )}
       </AnimatePresence>
 
+      {/* Confetti */}
+      {confetti.length > 0 && (
+        <div className="fixed inset-0 pointer-events-none z-50">
+          {confetti.map((piece) => (
+            <motion.div
+              key={`confetti-${piece.id}`}
+              className="absolute"
+              style={{
+                left: `${piece.x}%`,
+                top: `${piece.y}%`,
+                width: `${piece.size || 8}px`,
+                height: `${piece.size || 8}px`,
+                backgroundColor: piece.color,
+                transform: `rotate(${piece.rotation}deg)`,
+              }}
+              initial={{
+                opacity: 0,
+                scale: 0,
+                y: 0,
+                x: 0,
+                rotate: piece.rotation
+              }}
+              animate={{
+                opacity: [0, 1, 0],
+                scale: [0, 1, 0],
+                y: [-20, -300],
+                x: [0, (Math.random() - 0.5) * 400],
+                rotate: [piece.rotation, piece.rotation + 360]
+              }}
+              transition={{
+                duration: 3,
+                delay: piece.delay || 0,
+                ease: "easeOut"
+              }}
+            />
+          ))}
+        </div>
+      )}
+
       {/* Powiadomienie */}
       <AnimatePresence>
         {showNotification && (
@@ -746,11 +964,16 @@ const Talizmany = ({ user, talismanDefinitions }) => {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className="fixed bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-blue-500 text-white px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-3 rounded-full shadow-lg z-50 text-xs sm:text-sm md:text-base"
+            className="fixed bottom-2 left-2 right-2 sm:bottom-4 sm:left-4 sm:right-4 bg-gradient-to-r from-green-500 to-blue-500 text-white px-4 py-3 rounded-full shadow-lg z-50 text-sm sm:text-base"
+            style={{
+              maxWidth: 'calc(100vw - 16px)',
+              wordWrap: 'break-word',
+              whiteSpace: 'normal'
+            }}
           >
-            <div className="flex items-center space-x-1 sm:space-x-2">
+            <div className="flex items-center justify-center space-x-2 text-center">
               <span>🎉</span>
-              <span className="truncate">{notificationMessage}</span>
+              <span>{notificationMessage}</span>
             </div>
           </motion.div>
         )}

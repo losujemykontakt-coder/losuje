@@ -31,18 +31,26 @@ code {
   display: block !important;
   text-align: center !important;
   /* Responsywne skalowanie - różne rozmiary dla różnych urządzeń */
-  font-size: 4rem !important;
-  min-width: 2.5rem !important;
-  min-height: 2.5rem !important;
+  font-size: 4.5rem !important;
+  min-width: 3rem !important;
+  min-height: 3rem !important;
   width: 100% !important;
   height: auto !important;
-  max-width: 6rem !important;
-  max-height: 6rem !important;
+  max-width: 7rem !important;
+  max-height: 7rem !important;
   margin: 0 auto !important;
 }
 
 /* Media queries dla lepszego skalowania na różnych urządzeniach */
 @media (max-width: 773px) {
+  .talisman-icon {
+    font-size: 4.2rem !important;
+    max-width: 5.5rem !important;
+    max-height: 5.5rem !important;
+  }
+}
+
+@media (max-width: 640px) {
   .talisman-icon {
     font-size: 4rem !important;
     max-width: 5rem !important;
@@ -50,7 +58,15 @@ code {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 480px) {
+  .talisman-icon {
+    font-size: 3.8rem !important;
+    max-width: 4.8rem !important;
+    max-height: 4.8rem !important;
+  }
+}
+
+@media (max-width: 360px) {
   .talisman-icon {
     font-size: 3.5rem !important;
     max-width: 4.5rem !important;
@@ -58,27 +74,11 @@ code {
   }
 }
 
-@media (max-width: 480px) {
-  .talisman-icon {
-    font-size: 3rem !important;
-    max-width: 4rem !important;
-    max-height: 4rem !important;
-  }
-}
-
-@media (max-width: 360px) {
-  .talisman-icon {
-    font-size: 2.8rem !important;
-    max-width: 4rem !important;
-    max-height: 4rem !important;
-  }
-}
-
 @media (max-width: 320px) {
   .talisman-icon {
-    font-size: 2.5rem !important;
-    max-width: 3.5rem !important;
-    max-height: 3.5rem !important;
+    font-size: 3.2rem !important;
+    max-width: 4.2rem !important;
+    max-height: 4.2rem !important;
   }
 }
 
@@ -103,7 +103,7 @@ code {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-height: 6rem !important;
+  min-height: 7rem !important;
   width: 100% !important;
   padding: 0.5rem !important;
 }
@@ -111,15 +111,36 @@ code {
 /* Responsywne style dla kontenera ikon */
 @media (max-width: 773px) {
   .talisman-icon-container {
-    min-height: 5rem;
-    padding: 0.3rem;
+    min-height: 6rem;
+    padding: 0.4rem;
   }
 }
 
 @media (max-width: 640px) {
   .talisman-icon-container {
-    min-height: 4.5rem;
+    min-height: 5.5rem;
+    padding: 0.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .talisman-icon-container {
+    min-height: 5rem;
     padding: 0.2rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .talisman-icon-container {
+    min-height: 4.8rem;
+    padding: 0.2rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .talisman-icon-container {
+    min-height: 4.5rem;
+    padding: 0.1rem;
   }
 }
 

@@ -13,6 +13,8 @@ import MyLuckyNumbersScreen from './components/MyLuckyNumbersScreen';
 import Talizmany from './components/Talizmany';
 import ActiveTalismanDisplay from './components/ActiveTalismanDisplay';
 import LanguageSwitcher from './components/LanguageSwitcher';
+import HomePage from './components/HomePage';
+import SchonheimGenerator from './components/SchonheimGenerator';
 import { logoutUser, onAuthStateChange } from './utils/firebaseAuth';
 import {
   getUserSubscription,
@@ -498,6 +500,32 @@ function App() {
   // Stan aktywnego talizmanu
   const [activeTalisman, setActiveTalisman] = useState(null);
   
+  // Funkcja do ładowania talizmanów użytkownika
+  const loadUserTalismans = async (uid) => {
+    if (!uid) return;
+    
+    try {
+      const response = await fetch(`/api/talismans/${uid}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        signal: AbortSignal.timeout(3000)
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.activeTalisman) {
+          setActiveTalisman(data.activeTalisman);
+        }
+      }
+    } catch (error) {
+      console.log('Nie udało się załadować talizmanów użytkownika:', error);
+      // W trybie fallback ustaw domyślny aktywny talizman
+      setActiveTalisman({ talisman_id: 1 });
+    }
+  };
+  
   // Metody płatności - PRZENIESIONE NA POCZĄTEK
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("paypal");
   
@@ -530,13 +558,7 @@ function App() {
     }
   }, [location.search, navigate, isLoggedIn]);
 
-  // Przekierowanie zalogowanych użytkowników z głównej strony
-  useEffect(() => {
-    if (!isLoading && isLoggedIn && location.pathname === '/') {
-      console.log('🔄 Przekierowanie zalogowanego użytkownika z / do /generator');
-      navigate('/generator', { replace: true });
-    }
-  }, [isLoading, isLoggedIn, location.pathname, navigate]);
+  // Usunięte automatyczne przekierowanie - teraz pokazujemy HomePage na /
 
   // Nasłuchiwanie zmian stanu autentykacji Firebase
   useEffect(() => {
@@ -773,6 +795,7 @@ function App() {
   useEffect(() => {
     if (user && user.uid) {
       checkSubscription();
+      loadUserTalismans(user.uid); // Załaduj talizmany użytkownika
     }
   }, [user]);
 
@@ -928,9 +951,127 @@ function App() {
   const [kenoRange, setKenoRange] = useState("mixed"); // mixed, low, high
   const [kenoNumbers, setKenoNumbers] = useState(10); // 10 lub 20 liczb dla Keno
   
+  // Funkcja zwracająca minimalną liczbę liczb dla danej gry
+  const getMinSystemNumbers = (game) => {
+    const minNumbers = {
+      lotto: 7,        // Lotto: 6 liczb w zakładzie, minimum 7 dla systemu skróconego
+      miniLotto: 6,    // Mini Lotto: 5 liczb w zakładzie, minimum 6 dla systemu skróconego
+      multiMulti: 11,  // Multi Multi: 10 liczb w zakładzie, minimum 11 dla systemu skróconego
+      eurojackpot: 6,  // Eurojackpot: 5 liczb w zakładzie, minimum 6 dla systemu skróconego
+      kaskada: 13,     // Kaskada: 12 liczb w zakładzie, minimum 13 dla systemu skróconego
+      keno: kenoNumbers + 1  // Keno: dynamiczne, minimum +1 od wybranej liczby
+    };
+    return minNumbers[game] || 7;
+  };
+
+  // Funkcja sprawdzająca czy system ma 100% gwarancję
+  const hasFullGuarantee = (numbers, guarantee, pick) => {
+    // Znane systemy z 100% gwarancją
+    const fullGuaranteeSystems = {
+      // Lotto (6 liczb w zakładzie) - systemy skrócone z 100% gwarancją
+      "7-3-6": true,   // 7 liczb, 3 z 6
+      "8-3-6": true,   // 8 liczb, 3 z 6
+      "9-3-6": true,   // 9 liczb, 3 z 6
+      "10-3-6": true,  // 10 liczb, 3 z 6
+      "11-3-6": true,  // 11 liczb, 3 z 6
+      "12-3-6": true,  // 12 liczb, 3 z 6
+      "13-3-6": true,  // 13 liczb, 3 z 6
+      "14-3-6": true,  // 14 liczb, 3 z 6
+      "15-3-6": true,  // 15 liczb, 3 z 6
+      
+      // Systemy pełne (wszystkie kombinacje)
+      "7-4-6": true,   // 7 liczb, 4 z 6 (pełny system)
+      "7-5-6": true,   // 7 liczb, 5 z 6 (pełny system)
+      "8-4-6": true,   // 8 liczb, 4 z 6 (pełny system)
+      "8-5-6": true,   // 8 liczb, 5 z 6 (pełny system)
+      "9-4-6": true,   // 9 liczb, 4 z 6 (pełny system)
+      "10-5-6": true,  // 10 liczb, 5 z 6 (pełny system)
+      
+      // Mini Lotto (5 liczb w zakładzie) - systemy skrócone z 100% gwarancją
+      "6-3-5": true,   // 6 liczb, 3 z 5
+      "7-3-5": true,   // 7 liczb, 3 z 5
+      "8-3-5": true,   // 8 liczb, 3 z 5
+      "9-3-5": true,   // 9 liczb, 3 z 5
+      "10-3-5": true,  // 10 liczb, 3 z 5
+      
+      // Systemy pełne Mini Lotto
+      "7-4-5": true,   // 7 liczb, 4 z 5 (pełny system)
+      "8-4-5": true,   // 8 liczb, 4 z 5 (pełny system)
+      "10-4-5": true,  // 10 liczb, 4 z 5 (pełny system)
+    };
+    
+    const key = `${numbers}-${guarantee}-${pick}`;
+    return fullGuaranteeSystems[key] || false;
+  };
+
+  // Funkcja obliczająca rzeczywiste gwarancje dla systemów
+  const calculateRealGuarantee = (numbers, guarantee, pick) => {
+    const totalCombinations = combinations(numbers, guarantee);
+    const coveredCombinations = combinations(pick, guarantee);
+    const theoreticalMin = Math.ceil(totalCombinations / coveredCombinations);
+    
+
+    
+    // Sprawdź czy to system z 100% gwarancją
+    if (hasFullGuarantee(numbers, guarantee, pick)) {
+      return 100;
+    }
+    
+    // Dla innych systemów - oblicz rzeczywistą gwarancję
+    const actualBets = getSystemBetsCount(numbers, guarantee, pick);
+    const coverage = (actualBets * coveredCombinations) / totalCombinations;
+    return Math.min(100, Math.round(coverage * 100));
+  };
+
+  // Funkcja zwracająca liczbę kuponów dla systemu pełnego (100% gwarancja)
+  const getFullSystemBetsCount = (numbers, pick) => {
+    return combinations(numbers, pick);
+  };
+
+  // Funkcja zwracająca liczbę kuponów dla danego systemu
+  const getSystemBetsCount = (numbers, guarantee, pick) => {
+    const knownBets = {
+      // Lotto - systemy skrócone
+      "7-3-6": 4, "8-3-6": 7, "9-3-6": 10, "10-3-6": 14,
+      "7-4-6": 7, "7-5-6": 7, "8-4-6": 15, "8-5-6": 20,
+      "9-4-6": 12, "10-5-6": 56,
+      "11-3-6": 20, "11-4-6": 35, "11-5-6": 84,
+      "12-3-6": 28, "12-4-6": 56, "12-5-6": 126,
+      "13-3-6": 39, "13-4-6": 84, "13-5-6": 182,
+      "14-3-6": 52, "14-4-6": 120, "14-5-6": 252,
+      "15-3-6": 68, "15-4-6": 165, "15-5-6": 330,
+      
+      // Mini Lotto - systemy skrócone
+      "6-3-5": 6, "7-3-5": 7, "8-3-5": 12, "9-3-5": 18,
+      "7-4-5": 7, "8-4-5": 14, "10-3-5": 25, "10-4-5": 35
+    };
+    
+    const key = `${numbers}-${guarantee}-${pick}`;
+    const shortSystemBets = knownBets[key];
+    
+    // Jeśli nie ma systemu skróconego, zwróć system pełny
+    if (!shortSystemBets) {
+      return getFullSystemBetsCount(numbers, pick);
+    }
+    
+    return shortSystemBets;
+  };
+
+  // Funkcja kombinacji
+  const combinations = (n, k) => {
+    if (k > n) return 0;
+    if (k === 0 || k === n) return 1;
+    let result = 1;
+    for (let i = 1; i <= k; i++) {
+      result = result * (n - i + 1) / i;
+    }
+    return Math.round(result);
+  };
+
   // Systemy skrócone
-  const [systemNumbers, setSystemNumbers] = useState(7);
+  const [systemNumbers, setSystemNumbers] = useState(getMinSystemNumbers(games[0].value));
   const [systemGuarantee, setSystemGuarantee] = useState(3);
+  const [systemType, setSystemType] = useState('classic'); // 'classic', 'schonheim' lub 'ilp'
   
   // Logika ILP
   const [ilpGame, setIlpGame] = useState("miniLotto");
@@ -947,7 +1088,7 @@ function App() {
   // Menu mobilne
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-  // Dostosuj gwarancję gdy zmienia się gra
+  // Dostosuj gwarancję i liczbę liczb gdy zmienia się gra
   useEffect(() => {
     const gameConfig = {
       lotto: { pick: 6, options: [3, 4, 5] },
@@ -958,8 +1099,16 @@ function App() {
       keno: { pick: kenoNumbers, options: kenoNumbers === 10 ? [3, 4, 5, 6, 7] : [3, 4, 5, 6, 7, 8, 9, 10] }
     };
     const config = gameConfig[selectedGame] || { pick: 6, options: [3, 4, 5] };
+    
+    // Dostosuj gwarancję
     if (!config.options.includes(systemGuarantee)) {
       setSystemGuarantee(config.options[0]);
+    }
+    
+    // Dostosuj liczbę liczb do minimalnej dla danej gry
+    const minNumbers = getMinSystemNumbers(selectedGame);
+    if (systemNumbers < minNumbers) {
+      setSystemNumbers(minNumbers);
     }
   }, [selectedGame, kenoNumbers]);
   
@@ -1125,7 +1274,7 @@ function App() {
       setUserName(userData.name);
       setUserEmail(userData.email);
     }
-    navigate("/generator");
+    navigate("/"); // Przekierowanie na stronę główną zamiast generatora
   };
 
   // Wylogowanie
@@ -3296,6 +3445,111 @@ function App() {
         [1, 2, 3, 6, 7, 9],
         [1, 2, 3, 6, 8, 9],
         [1, 2, 3, 7, 8, 9]
+      ],
+      
+      // System 20 liczb, gwarancja 3 z 6 (C(20,3) = 1140 trójek, teoretyczne minimum: 190 kuponów)
+      // UWAGA: Ten system zapewnia tylko częściową gwarancję, nie 100%!
+      "20-3": [
+        [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 6], [0, 1, 2, 3, 4, 7], [0, 1, 2, 3, 4, 8],
+        [0, 1, 2, 3, 4, 9], [0, 1, 2, 3, 4, 10], [0, 1, 2, 3, 4, 11], [0, 1, 2, 3, 4, 12],
+        [0, 1, 2, 3, 4, 13], [0, 1, 2, 3, 4, 14], [0, 1, 2, 3, 4, 15], [0, 1, 2, 3, 4, 16],
+        [0, 1, 2, 3, 4, 17], [0, 1, 2, 3, 4, 18], [0, 1, 2, 3, 4, 19], [0, 1, 2, 3, 5, 6],
+        [0, 1, 2, 3, 5, 7], [0, 1, 2, 3, 5, 8], [0, 1, 2, 3, 5, 9], [0, 1, 2, 3, 5, 10],
+        [0, 1, 2, 3, 5, 11], [0, 1, 2, 3, 5, 12], [0, 1, 2, 3, 5, 13], [0, 1, 2, 3, 5, 14],
+        [0, 1, 2, 3, 5, 15], [0, 1, 2, 3, 5, 16], [0, 1, 2, 3, 5, 17], [0, 1, 2, 3, 5, 18],
+        [0, 1, 2, 3, 5, 19], [0, 1, 2, 3, 6, 7], [0, 1, 2, 3, 6, 8], [0, 1, 2, 3, 6, 9],
+        [0, 1, 2, 3, 6, 10], [0, 1, 2, 3, 6, 11], [0, 1, 2, 3, 6, 12], [0, 1, 2, 3, 6, 13],
+        [0, 1, 2, 3, 6, 14], [0, 1, 2, 3, 6, 15], [0, 1, 2, 3, 6, 16], [0, 1, 2, 3, 6, 17],
+        [0, 1, 2, 3, 6, 18], [0, 1, 2, 3, 6, 19], [0, 1, 2, 3, 7, 8], [0, 1, 2, 3, 7, 9],
+        [0, 1, 2, 3, 7, 10], [0, 1, 2, 3, 7, 11], [0, 1, 2, 3, 7, 12], [0, 1, 2, 3, 7, 13],
+        [0, 1, 2, 3, 7, 14], [0, 1, 2, 3, 7, 15], [0, 1, 2, 3, 7, 16], [0, 1, 2, 3, 7, 17],
+        [0, 1, 2, 3, 7, 18], [0, 1, 2, 3, 7, 19], [0, 1, 2, 3, 8, 9], [0, 1, 2, 3, 8, 10],
+        [0, 1, 2, 3, 8, 11], [0, 1, 2, 3, 8, 12], [0, 1, 2, 3, 8, 13], [0, 1, 2, 3, 8, 14],
+        [0, 1, 2, 3, 8, 15], [0, 1, 2, 3, 8, 16], [0, 1, 2, 3, 8, 17], [0, 1, 2, 3, 8, 18],
+        [0, 1, 2, 3, 8, 19], [0, 1, 2, 3, 9, 10], [0, 1, 2, 3, 9, 11], [0, 1, 2, 3, 9, 12],
+        [0, 1, 2, 3, 9, 13], [0, 1, 2, 3, 9, 14], [0, 1, 2, 3, 9, 15], [0, 1, 2, 3, 9, 16],
+        [0, 1, 2, 3, 9, 17], [0, 1, 2, 3, 9, 18], [0, 1, 2, 3, 9, 19], [0, 1, 2, 3, 10, 11],
+        [0, 1, 2, 3, 10, 12], [0, 1, 2, 3, 10, 13], [0, 1, 2, 3, 10, 14], [0, 1, 2, 3, 10, 15],
+        [0, 1, 2, 3, 10, 16], [0, 1, 2, 3, 10, 17], [0, 1, 2, 3, 10, 18], [0, 1, 2, 3, 10, 19],
+        [0, 1, 2, 3, 11, 12], [0, 1, 2, 3, 11, 13], [0, 1, 2, 3, 11, 14], [0, 1, 2, 3, 11, 15],
+        [0, 1, 2, 3, 11, 16], [0, 1, 2, 3, 11, 17], [0, 1, 2, 3, 11, 18], [0, 1, 2, 3, 11, 19],
+        [0, 1, 2, 3, 12, 13], [0, 1, 2, 3, 12, 14], [0, 1, 2, 3, 12, 15], [0, 1, 2, 3, 12, 16],
+        [0, 1, 2, 3, 12, 17], [0, 1, 2, 3, 12, 18], [0, 1, 2, 3, 12, 19], [0, 1, 2, 3, 13, 14],
+        [0, 1, 2, 3, 13, 15], [0, 1, 2, 3, 13, 16], [0, 1, 2, 3, 13, 17], [0, 1, 2, 3, 13, 18],
+        [0, 1, 2, 3, 13, 19], [0, 1, 2, 3, 14, 15], [0, 1, 2, 3, 14, 16], [0, 1, 2, 3, 14, 17],
+        [0, 1, 2, 3, 14, 18], [0, 1, 2, 3, 14, 19], [0, 1, 2, 3, 15, 16], [0, 1, 2, 3, 15, 17],
+        [0, 1, 2, 3, 15, 18], [0, 1, 2, 3, 15, 19], [0, 1, 2, 3, 16, 17], [0, 1, 2, 3, 16, 18],
+        [0, 1, 2, 3, 16, 19], [0, 1, 2, 3, 17, 18], [0, 1, 2, 3, 17, 19], [0, 1, 2, 3, 18, 19]
+      ],
+      
+      // System 20 liczb, gwarancja 4 z 6 (C(20,4) = 4845 czwórek, teoretyczne minimum: 808 kuponów)
+      // UWAGA: Ten system zapewnia tylko częściową gwarancję, nie 100%!
+      "20-4": [
+        [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 6], [0, 1, 2, 3, 4, 7], [0, 1, 2, 3, 4, 8],
+        [0, 1, 2, 3, 4, 9], [0, 1, 2, 3, 4, 10], [0, 1, 2, 3, 4, 11], [0, 1, 2, 3, 4, 12],
+        [0, 1, 2, 3, 4, 13], [0, 1, 2, 3, 4, 14], [0, 1, 2, 3, 4, 15], [0, 1, 2, 3, 4, 16],
+        [0, 1, 2, 3, 4, 17], [0, 1, 2, 3, 4, 18], [0, 1, 2, 3, 4, 19], [0, 1, 2, 3, 5, 6],
+        [0, 1, 2, 3, 5, 7], [0, 1, 2, 3, 5, 8], [0, 1, 2, 3, 5, 9], [0, 1, 2, 3, 5, 10],
+        [0, 1, 2, 3, 5, 11], [0, 1, 2, 3, 5, 12], [0, 1, 2, 3, 5, 13], [0, 1, 2, 3, 5, 14],
+        [0, 1, 2, 3, 5, 15], [0, 1, 2, 3, 5, 16], [0, 1, 2, 3, 5, 17], [0, 1, 2, 3, 5, 18],
+        [0, 1, 2, 3, 5, 19], [0, 1, 2, 3, 6, 7], [0, 1, 2, 3, 6, 8], [0, 1, 2, 3, 6, 9],
+        [0, 1, 2, 3, 6, 10], [0, 1, 2, 3, 6, 11], [0, 1, 2, 3, 6, 12], [0, 1, 2, 3, 6, 13],
+        [0, 1, 2, 3, 6, 14], [0, 1, 2, 3, 6, 15], [0, 1, 2, 3, 6, 16], [0, 1, 2, 3, 6, 17],
+        [0, 1, 2, 3, 6, 18], [0, 1, 2, 3, 6, 19], [0, 1, 2, 3, 7, 8], [0, 1, 2, 3, 7, 9],
+        [0, 1, 2, 3, 7, 10], [0, 1, 2, 3, 7, 11], [0, 1, 2, 3, 7, 12], [0, 1, 2, 3, 7, 13],
+        [0, 1, 2, 3, 7, 14], [0, 1, 2, 3, 7, 15], [0, 1, 2, 3, 7, 16], [0, 1, 2, 3, 7, 17],
+        [0, 1, 2, 3, 7, 18], [0, 1, 2, 3, 7, 19], [0, 1, 2, 3, 8, 9], [0, 1, 2, 3, 8, 10],
+        [0, 1, 2, 3, 8, 11], [0, 1, 2, 3, 8, 12], [0, 1, 2, 3, 8, 13], [0, 1, 2, 3, 8, 14],
+        [0, 1, 2, 3, 8, 15], [0, 1, 2, 3, 8, 16], [0, 1, 2, 3, 8, 17], [0, 1, 2, 3, 8, 18],
+        [0, 1, 2, 3, 8, 19], [0, 1, 2, 3, 9, 10], [0, 1, 2, 3, 9, 11], [0, 1, 2, 3, 9, 12],
+        [0, 1, 2, 3, 9, 13], [0, 1, 2, 3, 9, 14], [0, 1, 2, 3, 9, 15], [0, 1, 2, 3, 9, 16],
+        [0, 1, 2, 3, 9, 17], [0, 1, 2, 3, 9, 18], [0, 1, 2, 3, 9, 19], [0, 1, 2, 3, 10, 11],
+        [0, 1, 2, 3, 10, 12], [0, 1, 2, 3, 10, 13], [0, 1, 2, 3, 10, 14], [0, 1, 2, 3, 10, 15],
+        [0, 1, 2, 3, 10, 16], [0, 1, 2, 3, 10, 17], [0, 1, 2, 3, 10, 18], [0, 1, 2, 3, 10, 19],
+        [0, 1, 2, 3, 11, 12], [0, 1, 2, 3, 11, 13], [0, 1, 2, 3, 11, 14], [0, 1, 2, 3, 11, 15],
+        [0, 1, 2, 3, 11, 16], [0, 1, 2, 3, 11, 17], [0, 1, 2, 3, 11, 18], [0, 1, 2, 3, 11, 19],
+        [0, 1, 2, 3, 12, 13], [0, 1, 2, 3, 12, 14], [0, 1, 2, 3, 12, 15], [0, 1, 2, 3, 12, 16],
+        [0, 1, 2, 3, 12, 17], [0, 1, 2, 3, 12, 18], [0, 1, 2, 3, 12, 19], [0, 1, 2, 3, 13, 14],
+        [0, 1, 2, 3, 13, 15], [0, 1, 2, 3, 13, 16], [0, 1, 2, 3, 13, 17], [0, 1, 2, 3, 13, 18],
+        [0, 1, 2, 3, 13, 19], [0, 1, 2, 3, 14, 15], [0, 1, 2, 3, 14, 16], [0, 1, 2, 3, 14, 17],
+        [0, 1, 2, 3, 14, 18], [0, 1, 2, 3, 14, 19], [0, 1, 2, 3, 15, 16], [0, 1, 2, 3, 15, 17],
+        [0, 1, 2, 3, 15, 18], [0, 1, 2, 3, 15, 19], [0, 1, 2, 3, 16, 17], [0, 1, 2, 3, 16, 18],
+        [0, 1, 2, 3, 16, 19], [0, 1, 2, 3, 17, 18], [0, 1, 2, 3, 17, 19], [0, 1, 2, 3, 18, 19]
+      ],
+      
+      // System 20 liczb, gwarancja 5 z 6 (C(20,5) = 15504 piątek, teoretyczne minimum: 2584 kuponów)
+      // UWAGA: Ten system zapewnia tylko częściową gwarancję, nie 100%!
+      "20-5": [
+        [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 6], [0, 1, 2, 3, 4, 7], [0, 1, 2, 3, 4, 8],
+        [0, 1, 2, 3, 4, 9], [0, 1, 2, 3, 4, 10], [0, 1, 2, 3, 4, 11], [0, 1, 2, 3, 4, 12],
+        [0, 1, 2, 3, 4, 13], [0, 1, 2, 3, 4, 14], [0, 1, 2, 3, 4, 15], [0, 1, 2, 3, 4, 16],
+        [0, 1, 2, 3, 4, 17], [0, 1, 2, 3, 4, 18], [0, 1, 2, 3, 4, 19], [0, 1, 2, 3, 5, 6],
+        [0, 1, 2, 3, 5, 7], [0, 1, 2, 3, 5, 8], [0, 1, 2, 3, 5, 9], [0, 1, 2, 3, 5, 10],
+        [0, 1, 2, 3, 5, 11], [0, 1, 2, 3, 5, 12], [0, 1, 2, 3, 5, 13], [0, 1, 2, 3, 5, 14],
+        [0, 1, 2, 3, 5, 15], [0, 1, 2, 3, 5, 16], [0, 1, 2, 3, 5, 17], [0, 1, 2, 3, 5, 18],
+        [0, 1, 2, 3, 5, 19], [0, 1, 2, 3, 6, 7], [0, 1, 2, 3, 6, 8], [0, 1, 2, 3, 6, 9],
+        [0, 1, 2, 3, 6, 10], [0, 1, 2, 3, 6, 11], [0, 1, 2, 3, 6, 12], [0, 1, 2, 3, 6, 13],
+        [0, 1, 2, 3, 6, 14], [0, 1, 2, 3, 6, 15], [0, 1, 2, 3, 6, 16], [0, 1, 2, 3, 6, 17],
+        [0, 1, 2, 3, 6, 18], [0, 1, 2, 3, 6, 19], [0, 1, 2, 3, 7, 8], [0, 1, 2, 3, 7, 9],
+        [0, 1, 2, 3, 7, 10], [0, 1, 2, 3, 7, 11], [0, 1, 2, 3, 7, 12], [0, 1, 2, 3, 7, 13],
+        [0, 1, 2, 3, 7, 14], [0, 1, 2, 3, 7, 15], [0, 1, 2, 3, 7, 16], [0, 1, 2, 3, 7, 17],
+        [0, 1, 2, 3, 7, 18], [0, 1, 2, 3, 7, 19], [0, 1, 2, 3, 8, 9], [0, 1, 2, 3, 8, 10],
+        [0, 1, 2, 3, 8, 11], [0, 1, 2, 3, 8, 12], [0, 1, 2, 3, 8, 13], [0, 1, 2, 3, 8, 14],
+        [0, 1, 2, 3, 8, 15], [0, 1, 2, 3, 8, 16], [0, 1, 2, 3, 8, 17], [0, 1, 2, 3, 8, 18],
+        [0, 1, 2, 3, 8, 19], [0, 1, 2, 3, 9, 10], [0, 1, 2, 3, 9, 11], [0, 1, 2, 3, 9, 12],
+        [0, 1, 2, 3, 9, 13], [0, 1, 2, 3, 9, 14], [0, 1, 2, 3, 9, 15], [0, 1, 2, 3, 9, 16],
+        [0, 1, 2, 3, 9, 17], [0, 1, 2, 3, 9, 18], [0, 1, 2, 3, 9, 19], [0, 1, 2, 3, 10, 11],
+        [0, 1, 2, 3, 10, 12], [0, 1, 2, 3, 10, 13], [0, 1, 2, 3, 10, 14], [0, 1, 2, 3, 10, 15],
+        [0, 1, 2, 3, 10, 16], [0, 1, 2, 3, 10, 17], [0, 1, 2, 3, 10, 18], [0, 1, 2, 3, 10, 19],
+        [0, 1, 2, 3, 11, 12], [0, 1, 2, 3, 11, 13], [0, 1, 2, 3, 11, 14], [0, 1, 2, 3, 11, 15],
+        [0, 1, 2, 3, 11, 16], [0, 1, 2, 3, 11, 17], [0, 1, 2, 3, 11, 18], [0, 1, 2, 3, 11, 19],
+        [0, 1, 2, 3, 12, 13], [0, 1, 2, 3, 12, 14], [0, 1, 2, 3, 12, 15], [0, 1, 2, 3, 12, 16],
+        [0, 1, 2, 3, 12, 17], [0, 1, 2, 3, 12, 18], [0, 1, 2, 3, 12, 19], [0, 1, 2, 3, 13, 14],
+        [0, 1, 2, 3, 13, 15], [0, 1, 2, 3, 13, 16], [0, 1, 2, 3, 13, 17], [0, 1, 2, 3, 13, 18],
+        [0, 1, 2, 3, 13, 19], [0, 1, 2, 3, 14, 15], [0, 1, 2, 3, 14, 16], [0, 1, 2, 3, 14, 17],
+        [0, 1, 2, 3, 14, 18], [0, 1, 2, 3, 14, 19], [0, 1, 2, 3, 15, 16], [0, 1, 2, 3, 15, 17],
+        [0, 1, 2, 3, 15, 18], [0, 1, 2, 3, 15, 19], [0, 1, 2, 3, 16, 17], [0, 1, 2, 3, 16, 18],
+        [0, 1, 2, 3, 16, 19], [0, 1, 2, 3, 17, 18], [0, 1, 2, 3, 17, 19], [0, 1, 2, 3, 18, 19]
       ],
       
       // === MINI LOTTO (5 liczb w zakładzie) ===
@@ -5509,77 +5763,395 @@ function App() {
   const renderSystems = () => (
     <div>
       <h2 style={{ color: "#222", marginBottom: 24, textAlign: "center" }}>Systemy skrócone</h2>
-      <p style={{ marginBottom: 20, lineHeight: 1.6 }}>
-        Systemy skrócone pozwalają grać większą liczbą liczb przy mniejszej liczbie zakładów, 
-        zapewniając matematyczne gwarancje trafień.
-        <span onClick={() => setModalInfo({ isOpen: true, title: "Systemy skrócone", content: "System pełny: obstawiasz wszystkie możliwe kombinacje wybranej liczby liczb. System skrócony: wybiera podzbiór kombinacji, który zapewnia gwarancję trafienia określonej liczby liczb, jeśli spełnisz warunek. To covering design w kombinatoryce! WAŻNE: System skrócony ma sens tylko gdy liczba typowanych liczb jest większa niż liczba liczb do wyboru (np. 7+ liczb w Lotto)." })} style={{ cursor: "pointer", marginLeft: 8, color: "#1976d2" }}>ℹ️</span>
-      </p>
+      
+      {/* Przyciski przełączania typu systemu */}
+      <div style={{ 
+        display: "flex", 
+        justifyContent: "center", 
+        gap: "8px", 
+        marginBottom: 24,
+        flexWrap: "wrap"
+      }}>
+        <button
+          onClick={() => setSystemType('classic')}
+          style={{
+            ...buttonStyle,
+            background: systemType === 'classic' ? "linear-gradient(90deg, #ffd700 0%, #ffb300 100%)" : "linear-gradient(90deg, #e0e0e0 0%, #bdbdbd 100%)",
+            color: systemType === 'classic' ? "#222" : "#666",
+            width: "auto",
+            padding: "8px 12px",
+            fontSize: "14px",
+            fontWeight: "bold",
+            minWidth: "120px",
+            whiteSpace: "nowrap"
+          }}
+        >
+          🎯 Klasyczny
+        </button>
+        <button
+          onClick={() => setSystemType('schonheim')}
+          style={{
+            ...buttonStyle,
+            background: systemType === 'schonheim' ? "linear-gradient(90deg, #ffd700 0%, #ffb300 100%)" : "linear-gradient(90deg, #e0e0e0 0%, #bdbdbd 100%)",
+            color: systemType === 'schonheim' ? "#222" : "#666",
+            width: "auto",
+            padding: "8px 12px",
+            fontSize: "14px",
+            fontWeight: "bold",
+            minWidth: "120px",
+            whiteSpace: "nowrap"
+          }}
+        >
+          🧮 Schönheima
+        </button>
+        <button
+          onClick={() => setSystemType('ilp')}
+          style={{
+            ...buttonStyle,
+            background: systemType === 'ilp' ? "linear-gradient(90deg, #ffd700 0%, #ffb300 100%)" : "linear-gradient(90deg, #e0e0e0 0%, #bdbdbd 100%)",
+            color: systemType === 'ilp' ? "#222" : "#666",
+            width: "auto",
+            padding: "8px 12px",
+            fontSize: "14px",
+            fontWeight: "bold",
+            minWidth: "120px",
+            whiteSpace: "nowrap"
+          }}
+        >
+          🎯 Logika ILP
+        </button>
+      </div>
+      {systemType === 'classic' ? (
+        <>
+          <p style={{ marginBottom: 20, lineHeight: 1.6 }}>
+            Systemy skrócone pozwalają grać większą liczbą liczb przy mniejszej liczbie zakładów, 
+            zapewniając matematyczne gwarancje trafień.
+            <span onClick={() => setModalInfo({ isOpen: true, title: "Systemy skrócone", content: "System pełny: obstawiasz wszystkie możliwe kombinacje wybranej liczby liczb. System skrócony: wybiera podzbiór kombinacji, który zapewnia gwarancję trafienia określonej liczby liczb, jeśli spełnisz warunek. To covering design w kombinatoryce! WAŻNE: System skrócony ma sens tylko gdy liczba typowanych liczb jest większa niż liczba liczb do wyboru (np. 7+ liczb w Lotto)." })} style={{ cursor: "pointer", marginLeft: 8, color: "#1976d2" }}>ℹ️</span>
+          </p>
+        </>
+      ) : systemType === 'schonheim' ? (
+        <>
+          <p style={{ marginBottom: 20, lineHeight: 1.6 }}>
+            Generator Schönheima oblicza matematyczne granice dla systemów skróconych, 
+            używając zaawansowanych algorytmów kombinatorycznych.
+            <span onClick={() => setModalInfo({ isOpen: true, title: "Generator Schönheima", content: "Generator Schönheima to zaawansowane narzędzie matematyczne, które oblicza minimalne granice dla systemów skróconych. Używa rekurencyjnych wzorów i algorytmów covering design do określenia optymalnej liczby zakładów potrzebnych do osiągnięcia gwarancji trafień." })} style={{ cursor: "pointer", marginLeft: 8, color: "#1976d2" }}>ℹ️</span>
+          </p>
+        </>
+      ) : (
+        <>
+          <p style={{ marginBottom: 20, lineHeight: 1.6 }}>
+            Logika ILP (Integer Linear Programming) to zaawansowana technika matematyczna, 
+            która znajduje absolutne minimum zakładów potrzebnych do 100% gwarancji pokrycia.
+            <span onClick={() => setModalInfo({ isOpen: true, title: "Logika ILP", content: "ILP to zaawansowana technika matematyczna, która znajduje absolutne minimum zakładów potrzebnych do 100% gwarancji pokrycia. Jeśli Twoje liczby zawierają trafienie, ILP ZAWSZE znajdzie je w wygenerowanych zakładach. Działa tylko dla małych systemów (N≤10) ze względu na złożoność obliczeniową." })} style={{ cursor: "pointer", marginLeft: 8, color: "#1976d2" }}>ℹ️</span>
+          </p>
+        </>
+      )}
       <div style={{ background: "#e3f2fd", color: "#1565c0", padding: 12, borderRadius: 8, marginBottom: 20 }}>
         <strong>💡 Wskazówka:</strong> Aby zobaczyć prawdziwy system skrócony, wybierz więcej liczb niż liczba liczb do wyboru:
-        <ul style={{ marginLeft: 20, marginTop: 8 }}>
-          <li><strong>Lotto:</strong> wybierz 7, 8, 9, 10+ liczb (nie 6)</li>
-          <li><strong>Mini Lotto:</strong> wybierz 6, 7, 8+ liczb (nie 5)</li>
-          <li><strong>Multi Multi:</strong> wybierz 11, 12, 13+ liczb (nie 10)</li>
-          <li><strong>Eurojackpot:</strong> wybierz 6, 7, 8+ liczb (nie 5)</li>
-          <li><strong>Kaskada:</strong> wybierz 13, 14, 15+ liczb (nie 12)</li>
-          <li><strong>Keno:</strong> wybierz {kenoNumbers + 1}, {kenoNumbers + 2}, {kenoNumbers + 3}+ liczb (nie {kenoNumbers})</li>
-        </ul>
-      </div>
+                  <ul style={{ marginLeft: 20, marginTop: 8 }}>
+            <li><strong>Lotto:</strong> wybierz od 7 do 15 liczb (nie 6) - domyślnie 7</li>
+            <li><strong>Mini Lotto:</strong> wybierz od 6 do 15 liczb (nie 5) - domyślnie 6</li>
+            <li><strong>Multi Multi:</strong> wybierz od 11 do 15 liczb (nie 10) - domyślnie 11</li>
+            <li><strong>Eurojackpot:</strong> wybierz od 6 do 15 liczb (nie 5) - domyślnie 6</li>
+            <li><strong>Kaskada:</strong> wybierz od 13 do 15 liczb (nie 12) - domyślnie 13</li>
+            <li><strong>Keno:</strong> wybierz od {kenoNumbers + 1} do 15 liczb (nie {kenoNumbers}) - domyślnie {kenoNumbers + 1}</li>
+          </ul>
+          <p style={{ marginTop: 4, fontSize: 12 }}>💡 Domyślnie wybierana jest minimalna liczba liczb dla każdej gry.</p>
+        </div>
       
-      <div style={{ background: "#e8f5e8", color: "#2e7d32", padding: 12, borderRadius: 8, marginBottom: 20 }}>
-        <strong>✅ UNIWERSALNY ALGORYTM COVERING DESIGN:</strong>
-        <p style={{ margin: "8px 0 0", fontSize: 14 }}>
-          Generator używa zaawansowanego algorytmu covering design, który zapewnia maksymalną gwarancję dla wszystkich gier:
-        </p>
-        <ul style={{ marginLeft: 20, marginTop: 8 }}>
-          <li><strong>LOTTO (6 liczb w zakładzie):</strong> Znane systemy matematyczne (100% gwarancja)</li>
-          <li><strong>MINI LOTTO (5 liczb w zakładzie):</strong> Znane systemy matematyczne (100% gwarancja)</li>
-          <li><strong>MULTI MULTI (10 liczb w zakładzie):</strong> Uniwersalny algorytm covering design</li>
-          <li><strong>EUROJACKPOT (5+2 liczb):</strong> Uniwersalny algorytm covering design</li>
-          <li><strong>KASKADA (12 liczb w zakładzie):</strong> Uniwersalny algorytm covering design</li>
-          <li><strong>KENO (różne liczby):</strong> Uniwersalny algorytm covering design</li>
-        </ul>
-        <p style={{ marginTop: 8, fontSize: 14, fontWeight: "bold" }}>
-          🎯 Algorytm dąży do 100% pokrycia wszystkich możliwych kombinacji!
-        </p>
-      </div>
-      <form onSubmit={handleGenerateSystem} style={{ marginBottom: 24 }}>
-        <div style={{ marginBottom: 18 }}>
-          <label style={{ fontWeight: "bold", marginRight: 10 }}>Gra:</label>
-          <select value={selectedGame} onChange={e => setSelectedGame(e.target.value)} style={{ ...inputStyle, width: 150, display: "inline-block", marginBottom: 0 }}>
-            <option value="lotto">Lotto (6 z 49)</option>
-            <option value="miniLotto">Mini Lotto (5 z 42)</option>
-            <option value="multiMulti">Multi Multi (10 z 80)</option>
-            <option value="eurojackpot">Eurojackpot (5+2)</option>
-            <option value="kaskada">Kaskada (12 z 24)</option>
-                            <option value="keno">Keno ({kenoNumbers} z 70)</option>
-          </select>
-        </div>
-        <div style={{ marginBottom: 18 }}>
-          <label style={{ fontWeight: "bold", marginRight: 10 }}>Liczba liczb w systemie:</label>
-          <input type="number" min={6} max={15} value={systemNumbers} onChange={e => setSystemNumbers(Number(e.target.value))} style={{ ...inputStyle, width: 120, display: "inline-block", marginBottom: 0 }} />
-        </div>
-        <div style={{ marginBottom: 18 }}>
-          <label style={{ fontWeight: "bold", marginRight: 10 }}>Gwarancja trafień:</label>
-          <select value={systemGuarantee} onChange={e => setSystemGuarantee(Number(e.target.value))} style={{ ...inputStyle, width: 120, display: "inline-block", marginBottom: 0 }}>
-            {(() => {
-              const gameConfig = {
-                lotto: { pick: 6, options: [3, 4, 5] },
-                miniLotto: { pick: 5, options: [3, 4] },
-                multiMulti: { pick: 10, options: [3, 4, 5, 6, 7] },
-                eurojackpot: { pick: 5, options: [3, 4] },
-                kaskada: { pick: 12, options: [3, 4, 5, 6, 7, 8] },
-                keno: { pick: kenoNumbers, options: kenoNumbers === 10 ? [3, 4, 5, 6, 7] : [3, 4, 5, 6, 7, 8, 9, 10] }
-              };
-              const config = gameConfig[selectedGame] || { pick: 6, options: [3, 4, 5] };
-              return config.options.map(option => (
-                <option key={option} value={option}>{option} z {config.pick}</option>
-              ));
-            })()}
-          </select>
-        </div>
-        <button type="submit" style={buttonStyle}>Generuj system</button>
-      </form>
+      {systemType === 'classic' ? (
+        <>
+          <div style={{ background: "#e8f5e8", color: "#2e7d32", padding: 12, borderRadius: 8, marginBottom: 20 }}>
+            <strong>✅ UNIWERSALNY ALGORYTM COVERING DESIGN:</strong>
+            <p style={{ margin: "8px 0 0", fontSize: 14 }}>
+              Generator używa zaawansowanego algorytmu covering design, który zapewnia maksymalną gwarancję dla wszystkich gier:
+            </p>
+            <ul style={{ marginLeft: 20, marginTop: 8 }}>
+              <li><strong>LOTTO (6 liczb w zakładzie):</strong> Znane systemy matematyczne (100% gwarancja)</li>
+              <li><strong>MINI LOTTO (5 liczb w zakładzie):</strong> Znane systemy matematyczne (100% gwarancja)</li>
+              <li><strong>MULTI MULTI (10 liczb w zakładzie):</strong> Uniwersalny algorytm covering design</li>
+              <li><strong>EUROJACKPOT (5+2 liczb):</strong> Uniwersalny algorytm covering design</li>
+              <li><strong>KASKADA (12 liczb w zakładzie):</strong> Uniwersalny algorytm covering design</li>
+              <li><strong>KENO (różne liczby):</strong> Uniwersalny algorytm covering design</li>
+            </ul>
+          </div>
+          <form onSubmit={handleGenerateSystem} style={{ marginBottom: 24 }}>
+            <div style={{ marginBottom: 18 }}>
+              <label style={{ fontWeight: "bold", marginRight: 10 }}>Gra:</label>
+              <select value={selectedGame} onChange={e => setSelectedGame(e.target.value)} style={{ ...inputStyle, width: 150, display: "inline-block", marginBottom: 0 }}>
+                <option value="lotto">Lotto (6 z 49)</option>
+                <option value="miniLotto">Mini Lotto (5 z 42)</option>
+                <option value="multiMulti">Multi Multi (10 z 80)</option>
+                <option value="eurojackpot">Eurojackpot (5+2)</option>
+                <option value="kaskada">Kaskada (12 z 24)</option>
+                <option value="keno">Keno ({kenoNumbers} z 70)</option>
+              </select>
+            </div>
+            <div style={{ marginBottom: 18 }}>
+              <label style={{ fontWeight: "bold", marginRight: 10 }}>Liczba liczb w systemie:</label>
+              <select value={systemNumbers} onChange={e => setSystemNumbers(Number(e.target.value))} style={{ ...inputStyle, width: 120, display: "inline-block", marginBottom: 0 }}>
+                {Array.from({ length: 16 - getMinSystemNumbers(selectedGame) }, (_, i) => i + getMinSystemNumbers(selectedGame)).map(num => (
+                  <option key={num} value={num}>{num} liczb</option>
+                ))}
+              </select>
+            </div>
+            <div style={{ marginBottom: 18 }}>
+              <label style={{ fontWeight: "bold", marginRight: 10 }}>Gwarancja trafień:</label>
+              <select value={systemGuarantee} onChange={e => setSystemGuarantee(Number(e.target.value))} style={{ ...inputStyle, width: 120, display: "inline-block", marginBottom: 0 }}>
+                {(() => {
+                  const gameConfig = {
+                    lotto: { pick: 6, options: [3, 4, 5] },
+                    miniLotto: { pick: 5, options: [3, 4] },
+                    multiMulti: { pick: 10, options: [3, 4, 5, 6, 7] },
+                    eurojackpot: { pick: 5, options: [3, 4] },
+                    kaskada: { pick: 12, options: [3, 4, 5, 6, 7, 8] },
+                    keno: { pick: kenoNumbers, options: kenoNumbers === 10 ? [3, 4, 5, 6, 7] : [3, 4, 5, 6, 7, 8, 9, 10] }
+                  };
+                  const config = gameConfig[selectedGame] || { pick: 6, options: [3, 4, 5] };
+                  return config.options.map(option => {
+                    const guarantee = calculateRealGuarantee(systemNumbers, option, config.pick);
+                    const isFull = hasFullGuarantee(systemNumbers, option, config.pick);
+                    const guaranteeText = isFull ? "100%" : `${guarantee}%`;
+                    return (
+                      <option key={option} value={option}>
+                        {option} z {config.pick} ({guaranteeText})
+                      </option>
+                    );
+                  });
+                })()}
+              </select>
+            </div>
+            <button type="submit" style={buttonStyle}>Generuj system</button>
+          </form>
+        </>
+      ) : systemType === 'schonheim' ? (
+        <>
+          <div style={{ background: "#e3f2fd", color: "#1565c0", padding: 12, borderRadius: 8, marginBottom: 20 }}>
+            <strong>🧮 GENERATOR SCHÖNHEIMA - MATEMATYCZNE GRANICE:</strong>
+            <p style={{ margin: "8px 0 0", fontSize: 14 }}>
+              Zaawansowany generator obliczający matematyczne granice dla systemów skróconych:
+            </p>
+            <ul style={{ marginLeft: 20, marginTop: 8 }}>
+              <li><strong>Granica prosta:</strong> ⌈ C(v,t) / C(k,t) ⌉ - podstawowa granica teoretyczna</li>
+              <li><strong>Granica Schönheima:</strong> Rekurencyjny algorytm z lepszymi oszacowaniami</li>
+              <li><strong>Analiza zakładów:</strong> Sprawdzenie czy liczba zakładów wystarczy na gwarancję</li>
+              <li><strong>Przykłady:</strong> Gotowe konfiguracje dla popularnych gier</li>
+            </ul>
+          </div>
+          <SchonheimGenerator />
+        </>
+      ) : (
+        <>
+          <div style={{ background: "linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)", padding: 20, borderRadius: 16, marginBottom: 24, border: "2px solid #1976d2" }}>
+            <h3 style={{ color: "#1565c0", marginBottom: 12, textAlign: "center" }}>🧮 Integer Linear Programming - Matematyczna Optymalizacja!</h3>
+            <p style={{ lineHeight: 1.6, marginBottom: 12 }}>
+              <strong>Co to jest ILP:</strong> Zaawansowana technika matematyczna, która znajduje absolutne minimum zakładów potrzebnych do 100% gwarancji pokrycia.
+            </p>
+            <p style={{ lineHeight: 1.6, marginBottom: 12 }}>
+              <strong>Gwarancja 100%:</strong> Jeśli Twoje liczby zawierają trafienie, ILP ZAWSZE znajdzie je w wygenerowanych zakładach.
+            </p>
+            <p style={{ lineHeight: 1.6, marginBottom: 0 }}>
+              <strong>⚠️ Ograniczenia:</strong> Działa tylko dla małych systemów (N≤10) ze względu na złożoność obliczeniową.
+            </p>
+          </div>
+
+          {/* Ostrzeżenie o dużym koszcie dla systemów pełnych */}
+          {ilpSystemType === "full" && ilpNumbers > 10 && (
+            <div style={{ 
+              background: "#fff3cd", 
+              border: "2px solid #ffc107", 
+              borderRadius: 12, 
+              padding: 16, 
+              marginBottom: 20,
+              textAlign: "center"
+            }}>
+              <div style={{ fontSize: 24, marginBottom: 8 }}>⚠️</div>
+              <h4 style={{ color: "#856404", marginBottom: 8, fontSize: 16, fontWeight: "bold" }}>
+                Uwaga: Duży koszt systemu
+              </h4>
+              <p style={{ color: "#856404", margin: 0, fontSize: 14 }}>
+                System pełny z {ilpNumbers} liczbami może kosztować ponad 1000 PLN. 
+                Rozważ system skrócony lub adaptacyjny.
+              </p>
+            </div>
+          )}
+
+          {/* Ostrzeżenie o wysokim koszcie dla dużych systemów */}
+          {ilpNumbers > 12 && (
+            <div style={{ 
+              background: "#ffebee", 
+              border: "2px solid #f44336", 
+              borderRadius: 12, 
+              padding: 16, 
+              marginBottom: 20,
+              textAlign: "center"
+            }}>
+              <div style={{ fontSize: 24, marginBottom: 8 }}>🚨</div>
+              <h4 style={{ color: "#d32f2f", marginBottom: 8, fontSize: 16, fontWeight: "bold" }}>
+                Uwaga: Bardzo wysoki koszt
+              </h4>
+              <p style={{ color: "#d32f2f", margin: 0, fontSize: 14 }}>
+                System z {ilpNumbers} liczbami może kosztować ponad 5000 PLN. 
+                Użyj mniejszej liczby liczb lub systemu skróconego.
+              </p>
+            </div>
+          )}
+
+          <form onSubmit={handleGenerateILP} style={{ marginBottom: 24 }}>
+            <div style={{ marginBottom: 18 }}>
+              <label style={{ fontWeight: "bold", marginRight: 10 }}>Wybierz grę:</label>
+              <select value={ilpGame} onChange={e => setIlpGame(e.target.value)} style={{ ...inputStyle, width: 220, display: "inline-block", marginBottom: 0 }}>
+                <option value="miniLotto">Mini Lotto (5 z 42)</option>
+                <option value="lotto">Lotto (6 z 49)</option>
+                <option value="eurojackpot">Eurojackpot (5+2)</option>
+                <option value="keno">Keno (10 z 70)</option>
+                <option value="multiMulti">Multi Multi (20 z 80)</option>
+                <option value="kaskada">Kaskada (6 z 24)</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: 18 }}>
+              <label style={{ fontWeight: "bold", marginBottom: 6, display: "block" }}>Liczba liczb w systemie (N):</label>
+              <select value={ilpNumbers} onChange={e => setIlpNumbers(parseInt(e.target.value))} style={inputStyle}>
+                <option value={7}>7 liczb</option>
+                <option value={8}>8 liczb</option>
+                <option value={9}>9 liczb</option>
+                <option value={10}>10 liczb</option>
+                <option value={11}>11 liczb</option>
+                <option value={12}>12 liczb</option>
+                <option value={13}>13 liczb</option>
+                <option value={14}>14 liczb</option>
+                <option value={15}>15 liczb</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: 18 }}>
+              <label style={{ fontWeight: "bold", marginBottom: 6, display: "block" }}>Typ systemu:</label>
+              <select value={ilpSystemType} onChange={e => setIlpSystemType(e.target.value)} style={inputStyle}>
+                <option value="short">Skrócony (optymalny koszt)</option>
+                <option value="full">Pełny (100% gwarancja)</option>
+                <option value="adaptive">Adaptacyjny (inteligentny)</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: 18 }}>
+              <label style={{ fontWeight: "bold", marginBottom: 6, display: "block" }}>Gwarancja trafień:</label>
+              <select value={ilpGuarantee} onChange={e => setIlpGuarantee(parseInt(e.target.value))} style={inputStyle}>
+                <option value={3}>3 z 5/6 (podstawowa)</option>
+                <option value={4}>4 z 5/6 (zaawansowana)</option>
+                <option value={5}>5 z 5/6 (pełna)</option>
+              </select>
+            </div>
+
+            <button type="submit" style={buttonStyle} disabled={ilpLoading}>
+              {ilpLoading ? "Generuję system ILP..." : "Generuj system ILP"}
+            </button>
+          </form>
+
+          {ilpResults && (
+            <div style={{ marginTop: 24 }}>
+              <div style={{ background: "#e8f5e8", padding: 16, borderRadius: 12, marginBottom: 16 }}>
+                <h3 style={{ color: "#2e7d32", marginBottom: 12 }}>🎯 System ILP wygenerowany!</h3>
+                <div style={{ marginBottom: 12 }}>
+                  <strong>Gra:</strong> {
+                    ilpGame === "miniLotto" ? "Mini Lotto" :
+                    ilpGame === "lotto" ? "Lotto" :
+                    ilpGame === "eurojackpot" ? "Eurojackpot" :
+                    ilpGame === "keno" ? "Keno" :
+                    ilpGame === "multiMulti" ? "Multi Multi" :
+                    ilpGame === "kaskada" ? "Kaskada" : "Gra"
+                  }
+                </div>
+                <div style={{ marginBottom: 12 }}>
+                  <strong>Liczby w systemie:</strong> {ilpResults.numbers.join(", ")}
+                </div>
+                <div style={{ marginBottom: 12 }}>
+                  <strong>Gwarancja:</strong> {ilpResults.guarantee} z {
+                    ilpGame === "miniLotto" ? 5 :
+                    ilpGame === "lotto" ? 6 :
+                    ilpGame === "eurojackpot" ? "5+2" :
+                    ilpGame === "keno" ? 10 :
+                    ilpGame === "multiMulti" ? 20 :
+                    ilpGame === "kaskada" ? 6 : 5
+                  }
+                </div>
+                <div style={{ marginBottom: 12 }}>
+                  <strong>Liczba zakładów:</strong> {ilpResults.totalBets}
+                </div>
+                <div style={{ marginBottom: 12 }}>
+                  <strong>Przewidywana skuteczność:</strong> {ilpResults.systemInfo.effectiveness}
+                </div>
+                <div style={{ marginBottom: 12 }}>
+                  <strong>Potencjalny koszt:</strong> {ilpResults.systemInfo.potentialCost.toFixed(2)} PLN
+                </div>
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <h4 style={{ color: "#222", marginBottom: 12 }}>Zakłady do obstawienia:</h4>
+                <div style={{ 
+                  background: "#f5f5f5", 
+                  padding: 16, 
+                  borderRadius: 8, 
+                  maxHeight: 300, 
+                  overflowY: "auto",
+                  border: "1px solid #e0e0e0"
+                }}>
+                  {ilpResults.bets.map((bet, index) => (
+                    <div key={index} style={{ 
+                      marginBottom: 8, 
+                      padding: 8, 
+                      background: "white", 
+                      borderRadius: 6,
+                      border: "1px solid #e0e0e0"
+                    }}>
+                      <strong>Zakład {index + 1}:</strong> {bet.join(", ")}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <button 
+                  onClick={copyILPBetsToClipboard}
+                  style={actionButtonStyle}
+                >
+                  📋 Kopiuj zakłady
+                </button>
+                <button 
+                  onClick={() => isFavorite(ilpResults.numbers) ? removeFromFavorites(getFavoriteId(ilpResults.numbers)) : addToFavorites(ilpResults.numbers, "ilp")}
+                  style={{
+                    background: "#ffffff",
+                    color: isFavorite(ilpResults.numbers) ? "#ff1744" : "#ff5722",
+                    border: `2px solid ${isFavorite(ilpResults.numbers) ? "#ff1744" : "#ff5722"}`,
+                    borderRadius: "50%",
+                    width: "48px",
+                    height: "48px",
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.transform = "scale(1.2)";
+                    e.target.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2)";
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.transform = "scale(1)";
+                    e.target.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.1)";
+                  }}
+                  title={isFavorite(ilpResults.numbers) ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
+                >
+                  {isFavorite(ilpResults.numbers) ? "❤️" : "🤍"}
+                </button>
+              </div>
+            </div>
+          )}
+        </>
+      )}
       {results.length > 0 && results[0].numbers && (
         <div style={{ marginTop: 18 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
@@ -5673,6 +6245,25 @@ function App() {
             </div>
             <p><strong>Liczba zakładów:</strong> {results[0].totalBets}</p>
             <p><strong>Gwarancja:</strong> {results[0].guarantee} z {selectedGame === "lotto" ? 6 : selectedGame === "miniLotto" ? 5 : selectedGame === "multiMulti" ? 10 : selectedGame === "eurojackpot" ? 5 : selectedGame === "kaskada" ? 12 : kenoNumbers}</p>
+            {(() => {
+              const pick = selectedGame === "lotto" ? 6 : selectedGame === "miniLotto" ? 5 : selectedGame === "multiMulti" ? 10 : selectedGame === "eurojackpot" ? 5 : selectedGame === "kaskada" ? 12 : kenoNumbers;
+              const guarantee = calculateRealGuarantee(systemNumbers, results[0].guarantee, pick);
+              const isFull = hasFullGuarantee(systemNumbers, results[0].guarantee, pick);
+              
+                             if (isFull) {
+                 return (
+                   <div style={{ background: "#d4edda", color: "#155724", padding: 8, borderRadius: 6, marginTop: 8, fontSize: 12 }}>
+                     <strong>🟢 100% GWARANCJA:</strong> Ten system zapewnia pełną gwarancję matematyczną!
+                   </div>
+                 );
+               } else {
+                 return (
+                   <div style={{ background: "#fff3cd", color: "#856404", padding: 8, borderRadius: 6, marginTop: 8, fontSize: 12 }}>
+                     <strong>🟡 CZĘŚCIOWA GWARANCJA:</strong> Ten system zapewnia tylko {guarantee}% gwarancji.
+                   </div>
+                 );
+               }
+            })()}
             
             <div style={{ background: "#e8f5e8", color: "#2e7d32", padding: 12, borderRadius: 8, marginTop: 12, marginBottom: 12 }}>
               <strong>🎯 Jak obstawić zakłady:</strong>
@@ -9848,6 +10439,39 @@ function App() {
       {isMobileMenuOpen && (
         <div className="mobile-menu open">
         <button 
+          className={`mobile-menu-btn ${isActivePath("/") ? 'active' : ''}`}
+          onClick={() => handleMenuClick("/")}
+        >
+          🏠 Strona główna
+        </button>
+        {/* Ukryty przycisk Logika ILP - przeniesiony do Systemów Skróconych */}
+        {false && (
+          <button 
+            className={`mobile-menu-btn ${isActivePath("/ilp") ? 'active' : ''}`}
+            onClick={() => handleMenuClick("/ilp")}
+          >
+            🎯 {t('navigation.ilpLogic')}
+          </button>
+        )}
+        <button 
+          className={`mobile-menu-btn ${isActivePath("/ai-ultra-pro") ? 'active' : ''}`}
+          onClick={() => handleMenuClick("/ai-ultra-pro")}
+        >
+          🚀 {t('navigation.aiUltraPro')}
+        </button>
+        <button 
+          className={`mobile-menu-btn ${isActivePath("/gry") ? 'active' : ''}`}
+          onClick={() => handleMenuClick("/gry")}
+        >
+          🎰 {t('navigation.games')}
+        </button>
+        <button
+          className={`mobile-menu-btn ${isActivePath("/harmonic-analyzer") ? 'active' : ''}`}
+          onClick={() => handleMenuClick("/harmonic-analyzer")}
+        >
+          🎵 {t('navigation.harmonicAnalyzer')}
+        </button>
+        <button 
           className={`mobile-menu-btn ${isActivePath("/generator") ? 'active' : ''}`}
           onClick={() => handleMenuClick("/generator")}
         >
@@ -9865,29 +10489,47 @@ function App() {
         >
           🍀 {t('navigation.luckyNumbers')}
         </button>
-        <button 
-          className={`mobile-menu-btn ${isActivePath("/numberPicker") ? 'active' : ''}`}
-          onClick={() => handleMenuClick("/numberPicker")}
-        >
-          🎯 {t('navigation.numberSelection')}
-        </button>
+        {/* Ukryty przycisk Wybór liczb - przeniesiony do Gry */}
+        {false && (
+          <button 
+            className={`mobile-menu-btn ${isActivePath("/numberPicker") ? 'active' : ''}`}
+            onClick={() => handleMenuClick("/numberPicker")}
+          >
+            🎯 {t('navigation.numberSelection')}
+          </button>
+        )}
         <button 
           className={`mobile-menu-btn ${isActivePath("/systems") ? 'active' : ''}`}
           onClick={() => handleMenuClick("/systems")}
         >
           📊 {t('navigation.reducedSystems')}
         </button>
-        <button 
-          className={`mobile-menu-btn ${isActivePath("/ilp") ? 'active' : ''}`}
-          onClick={() => handleMenuClick("/ilp")}
-        >
-          🎯 {t('navigation.ilpLogic')}
-        </button>
+        {/* Ukryty przycisk Logika ILP - przeniesiony do Systemów Skróconych */}
+        {false && (
+          <button 
+            className={`mobile-menu-btn ${isActivePath("/ilp") ? 'active' : ''}`}
+            onClick={() => handleMenuClick("/ilp")}
+          >
+            🎯 {t('navigation.ilpLogic')}
+          </button>
+        )}
         <button 
           className={`mobile-menu-btn ${isActivePath("/stats") ? 'active' : ''}`}
           onClick={() => handleMenuClick("/stats")}
         >
           📈 {t('navigation.statistics')}
+        </button>
+        <button
+          className={`mobile-menu-btn ${isActivePath("/my-lucky-numbers") ? 'active' : ''}`}
+          onClick={() => handleMenuClick("/my-lucky-numbers")}
+        >
+          🎲 Moje szczęśliwe liczby
+        </button>
+        <button 
+          className={`mobile-menu-btn ${isActivePath("/talismans") ? 'active' : ''}`}
+          onClick={() => handleMenuClick("/talismans")}
+        >
+          ✨ Talizmany
         </button>
         <button 
           className={`mobile-menu-btn ${isActivePath("/explanations") ? 'active' : ''}`}
@@ -9906,38 +10548,6 @@ function App() {
           onClick={() => handleMenuClick("/payments")}
         >
           💳 {t('navigation.payments')}
-        </button>
-        <button 
-          className={`mobile-menu-btn ${isActivePath("/gry") ? 'active' : ''}`}
-          onClick={() => handleMenuClick("/gry")}
-        >
-          🎰 {t('navigation.games')}
-        </button>
-
-        <button 
-          className={`mobile-menu-btn ${isActivePath("/talismans") ? 'active' : ''}`}
-          onClick={() => handleMenuClick("/talismans")}
-        >
-          ✨ Talizmany
-        </button>
-
-        <button 
-          className={`mobile-menu-btn ${isActivePath("/ai-ultra-pro") ? 'active' : ''}`}
-          onClick={() => handleMenuClick("/ai-ultra-pro")}
-        >
-          🚀 {t('navigation.aiUltraPro')}
-        </button>
-                <button
-          className={`mobile-menu-btn ${isActivePath("/harmonic-analyzer") ? 'active' : ''}`}
-          onClick={() => handleMenuClick("/harmonic-analyzer")}
-        >
-          🎵 {t('navigation.harmonicAnalyzer')}
-        </button>
-        <button
-          className={`mobile-menu-btn ${isActivePath("/my-lucky-numbers") ? 'active' : ''}`}
-          onClick={() => handleMenuClick("/my-lucky-numbers")}
-        >
-          🎲 Moje szczęśliwe liczby
         </button>
         
         <button 
@@ -9965,38 +10575,44 @@ function App() {
       
       {/* Menu desktopowe */}
       <nav style={menuStyle} className="desktop-menu">
+        <button className="menu-btn" style={menuBtn(isActivePath("/"))}
+          onClick={() => navigate("/")}>🏠 Strona główna</button>
+        {/* Ukryty przycisk Logika ILP - przeniesiony do Systemów Skróconych */}
+        {false && (
+          <button className="menu-btn" style={menuBtn(isActivePath("/ilp"))}
+            onClick={() => navigate("/ilp")}>{t('navigation.ilpLogic')}</button>
+        )}
+        <button className="menu-btn" style={menuBtn(isActivePath("/ai-ultra-pro"))}
+          onClick={() => navigate("/ai-ultra-pro")}>🚀 {t('navigation.aiUltraPro')}</button>
+        <button className="menu-btn" style={menuBtn(isActivePath("/gry"))}
+          onClick={() => navigate("/gry")}>🎰 {t('navigation.games')}</button>
+        <button className="menu-btn" style={menuBtn(isActivePath("/harmonic-analyzer"))}
+          onClick={() => navigate("/harmonic-analyzer")}>🎵 {t('navigation.harmonicAnalyzer')}</button>
         <button className="menu-btn" style={menuBtn(isActivePath("/generator"))}
           onClick={() => navigate("/generator")}>{t('navigation.generator')}</button>
         <button className="menu-btn" style={menuBtn(isActivePath("/dreams"))}
           onClick={() => navigate("/dreams")}>{t('navigation.dreamGenerator')}</button>
         <button className="menu-btn" style={menuBtn(isActivePath("/lucky"))}
           onClick={() => navigate("/lucky")}>{t('navigation.luckyNumbers')}</button>
-        <button className="menu-btn" style={menuBtn(isActivePath("/numberPicker"))}
-          onClick={() => navigate("/numberPicker")}>{t('navigation.numberSelection')}</button>
+        {/* Ukryty przycisk Wybór liczb - przeniesiony do Gry */}
+        {false && (
+          <button className="menu-btn" style={menuBtn(isActivePath("/numberPicker"))}
+            onClick={() => navigate("/numberPicker")}>{t('navigation.numberSelection')}</button>
+        )}
         <button className="menu-btn" style={menuBtn(isActivePath("/systems"))}
           onClick={() => navigate("/systems")}>{t('navigation.reducedSystems')}</button>
-        <button className="menu-btn" style={menuBtn(isActivePath("/ilp"))}
-          onClick={() => navigate("/ilp")}>{t('navigation.ilpLogic')}</button>
         <button className="menu-btn" style={menuBtn(isActivePath("/stats"))}
           onClick={() => navigate("/stats")}>{t('navigation.statistics')}</button>
+        <button className="menu-btn" style={menuBtn(isActivePath("/my-lucky-numbers"))}
+          onClick={() => navigate("/my-lucky-numbers")}>🎲 Moje szczęśliwe liczby</button>
+        <button className="menu-btn" style={menuBtn(isActivePath("/talismans"))}
+          onClick={() => navigate("/talismans")}>✨ Talizmany</button>
         <button className="menu-btn" style={menuBtn(isActivePath("/explanations"))}
           onClick={() => navigate("/explanations")}>{t('navigation.explanations')}</button>
         <button className="menu-btn" style={menuBtn(isActivePath("/account"))}
           onClick={() => navigate("/account")}>{t('navigation.myAccount')}</button>
         <button className="menu-btn" style={menuBtn(isActivePath("/payments"))}
           onClick={() => navigate("/payments")}>{t('navigation.payments')}</button>
-        <button className="menu-btn" style={menuBtn(isActivePath("/gry"))}
-          onClick={() => navigate("/gry")}>🎰 {t('navigation.games')}</button>
-
-        <button className="menu-btn" style={menuBtn(isActivePath("/talismans"))}
-          onClick={() => navigate("/talismans")}>✨ Talizmany</button>
-
-        <button className="menu-btn" style={menuBtn(isActivePath("/ai-ultra-pro"))}
-          onClick={() => navigate("/ai-ultra-pro")}>🚀 {t('navigation.aiUltraPro')}</button>
-        <button className="menu-btn" style={menuBtn(isActivePath("/harmonic-analyzer"))}
-          onClick={() => navigate("/harmonic-analyzer")}>🎵 {t('navigation.harmonicAnalyzer')}</button>
-        <button className="menu-btn" style={menuBtn(isActivePath("/my-lucky-numbers"))}
-          onClick={() => navigate("/my-lucky-numbers")}>🎲 Moje szczęśliwe liczby</button>
         
         <button className="menu-btn" style={menuBtn(false)} onClick={handleLogout}>{t('navigation.logout')}</button>
         
@@ -10009,7 +10625,7 @@ function App() {
       <div className="main-panel" style={{...mainStyle, touchAction: "manipulation"}}>
         <Routes>
           <Route path="/" element={
-            <Navigate to="/generator" replace />
+            <HomePage user={user} />
           } />
           <Route path="/landing" element={
             <LandingPage 
@@ -10147,32 +10763,7 @@ function App() {
               </div>
             )
           } />
-          <Route path="/ilp" element={
-            hasAccess ? renderILP() : (
-              <div style={{ textAlign: "center", padding: "50px 20px" }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>🚫</div>
-                <h2 style={{ color: "#d32f2f", marginBottom: 16 }}>Dostęp zablokowany</h2>
-                <p style={{ color: "#666", marginBottom: 24 }}>
-                  Twój okres próbny wygasł. Aby odblokować dostęp do wszystkich funkcji, wykup plan Premium.
-                </p>
-                <button 
-                  onClick={() => navigate("/payments")}
-                  style={{
-                    background: "linear-gradient(90deg, #ff9800 0%, #ffb300 100%)",
-                    color: "white",
-                    border: "none",
-                    borderRadius: 12,
-                    padding: "16px 32px",
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    cursor: "pointer"
-                  }}
-                >
-                  Przejdź do płatności
-                </button>
-              </div>
-            )
-          } />
+          {/* Route /ilp usunięty - przeniesiony do /systems */}
           <Route path="/stats" element={<FinalStatistics selectedGame={selectedGame} onGameChange={setSelectedGame} />} />
           <Route path="/explanations" element={renderExplanations()} />
           <Route path="/account" element={renderAccount()} />
@@ -10267,7 +10858,14 @@ function App() {
             )
           } />
           <Route path="/my-lucky-numbers" element={
-            <MyLuckyNumbersScreen user={user} onLogout={handleLogout} />
+            <MyLuckyNumbersScreen 
+              user={user} 
+              onLogout={handleLogout}
+              addToFavorites={addToFavorites}
+              removeFromFavorites={removeFromFavorites}
+              isFavorite={isFavorite}
+              getFavoriteId={getFavoriteId}
+            />
           } />
           <Route path="/talismans" element={
             (() => {
@@ -10304,7 +10902,7 @@ function App() {
               console.log('🔄 Catch-all route - przekierowanie do /generator z:', location.pathname);
               console.log('🔍 Debug - wszystkie ścieżki:', [
                 '/', '/landing', '/generator', '/dreams', '/lucky', '/numberPicker', 
-                '/systems', '/ilp', '/stats', '/explanations', '/account', '/payments', '/gry', '/ai-ultra-pro', '/talismans'
+                '/systems', '/stats', '/explanations', '/account', '/payments', '/gry', '/ai-ultra-pro', '/talismans'
               ]);
               console.log('🔍 Debug catch-all - hasAccess:', hasAccess, 'userSubscription:', userSubscription);
               return <Navigate to="/generator" replace />;
@@ -10312,6 +10910,22 @@ function App() {
           } />
         </Routes>
       </div>
+      {/* Aktywny talizman w lewym górnym rogu */}
+      {hasAccess && user && (
+        <ActiveTalismanDisplay 
+          activeTalisman={activeTalisman} 
+          talismanDefinitions={talismanDefinitions} 
+        />
+      )}
+      
+      {/* Funkcja do aktualizacji aktywnego talizmanu - przekazywana do komponentów */}
+      {(() => {
+        window.updateActiveTalisman = (talismanId) => {
+          setActiveTalisman({ talisman_id: talismanId });
+        };
+        return null;
+      })()}
+      
       <InfoModal 
         isOpen={modalInfo.isOpen}
         onClose={() => setModalInfo({ isOpen: false, title: "", content: "" })}

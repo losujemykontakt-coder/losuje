@@ -124,7 +124,7 @@ const SlotMachineLanding = ({ onUseInGenerator }) => {
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg"
+          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 drop-shadow-lg"
         >
           🎰 Slot Machine Lotto
         </motion.h1>
@@ -136,7 +136,7 @@ const SlotMachineLanding = ({ onUseInGenerator }) => {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="mb-8"
         >
-          <p className="text-purple-300 text-lg md:text-xl font-medium drop-shadow-lg">
+          <p className="text-purple-300 text-sm sm:text-base md:text-lg lg:text-xl font-medium drop-shadow-lg">
             Wybrana gra: {selectedGame === 'lotto' ? '🎰 Lotto' : 
               selectedGame === 'mini-lotto' ? '🍀 Mini Lotto' :
               selectedGame === 'multi-multi' ? '🎲 Multi Multi' :
@@ -3269,7 +3269,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
             </div>
             
             <div className="hero-title" style={{ 
-              fontSize: "56px", 
+              fontSize: "clamp(32px, 5vw, 56px)", 
               fontWeight: "800", 
               color: "#424242", 
               marginBottom: "24px",
@@ -3284,7 +3284,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
               {t('landing.hero.title')}
             </div>
             <p className="hero-description" style={{ 
-              fontSize: "20px", 
+              fontSize: "clamp(16px, 2.5vw, 20px)", 
               color: "#666", 
               marginBottom: "48px", 
               lineHeight: "1.6",

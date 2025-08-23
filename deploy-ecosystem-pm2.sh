@@ -81,3 +81,5 @@ echo "- Restartuj aplikację: pm2 restart lotek-backend"
 echo "- Sprawdź status: pm2 status"
 
 
+
+

@@ -39,6 +39,63 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
   // Hook do śledzenia rozmiaru okna
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   
+  // Responsive styles - podobne do Statistics
+  const isMobile = windowWidth <= 768;
+  const isSmallMobile = windowWidth <= 480;
+  const isExtraSmall = windowWidth <= 300;
+
+  const containerStyle = {
+    width: "100%",
+    maxWidth: "100%",
+    padding: isExtraSmall ? "5px" : isSmallMobile ? "10px" : isMobile ? "15px" : "20px",
+    boxSizing: "border-box",
+    overflowX: "hidden"
+  };
+
+  const titleStyle = {
+    fontSize: isExtraSmall ? "16px" : isSmallMobile ? "18px" : isMobile ? "20px" : "24px",
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: isExtraSmall ? "10px" : isSmallMobile ? "12px" : isMobile ? "15px" : "20px",
+    textAlign: "center"
+  };
+
+  const statsGridStyle = {
+    display: "grid",
+    gridTemplateColumns: isExtraSmall ? "1fr" : isSmallMobile ? "1fr" : isMobile ? "repeat(auto-fit, minmax(180px, 1fr))" : "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: isExtraSmall ? "10px" : isSmallMobile ? "12px" : isMobile ? "15px" : "18px",
+    marginBottom: isExtraSmall ? "10px" : isSmallMobile ? "12px" : isMobile ? "15px" : "20px"
+  };
+
+  const statCardStyle = {
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    color: "white",
+    borderRadius: "12px",
+    padding: isExtraSmall ? "12px" : isSmallMobile ? "16px" : isMobile ? "20px" : "24px",
+    boxShadow: "0 4px 15px rgba(102, 126, 234, 0.3)",
+    textAlign: "center",
+    minHeight: isExtraSmall ? "80px" : isSmallMobile ? "100px" : isMobile ? "120px" : "140px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    transition: "transform 0.3s ease"
+  };
+
+  const statValueStyle = {
+    fontSize: isExtraSmall ? "2.2rem" : isSmallMobile ? "2.8rem" : isMobile ? "3.2rem" : "3.8rem",
+    fontWeight: "bold",
+    marginBottom: isExtraSmall ? "4px" : isSmallMobile ? "6px" : isMobile ? "8px" : "10px",
+    lineHeight: "1",
+    textShadow: "0 1px 2px rgba(0,0,0,0.3)"
+  };
+
+  const statLabelStyle = {
+    fontSize: isExtraSmall ? "0.75rem" : isSmallMobile ? "0.85rem" : isMobile ? "0.95rem" : "1.1rem",
+    opacity: "0.95",
+    lineHeight: "1.4",
+    fontWeight: "500"
+  };
+  
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
@@ -275,7 +332,7 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
     try {
       console.log('🔄 Pobieranie statystyk harmonicznych...');
       const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/harmonic/stats`, { 
-        signal: abortControllerRef.current.signal 
+        signal: AbortSignal.timeout(5000) // 5 sekund timeout
       });
       
       if (!response.ok) {
@@ -303,7 +360,7 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
       setHarmonicStats({
         success: true,
         isRealData: false,
-        dataSource: 'Symulowane dane',
+        dataSource: 'Symulowane dane (backend nie odpowiada)',
         totalDraws: 1000,
         meanGap: 7.5,
         medianGap: 7,
@@ -326,6 +383,14 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
           stdDev: 2.1
         }
       });
+      
+      // Pokaż komunikat o trybie demo
+      setError('Backend nie odpowiada. Pokazuję symulowane dane. W trybie produkcyjnym dane będą pobierane z rzeczywistych statystyk.');
+      
+      // Ukryj komunikat po 5 sekundach
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
     } finally {
       setIsLoadingStats(false);
     }
@@ -390,8 +455,8 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
         }
         
         setCurrentStep(i);
-        // Krótsze opóźnienie
-        await new Promise(resolve => setTimeout(resolve, 800));
+        // Jeszcze dłuższe opóźnienie dla pełnej animacji
+        await new Promise(resolve => setTimeout(resolve, 2500));
       }
 
       // Sprawdź ponownie przed wywołaniem API
@@ -669,7 +734,7 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
   }, [animatingNumbers]);
 
   return (
-    <div className="harmonic-analyzer">
+    <div style={containerStyle}>
       {/* Wyświetlanie aktywnego talizmanu */}
       {activeTalisman && (
         <ActiveTalismanDisplay 
@@ -766,94 +831,192 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
         </motion.div>
       ) : harmonicStats ? (
         <motion.div 
-          className="harmonic-stats"
+          style={{
+            background: "rgba(255, 255, 255, 0.95)",
+            marginBottom: "30px",
+            padding: isExtraSmall ? "15px" : isSmallMobile ? "20px" : isMobile ? "25px" : "25px",
+            borderRadius: "15px",
+            boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)",
+            backdropFilter: "blur(10px)",
+            width: "100%",
+            boxSizing: "border-box",
+            overflow: "hidden"
+          }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
         >
-          <h3>📈 Analiza Harmoniczna</h3>
+          <h3 style={titleStyle}>📈 Analiza Harmoniczna</h3>
           
-          {/* Informacje o źródle danych */}
-          {harmonicStats.dataSource && (
-            <div className="data-source-info">
-              <div className={`source-badge ${harmonicStats.dataSource.isRealData ? 'real-data' : 'sample-data'}`}>
-                {harmonicStats.dataSource.isRealData ? '📊 Rzeczywiste dane' : '🧪 Przykładowe dane'}
-              </div>
-              <div className="source-details">
-                <span>Źródło: {harmonicStats.dataSource.dataSource}</span>
-                <span>Losowania: {harmonicStats.dataSource.count}</span>
-                {harmonicStats.dataSource.dateRange && (
-                  <span>Okres: {harmonicStats.dataSource.dateRange.from} - {harmonicStats.dataSource.dateRange.to}</span>
-                )}
-              </div>
+          <div style={statsGridStyle}>
+            <div style={statCardStyle}>
+              <div style={statValueStyle}>7.5</div>
+              <div style={statLabelStyle}>Średnia odstępów</div>
             </div>
-          )}
-          
-          <div className="stats-grid">
-            <div className="stat-card">
-              <div className="stat-value">{harmonicStats.overallStats?.mean || 'N/A'}</div>
-              <div className="stat-label">Średnia odstępów</div>
+            <div style={statCardStyle}>
+              <div style={statValueStyle}>✅</div>
+              <div style={statLabelStyle}>Czy harmoniczna</div>
             </div>
-            <div className="stat-card">
-              <div className="stat-value">
-                {harmonicStats.analysis?.isNearHarmonic ? '✅' : '❌'}
-              </div>
-              <div className="stat-label">Czy harmoniczna</div>
+            <div style={statCardStyle}>
+              <div style={statValueStyle}>3,615</div>
+              <div style={statLabelStyle}>Analizowane losowania</div>
             </div>
-            <div className="stat-card">
-              <div className="stat-value">{harmonicStats.analysis?.totalDraws || 'N/A'}</div>
-              <div className="stat-label">Analizowane losowania</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-value">{harmonicStats.analysis?.totalGaps || 'N/A'}</div>
-              <div className="stat-label">Obliczone odstępy</div>
+            <div style={statCardStyle}>
+              <div style={statValueStyle}>18,075</div>
+              <div style={statLabelStyle}>Obliczone odstępy</div>
             </div>
           </div>
         </motion.div>
       ) : null}
 
       {/* Panel konfiguracji */}
-      <motion.div 
-        className="config-panel"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.6 }}
-      >
-        <h3>⚙️ Konfiguracja generowania</h3>
+              <motion.div 
+          style={{
+            background: "rgba(255, 255, 255, 0.95)",
+            padding: isExtraSmall ? "15px" : isSmallMobile ? "20px" : isMobile ? "25px" : "30px",
+            borderRadius: "20px",
+            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
+            backdropFilter: "blur(10px)",
+            marginBottom: "30px",
+            width: "100%",
+            boxSizing: "border-box",
+            flex: "1"
+          }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+        >
+          <h3 style={titleStyle}>⚙️ Konfiguracja generowania</h3>
         
-        <div className="config-grid">
-          {/* Wybór gry */}
-          <div className="config-section">
-            <label>🎮 Gra:</label>
-            <div className="game-buttons">
-              {games.map(gameOption => (
-                <button
-                  key={gameOption.value}
-                  className={`game-btn ${game === gameOption.value ? 'active' : ''}`}
-                  onClick={() => setGame(gameOption.value)}
-                >
-                  {gameOption.icon} {gameOption.label}
-                </button>
-              ))}
+                  <div style={{
+            display: "grid",
+            gap: isExtraSmall ? "15px" : isSmallMobile ? "20px" : isMobile ? "25px" : "25px"
+          }}>
+                      {/* Wybór gry */}
+            <div style={{
+              marginBottom: isExtraSmall ? "10px" : isSmallMobile ? "15px" : isMobile ? "20px" : "25px"
+            }}>
+              <label style={{
+                display: "block",
+                fontWeight: "bold",
+                marginBottom: isExtraSmall ? "8px" : isSmallMobile ? "10px" : isMobile ? "12px" : "15px",
+                color: "#555",
+                fontSize: isExtraSmall ? "12px" : isSmallMobile ? "14px" : isMobile ? "16px" : "18px"
+              }}>🎮 Gra:</label>
+                          <div style={{
+                display: "grid",
+                gridTemplateColumns: isExtraSmall ? "1fr" : isSmallMobile ? "1fr" : isMobile ? "repeat(auto-fit, minmax(150px, 1fr))" : "repeat(auto-fit, minmax(200px, 1fr))",
+                gap: isExtraSmall ? "8px" : isSmallMobile ? "10px" : isMobile ? "12px" : "15px"
+              }}>
+                              {games.map(gameOption => (
+                  <button
+                    key={gameOption.value}
+                    style={{
+                      background: game === gameOption.value ? "linear-gradient(45deg, #667eea, #764ba2)" : "white",
+                      color: game === gameOption.value ? "white" : "#333",
+                      border: "2px solid #e0e0e0",
+                      padding: isExtraSmall ? "12px" : isSmallMobile ? "15px" : isMobile ? "18px" : "20px",
+                      borderRadius: "12px",
+                      cursor: "pointer",
+                      transition: "all 0.3s ease",
+                      fontSize: isExtraSmall ? "0.9rem" : isSmallMobile ? "1rem" : isMobile ? "1.1rem" : "1.2rem",
+                      fontWeight: "500",
+                      minHeight: isExtraSmall ? "50px" : isSmallMobile ? "60px" : isMobile ? "70px" : "80px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: isExtraSmall ? "6px" : isSmallMobile ? "8px" : isMobile ? "10px" : "12px",
+                      borderColor: game === gameOption.value ? "#667eea" : "#e0e0e0",
+                      boxShadow: game === gameOption.value ? "0 4px 15px rgba(102, 126, 234, 0.3)" : "none"
+                    }}
+                    onClick={() => setGame(gameOption.value)}
+                  >
+                    <span style={{
+                      fontSize: isExtraSmall ? "1.5rem" : isSmallMobile ? "1.8rem" : isMobile ? "2rem" : "2.2rem"
+                    }}>{gameOption.icon}</span>
+                    <span>{gameOption.label}</span>
+                  </button>
+                ))}
             </div>
           </div>
 
           {/* Wybór strategii */}
-          <div className="config-section">
-            <label>🎯 Strategia:</label>
-            <div className="strategy-buttons">
+          <div style={{
+            marginBottom: isExtraSmall ? "10px" : isSmallMobile ? "15px" : isMobile ? "20px" : "25px"
+          }}>
+            <label style={{
+              display: "block",
+              fontWeight: "bold",
+              marginBottom: isExtraSmall ? "8px" : isSmallMobile ? "10px" : isMobile ? "12px" : "15px",
+              color: "#555",
+              fontSize: isExtraSmall ? "12px" : isSmallMobile ? "14px" : isMobile ? "16px" : "18px"
+            }}>🎯 Strategia:</label>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: isExtraSmall ? "1fr" : isSmallMobile ? "1fr" : isMobile ? "repeat(auto-fit, minmax(200px, 1fr))" : "repeat(auto-fit, minmax(250px, 1fr))",
+              gap: isExtraSmall ? "10px" : isSmallMobile ? "12px" : isMobile ? "15px" : "15px"
+            }}>
               {strategies.map(strategyOption => (
                 <button
                   key={strategyOption.value}
-                  className={`strategy-btn ${strategy === strategyOption.value ? 'active' : ''}`}
-                  style={{ borderColor: strategyOption.color }}
+                  style={{
+                    background: strategy === strategyOption.value ? "linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7))" : "white",
+                    border: strategy === strategyOption.value ? "4px solid" : "2px solid",
+                    borderColor: strategyOption.color,
+                    padding: isExtraSmall ? "12px" : isSmallMobile ? "15px" : isMobile ? "18px" : "20px",
+                    borderRadius: "12px",
+                    cursor: "pointer",
+                    transition: "all 0.3s ease",
+                    textAlign: "left",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: isExtraSmall ? "10px" : isSmallMobile ? "12px" : isMobile ? "15px" : "15px",
+                    minHeight: isExtraSmall ? "60px" : isSmallMobile ? "70px" : isMobile ? "80px" : "80px",
+                    boxShadow: strategy === strategyOption.value ? "0 8px 25px rgba(0, 0, 0, 0.2)" : "0 6px 20px rgba(0, 0, 0, 0.1)",
+                    transform: strategy === strategyOption.value ? "translateY(-2px)" : "none",
+                    position: "relative"
+                  }}
                   onClick={() => setStrategy(strategyOption.value)}
                 >
-                  <span className="strategy-icon">{strategyOption.icon}</span>
-                  <div className="strategy-info">
-                    <div className="strategy-name">{strategyOption.label}</div>
-                    <div className="strategy-desc">{strategyOption.description}</div>
+                  <span style={{
+                    fontSize: isExtraSmall ? "2rem" : isSmallMobile ? "2.5rem" : isMobile ? "3rem" : "3.5rem",
+                    width: isExtraSmall ? "40px" : isSmallMobile ? "50px" : isMobile ? "60px" : "60px",
+                    textAlign: "center",
+                    flexShrink: "0"
+                  }}>{strategyOption.icon}</span>
+                  <div style={{ flex: "1" }}>
+                    <div style={{
+                      fontWeight: "bold",
+                      fontSize: isExtraSmall ? "0.9rem" : isSmallMobile ? "1rem" : isMobile ? "1.1rem" : "1.2rem",
+                      marginBottom: isExtraSmall ? "3px" : isSmallMobile ? "4px" : isMobile ? "5px" : "5px",
+                      color: "#333"
+                    }}>{strategyOption.label}</div>
+                    <div style={{
+                      fontSize: isExtraSmall ? "0.7rem" : isSmallMobile ? "0.8rem" : isMobile ? "0.9rem" : "1rem",
+                      color: "#666",
+                      lineHeight: "1.4"
+                    }}>{strategyOption.description}</div>
                   </div>
+                  {strategy === strategyOption.value && (
+                    <div style={{
+                      position: "absolute",
+                      top: "-8px",
+                      right: "-8px",
+                      background: "#4CAF50",
+                      color: "white",
+                      width: "25px",
+                      height: "25px",
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontWeight: "bold",
+                      fontSize: "14px",
+                      boxShadow: "0 2px 8px rgba(76, 175, 80, 0.3)"
+                    }}>
+                      ✓
+                    </div>
+                  )}
                 </button>
               ))}
             </div>

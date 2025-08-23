@@ -206,3 +206,5 @@ kill -9 <PID>
 ✅ PM2 automatycznie restartuje aplikacje po awarii
 
 
+
+

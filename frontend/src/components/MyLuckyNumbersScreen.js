@@ -5,7 +5,7 @@ import schedulerService from '../utils/schedulerService';
 import luckyNumbersGenerator from '../utils/luckyNumbersGenerator';
 import './MyLuckyNumbersScreen.css';
 
-const MyLuckyNumbersScreen = ({ user, onLogout }) => {
+const MyLuckyNumbersScreen = ({ user, onLogout, addToFavorites, removeFromFavorites, isFavorite, getFavoriteId }) => {
   const { t } = useTranslation();
   const [luckyNumbersHistory, setLuckyNumbersHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -302,7 +302,7 @@ const MyLuckyNumbersScreen = ({ user, onLogout }) => {
     <div className="my-lucky-numbers-container">
       <div className="header">
         <h1>🎲 Moje szczęśliwe liczby</h1>
-        <p>Historia wszystkich wygenerowanych zestawów</p>
+        <p>Twoje dzisiejsze szczęśliwe liczby, które wygenerował AI! ✨</p>
       </div>
 
       <div className="controls">
@@ -405,16 +405,24 @@ const MyLuckyNumbersScreen = ({ user, onLogout }) => {
                   >
                     📋 Kopiuj
                   </button>
-                                     <button
-                     className="action-button favorite-button"
-                     onClick={() => {
-                       // TODO: Dodaj do ulubionych
-                       alert('Funkcja "Dodaj do ulubionych" będzie dostępna wkrótce!');
-                     }}
-                     title="Dodaj do ulubionych"
-                   >
-                     ❤️ Ulubione
-                   </button>
+                                                       <button
+                    className="action-button favorite-button"
+                    onClick={() => {
+                      if (addToFavorites && removeFromFavorites && isFavorite) {
+                        const numbers = entry.numbers;
+                        if (isFavorite(numbers)) {
+                          removeFromFavorites(getFavoriteId(numbers));
+                        } else {
+                          addToFavorites(numbers, "lucky");
+                        }
+                      } else {
+                        alert('Funkcja "Dodaj do ulubionych" wymaga zalogowania!');
+                      }
+                    }}
+                    title={addToFavorites && isFavorite && isFavorite(entry.numbers) ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
+                  >
+                    {addToFavorites && isFavorite && isFavorite(entry.numbers) ? "💔 Usuń" : "❤️ Ulubione"}
+                  </button>
                   <button
                     className="action-button delete-button"
                     onClick={() => deleteHistoryEntry(entry.id)}

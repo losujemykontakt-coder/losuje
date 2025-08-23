@@ -7,7 +7,7 @@ import Machine3DAnimation from './animations/Machine3DAnimation';
 import HackerAnimation from './animations/HackerAnimation';
 import NeuronAIAnimation from './animations/NeuronAIAnimation';
 import ChessAnimation from './animations/ChessAnimation';
-import RobotChatAnimation from './animations/RobotChatAnimation';
+
 import ActiveTalismanDisplay from '../ActiveTalismanDisplay';
 import './AILottoGeneratorUltraPro.css';
 
@@ -58,8 +58,7 @@ const AILottoGeneratorUltraPro = ({ activeTalisman, talismanDefinitions }) => {
     { value: 'machine3d', label: 'Maszyna 3D', icon: '🎰', color: '#764ba2' },
     { value: 'hacker', label: 'Tryb Hackera', icon: '💻', color: '#00ff00' },
     { value: 'laser', label: 'Neuron AI', icon: '🧠', color: '#00ffff' },
-    { value: 'chess', label: 'Szachy Lotto', icon: '♟️', color: '#8b4513' },
-    { value: 'robot', label: 'Robot Chat Analizy', icon: '🤖', color: '#00ff88' }
+    { value: 'chess', label: 'Szachy Lotto', icon: '♟️', color: '#8b4513' }
   ];
 
   // Animacje dla przycisków
@@ -318,8 +317,6 @@ const AILottoGeneratorUltraPro = ({ activeTalisman, talismanDefinitions }) => {
         return <NeuronAIAnimation onComplete={handleAnimationComplete} />;
       case 'chess':
         return <ChessAnimation onComplete={handleAnimationComplete} generatedNumbers={generatedNumbers} />;
-      case 'robot':
-        return <RobotChatAnimation onComplete={handleAnimationComplete} />;
       default:
         return <RocketLaunchAnimation onComplete={handleAnimationComplete} />;
     }

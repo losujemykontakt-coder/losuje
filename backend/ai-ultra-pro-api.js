@@ -259,8 +259,7 @@ const calculateAIConfidence = (numbers, gameType, mode) => {
     machine3d: 5,
     hacker: 8,
     laser: 10,
-    chess: 7,
-    robot: 9
+    chess: 7
   };
   
   confidence += modeBonuses[mode] || 0;
@@ -309,11 +308,7 @@ const generateAIComment = (numbers, gameType, mode) => {
       "Algorytm szachowy wykonał idealny ruch! ♔",
       "Gra strategiczna zakończona sukcesem! 🏆"
     ],
-    robot: [
-      "Robot zakończył analizę z sukcesem! 🤖",
-      "Algorytm czatu wykrył optymalny wzorzec! 💬",
-      "Inteligentna analiza potwierdza skuteczność! 🧠"
-    ]
+
   };
   
   const modeComments = comments[mode] || comments.start;
