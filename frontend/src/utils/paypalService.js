@@ -1,7 +1,7 @@
 // Dynamiczny URL API - localhost w development, losuje.pl w produkcji
 const API_BASE_URL = process.env.REACT_APP_API_URL 
-  ? `${process.env.REACT_APP_API_URL}/api`
-  : 'https://losuje.pl/api';
+  ? process.env.REACT_APP_API_URL
+  : 'https://losuje.pl';
 
 class PayPalService {
   // Tworzenie zamówienia PayPal
@@ -9,10 +9,10 @@ class PayPalService {
     try {
       console.log('🔄 [PAYPAL] Tworzenie zamówienia...');
       console.log('📋 Dane zamówienia:', { amount, currency, description });
-      console.log('🌐 API URL:', `${API_BASE_URL}/paypal/create-order`);
+      console.log('🌐 API URL:', `${API_BASE_URL}/api/paypal/create-order`);
       console.log('🔧 Environment:', process.env.NODE_ENV);
       
-      const response = await fetch(`${API_BASE_URL}/paypal/create-order`, {
+      const response = await fetch(`${API_BASE_URL}/api/paypal/create-order`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -79,7 +79,7 @@ class PayPalService {
   // Finalizacja płatności PayPal
   async capturePayment(orderId) {
     try {
-      const response = await fetch(`${API_BASE_URL}/paypal/capture-payment`, {
+      const response = await fetch(`${API_BASE_URL}/api/paypal/capture-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ class PayPalService {
   // Pobieranie szczegółów zamówienia
   async getOrderDetails(orderId) {
     try {
-      const response = await fetch(`${API_BASE_URL}/paypal/order/${orderId}`);
+      const response = await fetch(`${API_BASE_URL}/api/paypal/order/${orderId}`);
       const data = await response.json();
       
       if (data.success) {
@@ -143,7 +143,7 @@ class PayPalService {
   // Zwrot pieniędzy
   async refundPayment(captureId, amount, reason = 'Refund requested') {
     try {
-      const response = await fetch(`${API_BASE_URL}/paypal/refund`, {
+      const response = await fetch(`${API_BASE_URL}/api/paypal/refund`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
