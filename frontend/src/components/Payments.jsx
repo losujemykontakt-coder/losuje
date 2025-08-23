@@ -266,25 +266,33 @@ const Payments = ({ user = null }) => {
                   onInit={() => {
                     console.log('✅ PayPal SDK załadowany w Payments komponencie');
                     setPaypalLoading(false);
+                    showNotification('✅ PayPal gotowy do płatności', 'success');
                   }}
                   onCancel={(data) => {
                     console.log('❌ PayPal payment cancelled:', data);
-                    showNotification('❌ Płatność PayPal anulowana', 'error');
+                    showNotification('ℹ️ Płatność PayPal anulowana przez użytkownika', 'info');
                   }}
                   onError={(err) => {
                     console.error('PayPal error:', err);
-                    // Ignoruj błędy sesji i sandbox
+                    
+                    // Ignoruj błędy sesji, sandbox i popup close - to normalne zachowanie
                     if (err.message && (
                       err.message.includes('global_session_not_found') || 
                       err.message.includes('session') ||
                       err.message.includes('sandbox') ||
-                      err.message.includes('clientID')
+                      err.message.includes('clientID') ||
+                      err.message.includes('popup close') ||
+                      err.message.includes('Detected popup close')
                     )) {
-                      console.log('🔄 Ignorowanie błędu PayPal:', err.message);
+                      console.log('🔄 Ignorowanie błędu PayPal (normalne):', err.message);
                       return;
                     }
-                    setError('Błąd PayPal: ' + err.message);
-                    showNotification('❌ Błąd PayPal: ' + err.message, 'error');
+                    
+                    // Dla innych błędów pokaż powiadomienie
+                    const errorMessage = err.message || 'Nieznany błąd PayPal';
+                    console.error('❌ Błąd PayPal (krytyczny):', errorMessage);
+                    setError('Błąd PayPal: ' + errorMessage);
+                    showNotification('❌ Błąd PayPal: ' + errorMessage, 'error');
                   }}
                 />
               </div>

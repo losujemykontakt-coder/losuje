@@ -10383,14 +10383,16 @@ function App() {
       }}
       onError={(err) => {
         console.error('PayPal Script Provider Error:', err);
-        // Ignoruj błędy sesji i sandbox
+        // Ignoruj błędy sesji, sandbox i popup close - to normalne zachowanie
         if (err.message && (
           err.message.includes('global_session_not_found') || 
           err.message.includes('session') ||
           err.message.includes('sandbox') ||
-          err.message.includes('clientID')
+          err.message.includes('clientID') ||
+          err.message.includes('popup close') ||
+          err.message.includes('Detected popup close')
         )) {
-          console.log('🔄 Ignorowanie błędu PayPal Script Provider:', err.message);
+          console.log('🔄 Ignorowanie błędu PayPal Script Provider (normalne):', err.message);
           return;
         }
         console.error('❌ PayPal Script Provider Error:', err);

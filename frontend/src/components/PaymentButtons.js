@@ -174,7 +174,25 @@ const PaymentButtons = ({
 
       const result = await response.json();
       console.log('✅ Zamówienie utworzone:', result);
-      showNotification(`✅ Zamówienie utworzone dla ${selectedPlanData.name}`, 'success');
+      
+      if (result.success && result.id) {
+        showNotification(`✅ Przekierowanie do płatności PayPal...`, 'success');
+        
+        // Przekierowanie do PayPal
+        if (method === 'paypal') {
+          // Dla PayPal używamy SDK do otwarcia popup
+          console.log('🔗 Przekierowanie do PayPal popup...');
+          console.log('🔗 Order ID:', result.id);
+          // PayPal SDK automatycznie otworzy popup z płatnością
+          // Zwróć orderId do PayPal SDK
+          return result.id;
+        } else {
+          // Dla innych metod przekierowanie do strony płatności
+          window.location.href = result.redirectUrl || `/payments?orderId=${result.id}`;
+        }
+      } else {
+        throw new Error(result.error || 'Błąd tworzenia zamówienia');
+      }
       
     } catch (error) {
       // Wyczyść timeout
