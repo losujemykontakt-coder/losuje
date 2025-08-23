@@ -55,8 +55,8 @@ const Talizmany = ({ user, talismanDefinitions }) => {
     padding: isExtraSmall ? "4px" : isSmallMobile ? "6px" : isMobile ? "10px" : "8px",
     boxShadow: "none",
     textAlign: "center",
-    minHeight: isExtraSmall ? "100px" : isSmallMobile ? "120px" : isMobile ? "150px" : "140px",
-    maxHeight: isExtraSmall ? "120px" : isSmallMobile ? "140px" : isMobile ? "180px" : "160px",
+    minHeight: isExtraSmall ? "120px" : isSmallMobile ? "140px" : isMobile ? "170px" : "160px",
+    maxHeight: isExtraSmall ? "140px" : isSmallMobile ? "160px" : isMobile ? "200px" : "180px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
@@ -287,7 +287,8 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       
       // Najpierw sprawdź czy backend działa
       try {
-        const testResponse = await fetch('/api/test', {
+        const baseUrl = process.env.NODE_ENV === 'development' ? '' : (process.env.REACT_APP_API_URL || 'https://losuje.pl');
+        const testResponse = await fetch(`${baseUrl}/api/test`, {
           method: 'GET',
           signal: AbortSignal.timeout(3000) // 3 sekundy timeout
         });
@@ -306,7 +307,9 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 sekundy timeout
       
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/talismans/${uid}`, {
+      // Użyj proxy w trybie development, a REACT_APP_API_URL w produkcji
+      const baseUrl = process.env.NODE_ENV === 'development' ? '' : (process.env.REACT_APP_API_URL || 'https://losuje.pl');
+      const response = await fetch(`${baseUrl}/api/talismans/${uid}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -420,6 +423,14 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       return;
     }
     
+    // Sprawdź czy użytkownik ma dostęp
+    if (eligibility?.blocked) {
+      setNotificationMessage('🔒 Dostęp zablokowany. Wykup subskrypcję, aby odbierać talizmany.');
+      setShowNotification(true);
+      setTimeout(() => setShowNotification(false), 4000);
+      return;
+    }
+    
     try {
       const response = await fetch('/api/talismans/grant', {
         method: 'POST',
@@ -460,6 +471,14 @@ const Talizmany = ({ user, talismanDefinitions }) => {
           window.updateActiveTalisman(talismanId);
         }
       }
+      return;
+    }
+    
+    // Sprawdź czy użytkownik ma dostęp
+    if (eligibility?.blocked) {
+      setNotificationMessage('🔒 Dostęp zablokowany. Wykup subskrypcję, aby aktywować talizmany.');
+      setShowNotification(true);
+      setTimeout(() => setShowNotification(false), 4000);
       return;
     }
     
@@ -516,6 +535,13 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       console.log('🔍 Demo: talizman', talismanId, 'można odebrać:', talismanId <= 3);
       return talismanId <= 3;
     }
+    
+    // Sprawdź czy użytkownik ma dostęp
+    if (eligibility?.blocked) {
+      console.log('🔍 Użytkownik zablokowany - nie może odebrać talizmanu');
+      return false;
+    }
+    
     return eligibility.availableTalismans && 
            eligibility.availableTalismans.includes(talisman.requirement) &&
            !isTalismanOwned(talismanId);
@@ -628,6 +654,31 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                 Debug: showFallback = true, user.uid = {user?.uid}
               </p>
             )}
+          </div>
+        )}
+        
+        {/* Informacja o blokadzie */}
+        {eligibility?.blocked && (
+          <div className="bg-red-500/20 border border-red-500 rounded-lg p-1.5 sm:p-2 md:p-3 mb-1.5 sm:mb-2 md:mb-4">
+            <p className="text-red-200 text-xs sm:text-sm font-bold">
+              🔒 Dostęp zablokowany
+            </p>
+            <p className="text-red-200 text-xs sm:text-sm">
+              Minęło {eligibility?.daysSinceRegistration || 0} dni od rejestracji. 
+              Wykup subskrypcję, aby kontynuować korzystanie z talizmanów.
+            </p>
+          </div>
+        )}
+        
+        {/* Informacja o czasie do końca okresu próbnego */}
+        {eligibility?.hasAccess && eligibility?.daysSinceRegistration && eligibility.daysSinceRegistration > 0 && (
+          <div className="bg-blue-500/20 border border-blue-500 rounded-lg p-1.5 sm:p-2 md:p-3 mb-1.5 sm:mb-2 md:mb-4">
+            <p className="text-blue-200 text-xs sm:text-sm">
+              ⏰ Okres próbny: {7 - eligibility.daysSinceRegistration} dni pozostało
+            </p>
+            <p className="text-blue-200 text-xs sm:text-sm">
+              Po 7 dniach dostęp zostanie zablokowany. Wykup subskrypcję, aby kontynuować.
+            </p>
           </div>
         )}
                   <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 sm:p-3 md:p-4 max-w-sm sm:max-w-md mx-auto">
@@ -763,9 +814,10 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                 
                 {/* Dolna część - przyciski akcji */}
                 <div style={{ 
-                  minHeight: isExtraSmall ? "18px" : isSmallMobile ? "22px" : isMobile ? "26px" : "24px",
+                  minHeight: isExtraSmall ? "24px" : isSmallMobile ? "28px" : isMobile ? "32px" : "30px",
                   display: "flex",
-                  alignItems: "flex-end"
+                  alignItems: "flex-end",
+                  marginTop: "auto"
                 }}>
                   {canGrant && (
                     <motion.button
@@ -777,10 +829,11 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                       }}
                       className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold rounded hover:from-yellow-300 hover:to-orange-400 transition-all"
                       style={{
-                        padding: isExtraSmall ? "2px 3px" : isSmallMobile ? "3px 4px" : isMobile ? "4px 6px" : "4px 5px",
-                        fontSize: isExtraSmall ? "0.5rem" : isSmallMobile ? "0.55rem" : isMobile ? "0.6rem" : "0.55rem",
-                        height: isExtraSmall ? "16px" : isSmallMobile ? "20px" : isMobile ? "24px" : "22px",
-                        lineHeight: "1"
+                        padding: isExtraSmall ? "4px 6px" : isSmallMobile ? "5px 8px" : isMobile ? "6px 10px" : "6px 8px",
+                        fontSize: isExtraSmall ? "0.6rem" : isSmallMobile ? "0.7rem" : isMobile ? "0.8rem" : "0.75rem",
+                        height: isExtraSmall ? "20px" : isSmallMobile ? "24px" : isMobile ? "28px" : "26px",
+                        lineHeight: "1.2",
+                        minHeight: isExtraSmall ? "20px" : isSmallMobile ? "24px" : isMobile ? "28px" : "26px"
                       }}
                     >
                       Odbierz!
@@ -797,10 +850,11 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                       }}
                       className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold rounded hover:from-purple-400 hover:to-blue-400 transition-all"
                       style={{
-                        padding: isExtraSmall ? "2px 3px" : isSmallMobile ? "3px 4px" : isMobile ? "4px 6px" : "4px 5px",
-                        fontSize: isExtraSmall ? "0.5rem" : isSmallMobile ? "0.55rem" : isMobile ? "0.6rem" : "0.55rem",
-                        height: isExtraSmall ? "16px" : isSmallMobile ? "20px" : isMobile ? "24px" : "22px",
-                        lineHeight: "1"
+                        padding: isExtraSmall ? "4px 6px" : isSmallMobile ? "5px 8px" : isMobile ? "6px 10px" : "6px 8px",
+                        fontSize: isExtraSmall ? "0.6rem" : isSmallMobile ? "0.7rem" : isMobile ? "0.8rem" : "0.75rem",
+                        height: isExtraSmall ? "20px" : isSmallMobile ? "24px" : isMobile ? "28px" : "26px",
+                        lineHeight: "1.2",
+                        minHeight: isExtraSmall ? "20px" : isSmallMobile ? "24px" : isMobile ? "28px" : "26px"
                       }}
                     >
                       Aktywuj
@@ -817,10 +871,11 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                       }}
                       className="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold rounded hover:from-red-400 hover:to-pink-400 transition-all"
                       style={{
-                        padding: isExtraSmall ? "2px 3px" : isSmallMobile ? "3px 4px" : isMobile ? "4px 6px" : "4px 5px",
-                        fontSize: isExtraSmall ? "0.5rem" : isSmallMobile ? "0.55rem" : isMobile ? "0.6rem" : "0.55rem",
-                        height: isExtraSmall ? "16px" : isSmallMobile ? "20px" : isMobile ? "24px" : "22px",
-                        lineHeight: "1"
+                        padding: isExtraSmall ? "4px 6px" : isSmallMobile ? "5px 8px" : isMobile ? "6px 10px" : "6px 8px",
+                        fontSize: isExtraSmall ? "0.6rem" : isSmallMobile ? "0.7rem" : isMobile ? "0.8rem" : "0.75rem",
+                        height: isExtraSmall ? "20px" : isSmallMobile ? "24px" : isMobile ? "28px" : "26px",
+                        lineHeight: "1.2",
+                        minHeight: isExtraSmall ? "20px" : isSmallMobile ? "24px" : isMobile ? "28px" : "26px"
                       }}
                     >
                       Deaktywuj

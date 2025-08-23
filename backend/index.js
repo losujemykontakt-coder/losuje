@@ -2314,20 +2314,7 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-// Fallback dla SPA - serwuj index.html dla wszystkich tras, które nie są API
-app.get('*', (req, res) => {
-  // Jeśli to nie jest API endpoint, przekieruj do frontendu
-  if (!req.path.startsWith('/api/')) {
-    try {
-      res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
-    } catch (error) {
-      console.error('Błąd serwowania pliku index.html:', error);
-      res.status(404).json({ error: 'Strona nie została znaleziona' });
-    }
-  } else {
-    res.status(404).json({ error: 'Endpoint nie istnieje' });
-  }
-});
+// Fallback dla SPA zostanie przeniesiony na koniec pliku
 
 // Endpoint do obsługi powrotu z płatności PayPal
 app.get('/api/payment/success', async (req, res) => {
@@ -2822,6 +2809,21 @@ app.get('/api/talismans/:userId', async (req, res) => {
     
     console.log('🔍 Używam Firebase dla UID:', userId);
     
+    // Sprawdź czy Firebase jest dostępny
+    const { db } = require('./firebase-admin');
+    if (!db) {
+      console.log('❌ Firebase nie jest dostępny - zwracam demo dane');
+      return res.json({
+        success: true,
+        streak: { current_streak: 0, total_tokens: 0 },
+        eligibility: { availableTalismans: [], totalTokens: 0, nextTalisman: null },
+        talismans: [],
+        activeTalisman: null,
+        bonuses: [],
+        isDemo: true
+      });
+    }
+    
     // Importuj funkcje Firebase
     const { 
       registerLogin,
@@ -2861,10 +2863,18 @@ app.get('/api/talismans/:userId', async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Błąd pobierania talizmanów z Firebase:', error);
-    res.status(500).json({ 
-      success: false,
-      error: 'Błąd serwera',
-      details: error.message
+    console.error('❌ Error stack:', error.stack);
+    
+    // Zwróć demo dane w przypadku błędu
+    res.json({
+      success: true,
+      streak: { current_streak: 0, total_tokens: 0 },
+      eligibility: { availableTalismans: [], totalTokens: 0, nextTalisman: null },
+      talismans: [],
+      activeTalisman: null,
+      bonuses: [],
+      isDemo: true,
+      error: error.message
     });
   }
 });
@@ -3012,4 +3022,20 @@ app.get('/api/paypal/config', (req, res) => {
     serviceLoaded: !!paypalService,
     timestamp: new Date().toISOString()
   });
+});
+
+// Fallback dla SPA - serwuj index.html dla wszystkich tras, które nie są API
+// MUSI być na końcu, po wszystkich endpointach API
+app.get('*', (req, res) => {
+  // Jeśli to nie jest API endpoint, przekieruj do frontendu
+  if (!req.path.startsWith('/api/')) {
+    try {
+      res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+    } catch (error) {
+      console.error('Błąd serwowania pliku index.html:', error);
+      res.status(404).json({ error: 'Strona nie została znaleziona' });
+    }
+  } else {
+    res.status(404).json({ error: 'Endpoint nie istnieje' });
+  }
 });

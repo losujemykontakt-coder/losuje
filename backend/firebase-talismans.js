@@ -126,6 +126,59 @@ const checkTalismanEligibility = async (firebaseUid) => {
   try {
     console.log('🔍 Firebase checkTalismanEligibility - dla UID:', firebaseUid);
     
+    // Sprawdź dostęp użytkownika
+    const userRef = db.collection('users').doc(firebaseUid);
+    const userDoc = await userRef.get();
+    
+    if (!userDoc.exists) {
+      console.log('🔍 Użytkownik nie istnieje w Firebase');
+      return {
+        currentStreak: 0,
+        totalTokens: 0,
+        availableTalismans: [],
+        nextTalisman: null,
+        hasAccess: false,
+        daysSinceRegistration: 0
+      };
+    }
+    
+    const userData = userDoc.data();
+    const now = new Date();
+    const createdAt = new Date(userData.created_at);
+    const daysSinceRegistration = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
+    
+    // Sprawdź czy użytkownik ma dostęp (7 dni od rejestracji lub aktywna subskrypcja)
+    const hasActiveSubscription = userData.subscription_status === 'active' && 
+      userData.subscription_end_date && 
+      new Date(userData.subscription_end_date) > now;
+    
+    const hasActiveTrial = userData.subscription_status === 'trial' && 
+      userData.trial_end_date && 
+      new Date(userData.trial_end_date) > now;
+    
+    const hasAccess = daysSinceRegistration <= 7 || hasActiveSubscription || hasActiveTrial;
+    
+    console.log('🔍 Sprawdzenie dostępu:', {
+      daysSinceRegistration,
+      hasActiveSubscription,
+      hasActiveTrial,
+      hasAccess,
+      subscriptionStatus: userData.subscription_status
+    });
+    
+    if (!hasAccess) {
+      console.log('❌ Użytkownik nie ma dostępu - minęło więcej niż 7 dni');
+      return {
+        currentStreak: 0,
+        totalTokens: 0,
+        availableTalismans: [],
+        nextTalisman: null,
+        hasAccess: false,
+        daysSinceRegistration,
+        blocked: true
+      };
+    }
+    
     const streak = await getLoginStreak(firebaseUid);
     console.log('🔍 Otrzymany streak:', streak);
     
@@ -136,7 +189,9 @@ const checkTalismanEligibility = async (firebaseUid) => {
       currentStreak: streak.current_streak,
       totalTokens: streak.total_tokens,
       availableTalismans,
-      nextTalisman: talismanRequirements.find(req => req > streak.total_tokens) || null
+      nextTalisman: talismanRequirements.find(req => req > streak.total_tokens) || null,
+      hasAccess: true,
+      daysSinceRegistration
     };
     
     console.log('🔍 Wynik eligibility:', result);

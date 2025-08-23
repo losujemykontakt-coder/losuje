@@ -1,0 +1,99 @@
+[1mdiff --git a/frontend/src/App.js b/frontend/src/App.js[m
+[1mindex 58062a8..c652bad 100644[m
+[1m--- a/frontend/src/App.js[m
+[1m+++ b/frontend/src/App.js[m
+[36m@@ -10383,14 +10383,16 @@[m [mfunction App() {[m
+       }}[m
+       onError={(err) => {[m
+         console.error('PayPal Script Provider Error:', err);[m
+[31m-        // Ignoruj błędy sesji i sandbox[m
+[32m+[m[32m        // Ignoruj błędy sesji, sandbox i popup close - to normalne zachowanie[m
+         if (err.message && ([m
+           err.message.includes('global_session_not_found') || [m
+           err.message.includes('session') ||[m
+           err.message.includes('sandbox') ||[m
+[31m-          err.message.includes('clientID')[m
+[32m+[m[32m          err.message.includes('clientID') ||[m
+[32m+[m[32m          err.message.includes('popup close') ||[m
+[32m+[m[32m          err.message.includes('Detected popup close')[m
+         )) {[m
+[31m-          console.log('🔄 Ignorowanie błędu PayPal Script Provider:', err.message);[m
+[32m+[m[32m          console.log('🔄 Ignorowanie błędu PayPal Script Provider (normalne):', err.message);[m
+           return;[m
+         }[m
+         console.error('❌ PayPal Script Provider Error:', err);[m
+[1mdiff --git a/frontend/src/components/PaymentButtons.js b/frontend/src/components/PaymentButtons.js[m
+[1mindex 7a96389..b46a23d 100644[m
+[1m--- a/frontend/src/components/PaymentButtons.js[m
+[1m+++ b/frontend/src/components/PaymentButtons.js[m
+[36m@@ -174,7 +174,25 @@[m [mconst PaymentButtons = ({[m
+ [m
+       const result = await response.json();[m
+       console.log('✅ Zamówienie utworzone:', result);[m
+[31m-      showNotification(`✅ Zamówienie utworzone dla ${selectedPlanData.name}`, 'success');[m
+[32m+[m[41m      [m
+[32m+[m[32m      if (result.success && result.id) {[m
+[32m+[m[32m        showNotification(`✅ Przekierowanie do płatności PayPal...`, 'success');[m
+[32m+[m[41m        [m
+[32m+[m[32m        // Przekierowanie do PayPal[m
+[32m+[m[32m        if (method === 'paypal') {[m
+[32m+[m[32m          // Dla PayPal używamy SDK do otwarcia popup[m
+[32m+[m[32m          console.log('🔗 Przekierowanie do PayPal popup...');[m
+[32m+[m[32m          console.log('🔗 Order ID:', result.id);[m
+[32m+[m[32m          // PayPal SDK automatycznie otworzy popup z płatnością[m
+[32m+[m[32m          // Zwróć orderId do PayPal SDK[m
+[32m+[m[32m          return result.id;[m
+[32m+[m[32m        } else {[m
+[32m+[m[32m          // Dla innych metod przekierowanie do strony płatności[m
+[32m+[m[32m          window.location.href = result.redirectUrl || `/payments?orderId=${result.id}`;[m
+[32m+[m[32m        }[m
+[32m+[m[32m      } else {[m
+[32m+[m[32m        throw new Error(result.error || 'Błąd tworzenia zamówienia');[m
+[32m+[m[32m      }[m
+       [m
+     } catch (error) {[m
+       // Wyczyść timeout[m
+[1mdiff --git a/frontend/src/components/Payments.jsx b/frontend/src/components/Payments.jsx[m
+[1mindex b5c2bbc..fb7b3ee 100644[m
+[1m--- a/frontend/src/components/Payments.jsx[m
+[1m+++ b/frontend/src/components/Payments.jsx[m
+[36m@@ -266,25 +266,33 @@[m [mconst Payments = ({ user = null }) => {[m
+                   onInit={() => {[m
+                     console.log('✅ PayPal SDK załadowany w Payments komponencie');[m
+                     setPaypalLoading(false);[m
+[32m+[m[32m                    showNotification('✅ PayPal gotowy do płatności', 'success');[m
+                   }}[m
+                   onCancel={(data) => {[m
+                     console.log('❌ PayPal payment cancelled:', data);[m
+[31m-                    showNotification('❌ Płatność PayPal anulowana', 'error');[m
+[32m+[m[32m                    showNotification('ℹ️ Płatność PayPal anulowana przez użytkownika', 'info');[m
+                   }}[m
+                   onError={(err) => {[m
+                     console.error('PayPal error:', err);[m
+[31m-                    // Ignoruj błędy sesji i sandbox[m
+[32m+[m[41m                    [m
+[32m+[m[32m                    // Ignoruj błędy sesji, sandbox i popup close - to normalne zachowanie[m
+                     if (err.message && ([m
+                       err.message.includes('global_session_not_found') || [m
+                       err.message.includes('session') ||[m
+                       err.message.includes('sandbox') ||[m
+[31m-                      err.message.includes('clientID')[m
+[32m+[m[32m                      err.message.includes('clientID') ||[m
+[32m+[m[32m                      err.message.includes('popup close') ||[m
+[32m+[m[32m                      err.message.includes('Detected popup close')[m
+                     )) {[m
+[31m-                      console.log('🔄 Ignorowanie błędu PayPal:', err.message);[m
+[32m+[m[32m                      console.log('🔄 Ignorowanie błędu PayPal (normalne):', err.message);[m
+                       return;[m
+                     }[m
+[31m-                    setError('Błąd PayPal: ' + err.message);[m
+[31m-                    showNotification('❌ Błąd PayPal: ' + err.message, 'error');[m
+[32m+[m[41m                    [m
+[32m+[m[32m                    // Dla innych błędów pokaż powiadomienie[m
+[32m+[m[32m                    const errorMessage = err.message || 'Nieznany błąd PayPal';[m
+[32m+[m[32m                    console.error('❌ Błąd PayPal (krytyczny):', errorMessage);[m
+[32m+[m[32m                    setError('Błąd PayPal: ' + errorMessage);[m
+[32m+[m[32m                    showNotification('❌ Błąd PayPal: ' + errorMessage, 'error');[m
+                   }}[m
+                 />[m
+               </div>[m
