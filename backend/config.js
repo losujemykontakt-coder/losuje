@@ -17,7 +17,7 @@ const config = {
     PORT: process.env.EMAIL_PORT || 587,
     USER: process.env.EMAIL_USER || 'twoj_email@gmail.com',
     PASS: process.env.EMAIL_PASS || 'twoje_haslo_aplikacji',
-    FROM: process.env.EMAIL_FROM || 'noreply@losuje-generator.com'
+    FROM: process.env.EMAIL_FROM || 'noreply@losuje.pl'
   },
   
   // Konfiguracja bazy danych
