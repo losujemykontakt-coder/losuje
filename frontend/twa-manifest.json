@@ -1,0 +1,38 @@
+{
+  "packageId": "com.losuje.generator",
+  "host": "losuje-generator.pl",
+  "name": "Magiczny Zestaw Dnia",
+  "launcherName": "Losuje Generator",
+  "display": "standalone",
+  "themeColor": "#000000",
+  "navigationColor": "#000000",
+  "backgroundColor": "#ffffff",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://losuje-generator.pl/logo512.png",
+  "maskableIconUrl": "https://losuje-generator.pl/logo512.png",
+  "monochromeIconUrl": "https://losuje-generator.pl/logo512.png",
+  "shortcuts": [
+    {
+      "name": "Losuj Lotto",
+      "shortName": "Lotto",
+      "url": "/?shortcut=lotto",
+      "chosenIconUrl": "https://losuje-generator.pl/logo192.png"
+    },
+    {
+      "name": "Magiczny Zestaw",
+      "shortName": "Magiczny",
+      "url": "/?shortcut=magiczny",
+      "chosenIconUrl": "https://losuje-generator.pl/logo192.png"
+    }
+  ],
+  "shareTarget": {
+    "action": "/",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}

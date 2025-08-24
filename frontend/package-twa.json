@@ -1,0 +1,21 @@
+{
+  "name": "losuje-generator-twa",
+  "version": "1.0.0",
+  "description": "Magiczny Zestaw Dnia - Generator Liczb Lotto TWA",
+  "main": "index.js",
+  "scripts": {
+    "build": "bubblewrap build",
+    "update": "bubblewrap update",
+    "validate": "bubblewrap validate",
+    "init": "bubblewrap init --manifest https://losuje-generator.pl/manifest.json"
+  },
+  "dependencies": {
+    "@bubblewrap/cli": "^1.0.0"
+  },
+  "devDependencies": {
+    "@bubblewrap/core": "^1.0.0"
+  },
+  "keywords": ["pwa", "twa", "lotto", "generator"],
+  "author": "Losuje.pl",
+  "license": "MIT"
+}
