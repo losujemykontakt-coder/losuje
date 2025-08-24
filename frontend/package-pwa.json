@@ -13,6 +13,7 @@
     "react-scripts": "5.0.1",
     "react-i18next": "^11.16.9",
     "i18next": "^21.8.16",
+    "i18next-browser-languagedetector": "^7.0.2",
     "firebase": "^9.9.0",
     "emailjs-com": "^3.2.0",
     "jspdf": "^2.5.1",
