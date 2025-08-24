@@ -13,6 +13,13 @@ import ActiveTalismanDisplay from './components/ActiveTalismanDisplay';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import HomePage from './components/HomePage';
 import SchonheimGenerator from './components/SchonheimGenerator';
+import DreamsGenerator from './components/DreamsGenerator';
+import LuckyNumbersGenerator from './components/LuckyNumbersGenerator';
+import NumberPicker from './components/NumberPicker';
+import SystemsGenerator from './components/SystemsGenerator';
+import Explanations from './components/Explanations';
+import Account from './components/Account';
+import Gry from './components/Gry';
 
 import { logoutUser, onAuthStateChange } from './utils/firebaseAuth';
 import {
@@ -352,24 +359,40 @@ function AppPWA() {
         <button onClick={() => navigate('/gry')} style={menuBtnStyle(location.pathname === '/gry')}>
           🎰 Gry
         </button>
-        <button onClick={() => navigate('/harmonic-analyzer')} style={menuBtnStyle(location.pathname === '/harmonic-analyzer')}>
-          🎵 Analizator Harmoniczny
-        </button>
-        
-        <button onClick={() => navigate('/statistics')} style={menuBtnStyle(location.pathname === '/statistics')}>
-          📈 Statystyki
-        </button>
+                 <button onClick={() => navigate('/harmonic-analyzer')} style={menuBtnStyle(location.pathname === '/harmonic-analyzer')}>
+           🎵 Analizator Harmoniczny
+         </button>
+         <button onClick={() => navigate('/dreams')} style={menuBtnStyle(location.pathname === '/dreams')}>
+           💭 Generator Snów
+         </button>
+         <button onClick={() => navigate('/lucky')} style={menuBtnStyle(location.pathname === '/lucky')}>
+           🍀 Szczęśliwe Liczby
+         </button>
+         <button onClick={() => navigate('/numberPicker')} style={menuBtnStyle(location.pathname === '/numberPicker')}>
+           🎯 Wybór Liczb
+         </button>
+         <button onClick={() => navigate('/systems')} style={menuBtnStyle(location.pathname === '/systems')}>
+           📊 Systemy Skrócone
+         </button>
+         <button onClick={() => navigate('/statistics')} style={menuBtnStyle(location.pathname === '/statistics')}>
+           📈 Statystyki
+         </button>
         <button onClick={() => navigate('/my-lucky-numbers')} style={menuBtnStyle(location.pathname === '/my-lucky-numbers')}>
           🎲 Moje Szczęśliwe Liczby
         </button>
         <button onClick={() => navigate('/talismans')} style={menuBtnStyle(location.pathname === '/talismans')}>
           ✨ Talizmany
         </button>
-        <button onClick={() => navigate('/schonheim')} style={menuBtnStyle(location.pathname === '/schonheim')}>
-          🎲 Generator Schonheim
-        </button>
-        
-      </nav>
+                 <button onClick={() => navigate('/schonheim')} style={menuBtnStyle(location.pathname === '/schonheim')}>
+           🎲 Generator Schonheim
+         </button>
+         <button onClick={() => navigate('/explanations')} style={menuBtnStyle(location.pathname === '/explanations')}>
+           📖 Wyjaśnienia
+         </button>
+         <button onClick={() => navigate('/account')} style={menuBtnStyle(location.pathname === '/account')}>
+           👤 Moje Konto
+         </button>
+       </nav>
 
       {/* Main Content */}
       <main style={{ padding: '20px' }}>
@@ -445,7 +468,61 @@ function AppPWA() {
             />
           } />
           
-
+          <Route path="/dreams" element={
+            <DreamsGenerator 
+              user={user}
+              userStatus={userStatus}
+              hasPremiumAccess={hasPremiumAccess}
+            />
+          } />
+          
+          <Route path="/lucky" element={
+            <LuckyNumbersGenerator 
+              user={user}
+              userStatus={userStatus}
+              hasPremiumAccess={hasPremiumAccess}
+            />
+          } />
+          
+          <Route path="/numberPicker" element={
+            <NumberPicker 
+              user={user}
+              userStatus={userStatus}
+              hasPremiumAccess={hasPremiumAccess}
+            />
+          } />
+          
+          <Route path="/systems" element={
+            <SystemsGenerator 
+              user={user}
+              userStatus={userStatus}
+              hasPremiumAccess={hasPremiumAccess}
+            />
+          } />
+          
+          <Route path="/explanations" element={
+            <Explanations 
+              user={user}
+              userStatus={userStatus}
+              hasPremiumAccess={hasPremiumAccess}
+            />
+          } />
+          
+          <Route path="/account" element={
+            <Account 
+              user={user}
+              userStatus={userStatus}
+              hasPremiumAccess={hasPremiumAccess}
+            />
+          } />
+          
+          <Route path="/gry" element={
+            <Gry 
+              user={user}
+              userStatus={userStatus}
+              hasPremiumAccess={hasPremiumAccess}
+            />
+          } />
           
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
