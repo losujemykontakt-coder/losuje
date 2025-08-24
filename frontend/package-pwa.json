@@ -19,7 +19,8 @@
     "jspdf": "^2.5.1",
     "web-vitals": "^2.1.4",
     "framer-motion": "^10.16.4",
-    "lottie-react": "^2.4.0"
+    "lottie-react": "^2.4.0",
+    "three": "^0.158.0"
   },
   "scripts": {
     "start": "react-scripts start",
