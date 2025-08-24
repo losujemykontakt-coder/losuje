@@ -290,7 +290,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
         const baseUrl = process.env.NODE_ENV === 'development' ? '' : (process.env.REACT_APP_API_URL || 'https://losuje.pl');
         const testResponse = await fetch(`${baseUrl}/api/test`, {
           method: 'GET',
-          signal: AbortSignal.timeout(3000) // 3 sekundy timeout
+          signal: AbortSignal.timeout(10000) // 10 sekund timeout
         });
         console.log('✅ Backend odpowiada na /api/test');
       } catch (testError) {
@@ -305,7 +305,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       
       // Dodaj timeout do fetch
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 sekundy timeout
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 sekund timeout
       
       // Użyj proxy w trybie development, a REACT_APP_API_URL w produkcji
       const baseUrl = process.env.NODE_ENV === 'development' ? '' : (process.env.REACT_APP_API_URL || 'https://losuje.pl');

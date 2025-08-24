@@ -1877,16 +1877,16 @@ const updateStatsInterval = setInterval(async () => {
   }
 }, 10 * 60 * 1000); // Co 10 minut (10 minut * 60 sekund * 1000 ms)
 
-// Pierwsza aktualizacja przy starcie serwera
-setTimeout(async () => {
-  try {
-    console.log('🚀 Pierwsza aktualizacja statystyk przy starcie...');
-    await updateAllStats();
-    console.log('✅ Pierwsza aktualizacja statystyk zakończona');
-  } catch (error) {
-    console.error('❌ Błąd pierwszej aktualizacji statystyk:', error);
-  }
-}, 5000); // 5 sekund po starcie
+// Pierwsza aktualizacja przy starcie serwera (wyłączona dla szybkiego startu)
+// setTimeout(async () => {
+//   try {
+//     console.log('🚀 Pierwsza aktualizacja statystyk przy starcie...');
+//     await updateAllStats();
+//     console.log('✅ Pierwsza aktualizacja statystyk zakończona');
+//   } catch (error) {
+//     console.error('❌ Błąd pierwszej aktualizacji statystyk:', error);
+//   }
+// }, 5000); // 5 sekund po starcie
 
 // Usuń app.listen stąd - przeniosę na koniec pliku
 
