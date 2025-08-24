@@ -13,6 +13,10 @@ import ActiveTalismanDisplay from './components/ActiveTalismanDisplay';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import HomePage from './components/HomePage';
 import SchonheimGenerator from './components/SchonheimGenerator';
+import DreamsGenerator from './components/DreamsGenerator';
+import LuckyNumbersGenerator from './components/LuckyNumbersGenerator';
+import NumberPicker from './components/NumberPicker';
+import SystemsGenerator from './components/SystemsGenerator';
 import { logoutUser, onAuthStateChange } from './utils/firebaseAuth';
 import {
   getUserSubscription,
@@ -384,6 +388,38 @@ function AppPWA() {
           
           <Route path="/schonheim" element={
             <SchonheimGenerator 
+              user={user}
+              userStatus={userStatus}
+              hasPremiumAccess={hasPremiumAccess}
+            />
+          } />
+          
+          <Route path="/dreams" element={
+            <DreamsGenerator 
+              user={user}
+              userStatus={userStatus}
+              hasPremiumAccess={hasPremiumAccess}
+            />
+          } />
+          
+          <Route path="/lucky" element={
+            <LuckyNumbersGenerator 
+              user={user}
+              userStatus={userStatus}
+              hasPremiumAccess={hasPremiumAccess}
+            />
+          } />
+          
+          <Route path="/numberPicker" element={
+            <NumberPicker 
+              user={user}
+              userStatus={userStatus}
+              hasPremiumAccess={hasPremiumAccess}
+            />
+          } />
+          
+          <Route path="/systems" element={
+            <SystemsGenerator 
               user={user}
               userStatus={userStatus}
               hasPremiumAccess={hasPremiumAccess}
