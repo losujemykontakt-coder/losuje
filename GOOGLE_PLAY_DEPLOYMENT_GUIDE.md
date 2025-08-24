@@ -126,7 +126,7 @@ bubblewrap build --target apk
 ## 8. Wymagania prawne
 
 ### A. Polityka prywatności
-Utwórz stronę z polityką prywatności na: `https://lotek-generator.pl/privacy`
+Utwórz stronę z polityką prywatności na: `https://losuje-generator.pl/privacy`
 
 ### B. Zgody
 - ✅ Zgoda na przetwarzanie danych
