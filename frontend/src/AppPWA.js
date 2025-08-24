@@ -17,6 +17,9 @@ import DreamsGenerator from './components/DreamsGenerator';
 import LuckyNumbersGenerator from './components/LuckyNumbersGenerator';
 import NumberPicker from './components/NumberPicker';
 import SystemsGenerator from './components/SystemsGenerator';
+import Explanations from './components/Explanations';
+import Account from './components/Account';
+import Gry from './components/Gry';
 import { logoutUser, onAuthStateChange } from './utils/firebaseAuth';
 import {
   getUserSubscription,
@@ -206,6 +209,22 @@ function AppPWA() {
     // Tutaj możesz dodać logikę zmiany języka w i18n
   };
 
+  // Stylowanie przycisków menu
+  const menuBtnStyle = (isActive) => ({
+    padding: '8px 16px',
+    backgroundColor: isActive ? '#FFD700' : '#ffffff',
+    color: isActive ? '#333' : '#666',
+    border: '1px solid #dee2e6',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    fontWeight: isActive ? 'bold' : 'normal',
+    transition: 'all 0.2s ease',
+    ':hover': {
+      backgroundColor: isActive ? '#FFD700' : '#f8f9fa'
+    }
+  });
+
   if (loading) {
     return (
       <div style={{
@@ -320,6 +339,60 @@ function AppPWA() {
         </div>
       </header>
 
+      {/* Navigation Menu */}
+      <nav style={{
+        backgroundColor: '#f8f9fa',
+        padding: '10px 20px',
+        borderBottom: '1px solid #dee2e6',
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '10px',
+        justifyContent: 'center'
+      }}>
+        <button onClick={() => navigate('/')} style={menuBtnStyle(location.pathname === '/')}>
+          🏠 Strona główna
+        </button>
+        <button onClick={() => navigate('/ai-generator')} style={menuBtnStyle(location.pathname === '/ai-generator')}>
+          🚀 AI Generator Ultra Pro
+        </button>
+        <button onClick={() => navigate('/gry')} style={menuBtnStyle(location.pathname === '/gry')}>
+          🎰 Gry
+        </button>
+        <button onClick={() => navigate('/harmonic-analyzer')} style={menuBtnStyle(location.pathname === '/harmonic-analyzer')}>
+          🎵 Analizator Harmoniczny
+        </button>
+        <button onClick={() => navigate('/dreams')} style={menuBtnStyle(location.pathname === '/dreams')}>
+          💭 Generator Snów
+        </button>
+        <button onClick={() => navigate('/lucky')} style={menuBtnStyle(location.pathname === '/lucky')}>
+          🍀 Szczęśliwe Liczby
+        </button>
+        <button onClick={() => navigate('/numberPicker')} style={menuBtnStyle(location.pathname === '/numberPicker')}>
+          🎯 Wybór Liczb
+        </button>
+        <button onClick={() => navigate('/systems')} style={menuBtnStyle(location.pathname === '/systems')}>
+          📊 Systemy Skrócone
+        </button>
+        <button onClick={() => navigate('/statistics')} style={menuBtnStyle(location.pathname === '/statistics')}>
+          📈 Statystyki
+        </button>
+        <button onClick={() => navigate('/my-lucky-numbers')} style={menuBtnStyle(location.pathname === '/my-lucky-numbers')}>
+          🎲 Moje Szczęśliwe Liczby
+        </button>
+        <button onClick={() => navigate('/talismans')} style={menuBtnStyle(location.pathname === '/talismans')}>
+          ✨ Talizmany
+        </button>
+        <button onClick={() => navigate('/schonheim')} style={menuBtnStyle(location.pathname === '/schonheim')}>
+          🎲 Generator Schonheim
+        </button>
+        <button onClick={() => navigate('/explanations')} style={menuBtnStyle(location.pathname === '/explanations')}>
+          📖 Wyjaśnienia
+        </button>
+        <button onClick={() => navigate('/account')} style={menuBtnStyle(location.pathname === '/account')}>
+          👤 Moje Konto
+        </button>
+      </nav>
+
       {/* Main Content */}
       <main style={{ padding: '20px' }}>
         <Routes>
@@ -420,6 +493,30 @@ function AppPWA() {
           
           <Route path="/systems" element={
             <SystemsGenerator 
+              user={user}
+              userStatus={userStatus}
+              hasPremiumAccess={hasPremiumAccess}
+            />
+          } />
+          
+          <Route path="/explanations" element={
+            <Explanations 
+              user={user}
+              userStatus={userStatus}
+              hasPremiumAccess={hasPremiumAccess}
+            />
+          } />
+          
+          <Route path="/account" element={
+            <Account 
+              user={user}
+              userStatus={userStatus}
+              hasPremiumAccess={hasPremiumAccess}
+            />
+          } />
+          
+          <Route path="/gry" element={
+            <Gry 
               user={user}
               userStatus={userStatus}
               hasPremiumAccess={hasPremiumAccess}
