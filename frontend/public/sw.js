@@ -1,12 +1,8 @@
 const CACHE_NAME = 'losuje-generator-v1';
 const urlsToCache = [
   '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
   '/manifest.json',
-  '/favicon.ico',
-  '/logo192.png',
-  '/logo512.png'
+  '/favicon.ico'
 ];
 
 // Install event
@@ -15,7 +11,12 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('Opened cache');
-        return cache.addAll(urlsToCache);
+        // Cache tylko podstawowe pliki, resztę pobierz z sieci
+        return cache.addAll(urlsToCache).catch(error => {
+          console.log('Cache addAll failed:', error);
+          // Kontynuuj nawet jeśli cache się nie udał
+          return Promise.resolve();
+        });
       })
   );
 });
@@ -26,9 +27,12 @@ self.addEventListener('fetch', event => {
     caches.match(event.request)
       .then(response => {
         // Return cached version or fetch from network
-        return response || fetch(event.request);
-      }
-    )
+        return response || fetch(event.request).catch(error => {
+          console.log('Fetch failed:', error);
+          // Jeśli fetch się nie udał, zwróć pustą odpowiedź
+          return new Response('Network error', { status: 503 });
+        });
+      })
   );
 });
 
