@@ -360,7 +360,7 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
       setHarmonicStats({
         success: true,
         isRealData: false,
-        dataSource: 'Symulowane dane (backend nie odpowiada)',
+        dataSource: 'Symulowane dane',
         totalDraws: 1000,
         meanGap: 7.5,
         medianGap: 7,
@@ -385,7 +385,7 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
       });
       
       // Pokaż komunikat o trybie demo
-      setError('Backend nie odpowiada. Pokazuję symulowane dane. W trybie produkcyjnym dane będą pobierane z rzeczywistych statystyk.');
+      setError('Pokazuję symulowane dane. W trybie produkcyjnym dane będą pobierane z rzeczywistych statystyk.');
       
       // Ukryj komunikat po 5 sekundach
       setTimeout(() => {

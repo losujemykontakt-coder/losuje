@@ -221,7 +221,7 @@ const Statistics = ({ selectedGame, onGameChange }) => {
         
         if (error.message.includes('fetch') || error.message.includes('network')) {
           console.log('🌐 Błąd połączenia z serwerem');
-          setError('Nie można połączyć się z serwerem. Sprawdź czy backend jest uruchomiony.');
+          setError('Nie można połączyć się z serwerem.');
         } else if (error.message.includes('timeout')) {
           console.log('⏰ Timeout - żądanie przerwane po 10 sekundach');
           setError('Serwer nie odpowiada. Używam domyślnych danych.');

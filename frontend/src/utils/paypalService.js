@@ -60,7 +60,7 @@ class PayPalService {
       if (error.message.includes('Failed to fetch')) {
         return {
           success: false,
-          error: 'Brak połączenia z serwerem. Sprawdź czy backend jest uruchomiony.'
+          error: 'Brak połączenia z serwerem.'
         };
       } else if (error.message.includes('timeout')) {
         return {

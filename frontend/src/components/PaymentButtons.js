@@ -202,11 +202,11 @@ const PaymentButtons = ({
       
       // Sprawdź typ błędu
       if (error.name === 'AbortError') {
-        setError('Timeout - Backend nie odpowiada po 2 minutach. Sprawdź czy backend jest uruchomiony na porcie 3001');
-        showNotification('❌ Timeout - Backend nie odpowiada', 'error');
+        setError('Timeout - Sprawdź połączenie z serwerem');
+showNotification('❌ Timeout - Sprawdź połączenie', 'error');
       } else if (error.message.includes('Failed to fetch')) {
-        setError('Brak połączenia z backendem. Sprawdź czy backend jest uruchomiony na porcie 3001');
-        showNotification('❌ Brak połączenia z backendem', 'error');
+        setError('Brak połączenia z serwerem');
+        showNotification('❌ Brak połączenia z serwerem', 'error');
       } else {
         setError('Błąd płatności: ' + error.message);
         showNotification('❌ Błąd płatności', 'error');
@@ -272,7 +272,7 @@ const PaymentButtons = ({
           setError(null);
         } else {
           setBackendStatus('error');
-          setError('Backend nie odpowiada poprawnie');
+          setError('Serwer nie odpowiada poprawnie');
         }
       } catch (error) {
         setBackendStatus('error');
