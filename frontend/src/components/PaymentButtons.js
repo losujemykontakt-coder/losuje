@@ -200,17 +200,7 @@ const PaymentButtons = ({
       
       console.error('❌ Błąd płatności:', error);
       
-      // Sprawdź typ błędu
-      if (error.name === 'AbortError') {
-        setError('Timeout - Sprawdź połączenie z serwerem');
-showNotification('❌ Timeout - Sprawdź połączenie', 'error');
-      } else if (error.message.includes('Failed to fetch')) {
-        setError('Brak połączenia z serwerem');
-        showNotification('❌ Brak połączenia z serwerem', 'error');
-      } else {
-        setError('Błąd płatności: ' + error.message);
-        showNotification('❌ Błąd płatności', 'error');
-      }
+      // Błąd płatności - bez komunikatu dla użytkownika
     } finally {
       setIsProcessing(false);
     }
@@ -271,9 +261,9 @@ showNotification('❌ Timeout - Sprawdź połączenie', 'error');
           setBackendStatus('connected');
           setError(null);
         } else {
-          setBackendStatus('error');
-          setError('Serwer nie odpowiada poprawnie');
-        }
+  setBackendStatus('error');
+  // Błąd serwera - bez komunikatu dla użytkownika
+}
       } catch (error) {
         setBackendStatus('error');
         setError('Brak połączenia z backendem');

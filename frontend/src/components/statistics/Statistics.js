@@ -220,11 +220,11 @@ const Statistics = ({ selectedGame, onGameChange }) => {
         console.error('Błąd pobierania statystyk:', error);
         
         if (error.message.includes('fetch') || error.message.includes('network')) {
-          console.log('🌐 Błąd połączenia z serwerem');
-          setError('Nie można połączyć się z serwerem.');
-        } else if (error.message.includes('timeout')) {
+  console.log('🌐 Błąd połączenia z serwerem');
+  // Błąd połączenia - bez komunikatu dla użytkownika
+} else if (error.message.includes('timeout')) {
           console.log('⏰ Timeout - żądanie przerwane po 10 sekundach');
-          setError('Serwer nie odpowiada. Używam domyślnych danych.');
+          // Timeout - bez komunikatu dla użytkownika
         } else {
           console.log('❌ Nieoczekiwany błąd:', error.message);
           setError('Błąd pobierania danych. Używam domyślnych danych.');

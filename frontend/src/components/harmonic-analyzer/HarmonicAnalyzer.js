@@ -346,7 +346,7 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
         setHarmonicStats(data);
       } else {
         console.error('Błąd pobierania statystyk:', data.error);
-        setError('Nie udało się pobrać statystyk harmonicznych');
+        // Błąd pobierania statystyk - bez komunikatu dla użytkownika
       }
     } catch (error) {
       if (error.name === 'AbortError') {
@@ -384,13 +384,7 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
         }
       });
       
-      // Pokaż komunikat o trybie demo
-      setError('Pokazuję symulowane dane. W trybie produkcyjnym dane będą pobierane z rzeczywistych statystyk.');
-      
-      // Ukryj komunikat po 5 sekundach
-      setTimeout(() => {
-        setError(null);
-      }, 5000);
+      // Tryb demo - bez komunikatu dla użytkownika
     } finally {
       setIsLoadingStats(false);
     }
