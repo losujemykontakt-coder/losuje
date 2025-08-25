@@ -125,7 +125,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Konfiguracja CORS - poprawiona zgodnie z Twoimi wskazówkami
 app.use(cors({
-  origin: ['https://losuje.pl', 'http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: ['https://losuje.pl', 'https://losuje-generator.pl', 'http://localhost:3000', 'http://127.0.0.1:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],

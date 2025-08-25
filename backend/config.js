@@ -45,7 +45,7 @@ const config = {
     
     // Konfiguracja CORS - z zmiennej środowiskowej
     CORS: {
-      ALLOWED_ORIGINS: [process.env.CORS_ORIGIN || 'https://losuje.pl', 'http://localhost:3000', 'http://127.0.0.1:3000']
+      ALLOWED_ORIGINS: [process.env.CORS_ORIGIN || 'https://losuje.pl', 'https://losuje-generator.pl', 'http://localhost:3000', 'http://127.0.0.1:3000']
     }
   },
   
