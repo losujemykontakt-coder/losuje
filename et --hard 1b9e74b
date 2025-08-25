@@ -1,0 +1,5 @@
+[33m512ff07[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Przywrócono wszystkie funkcje do PWA - identyczne jak losuje.pl
+[33m72a4de2[m Usunięto nieistniejące komponenty z PWA - naprawiono błędy build
+[33m80a5743[m Dodano pełną nawigację i wszystkie funkcje do PWA - identyczne jak losuje.pl
+[33me18a658[m Dodano wszystkie generatory do PWA
+[33m1b9e74b[m Aktualizacja Three.js i @react-three/fiber dla kompatybilności

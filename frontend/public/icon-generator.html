@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generator Ikony - Złota Kula</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .icon-preview {
+            width: 512px;
+            height: 512px;
+            margin: 20px auto;
+            display: block;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFB300 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .sphere {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle at 30% 30%, #FFD700, #FFB300, #E6C200);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 
+                inset -20px -20px 40px rgba(0,0,0,0.3),
+                0 10px 30px rgba(0,0,0,0.2);
+        }
+        .number {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 120px;
+            font-weight: bold;
+            color: #8B4513;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .download-btn {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 15px 30px;
+            background: linear-gradient(90deg, #FFD700, #FFB300);
+            color: #333;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+        }
+        .instructions {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #FFD700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎰 Generator Ikony - Złota Kula</h1>
+        
+        <div class="instructions">
+            <h3>📋 Instrukcje:</h3>
+            <ol>
+                <li>Kliknij prawym przyciskiem myszy na ikonę poniżej</li>
+                <li>Wybierz "Zapisz obraz jako..."</li>
+                <li>Zapisz jako "logo512.png"</li>
+                <li>Prześlij na serwer w katalogu <code>/var/www/losuje-generator.pl/dist/</code></li>
+            </ol>
+        </div>
+
+        <div class="icon-preview">
+            <div class="sphere"></div>
+            <div class="number">8</div>
+        </div>
+
+        <a href="#" class="download-btn" onclick="downloadIcon()">💾 Pobierz Ikona</a>
+        
+        <div class="instructions">
+            <h3>🎨 Opis ikony:</h3>
+            <ul>
+                <li><strong>Złota kula</strong> - symbol fortuny i szczęścia</li>
+                <li><strong>Liczba 8</strong> - symbol szczęścia w wielu kulturach</li>
+                <li><strong>Gradient złoty</strong> - pasuje do motywu aplikacji</li>
+                <li><strong>Rozmiar 512x512</strong> - wymagany dla Google Play</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function downloadIcon() {
+            // Tworzenie canvas z ikoną
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            // Tło
+            const gradient = ctx.createLinearGradient(0, 0, 512, 512);
+            gradient.addColorStop(0, '#FFD700');
+            gradient.addColorStop(1, '#FFB300');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 512, 512);
+            
+            // Kula
+            const sphereGradient = ctx.createRadialGradient(150, 150, 0, 200, 200, 200);
+            sphereGradient.addColorStop(0, '#FFD700');
+            sphereGradient.addColorStop(0.5, '#FFB300');
+            sphereGradient.addColorStop(1, '#E6C200');
+            
+            ctx.beginPath();
+            ctx.arc(256, 256, 200, 0, 2 * Math.PI);
+            ctx.fillStyle = sphereGradient;
+            ctx.fill();
+            
+            // Cień kuli
+            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+            ctx.shadowBlur = 20;
+            ctx.shadowOffsetX = 10;
+            ctx.shadowOffsetY = 10;
+            ctx.fill();
+            
+            // Liczba 8
+            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+            ctx.shadowBlur = 4;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            ctx.fillStyle = '#8B4513';
+            ctx.font = 'bold 120px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('8', 256, 256);
+            
+            // Pobieranie
+            const link = document.createElement('a');
+            link.download = 'logo512.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>
+
