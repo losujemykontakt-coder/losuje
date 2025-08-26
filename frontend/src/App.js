@@ -537,11 +537,14 @@ function App() {
   
   // Routing - sprawdź czy użytkownik jest zalogowany
   const isLoggedIn = !!user;
-  console.log('🔍 isLoggedIn check:', { isLoggedIn, user: user ? user.email : 'null' });
+  console.log('🔍 isLoggedIn check:', { isLoggedIn, user: user ? user.email : 'null', userObject: user });
   
   // Obsługa parametrów URL dla stron landing page - tylko dla niezalogowanych użytkowników
   useEffect(() => {
     if (isLoggedIn) return; // Nie przekierowuj zalogowanych użytkowników
+    
+    // Nie ingeruj w routing logowania i rejestracji
+    if (location.pathname === '/login' || location.pathname === '/register') return;
     
     const urlParams = new URLSearchParams(window.location.search);
     const page = urlParams.get('page');
@@ -559,7 +562,7 @@ function App() {
         navigate('/landing');
       }
     }
-  }, [location.search, navigate, isLoggedIn]);
+  }, [location.search, navigate, isLoggedIn, location.pathname]);
 
   // Usunięte automatyczne przekierowanie - teraz pokazujemy HomePage na /
 
@@ -570,6 +573,7 @@ function App() {
     // 1. Nasłuchiwanie zmian stanu użytkownika
     const unsubscribe = onAuthStateChange((user) => {
       console.log('🔍 onAuthStateChange callback:', user ? `Zalogowany: ${user.email}` : 'Niezalogowany');
+      console.log('🔍 onAuthStateChange - pełny user object:', user);
       
       setUser(user);
       if (user) {
@@ -600,6 +604,14 @@ function App() {
 
     return () => unsubscribe();
   }, []);
+
+  // Automatyczne przekierowanie po zalogowaniu
+  useEffect(() => {
+    if (isLoggedIn && (location.pathname === '/login' || location.pathname === '/register')) {
+      console.log('✅ Użytkownik zalogowany, przekierowanie na stronę główną');
+      navigate('/');
+    }
+  }, [isLoggedIn, location.pathname, navigate]);
 
   // Inicjalizacja EmailJS
   useEffect(() => {
@@ -1294,11 +1306,10 @@ function App() {
 
   // Obsługa logowania
   const handleLogin = (uid, userData) => {
-    if (userData) {
-      setUserName(userData.name);
-      setUserEmail(userData.email);
-    }
-    navigate("/"); // Przekierowanie na stronę główną zamiast generatora
+    console.log('🔄 handleLogin wywołany:', { uid, userData });
+    console.log('🔄 Typ userData:', typeof userData, userData);
+    // Przekieruj natychmiastowo po udanym logowaniu
+    navigate('/');
   };
 
   // Wylogowanie

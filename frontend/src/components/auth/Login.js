@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { loginUser, loginWithGoogle } from '../../utils/firebaseAuthPWA';
+import { loginUser, loginWithGoogle } from '../../utils/firebaseAuth';
 
 const Login = ({ onLogin, onSwitchToRegister, onSwitchToForgot, styles }) => {
   const [email, setEmail] = useState("");
