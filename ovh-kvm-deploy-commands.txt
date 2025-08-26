@@ -1,0 +1,100 @@
+# Komendy do wdrożenia na OVH przez KVM
+# Połączenie z serwerem przez KVM
+
+# 1. Połącz się z serwerem
+ssh root@51.77.220.61
+
+# 2. Przejdź do katalogu aplikacji
+cd /var/www/losuje.pl
+
+# 3. Pobierz najnowsze zmiany z Git
+git pull origin main
+
+# 4. Sprawdź czy backend działa
+pm2 status
+pm2 logs --lines 20
+
+# 5. Jeśli backend nie działa, uruchom go
+pm2 start ecosystem.config.js
+
+# 6. Sprawdź czy Firebase Admin działa
+node test-firebase-admin.js
+
+# 7. Sprawdź ścieżki frontendu
+chmod +x check-frontend-paths.sh
+./check-frontend-paths.sh
+
+# 8. Wdróż konfigurację nginx
+chmod +x deploy-nginx-config.sh
+./deploy-nginx-config.sh
+
+# 9. Sprawdź status nginx
+systemctl status nginx
+nginx -t
+
+# 10. Sprawdź działanie domen
+chmod +x check-domains.sh
+./check-domains.sh
+
+# 11. Sprawdź logi nginx
+tail -f /var/log/nginx/error.log
+
+# 12. Sprawdź certyfikaty SSL
+certbot certificates
+
+# 13. Sprawdź backend API
+curl http://localhost:3002/health
+
+# 14. Sprawdź czy porty są otwarte
+netstat -tlnp | grep :3002
+netstat -tlnp | grep :80
+netstat -tlnp | grep :443
+
+# 15. Sprawdź uprawnienia katalogów
+ls -la /var/www/
+ls -la /var/www/losuje.pl/
+ls -la /var/www/losuje-generator.pl/
+
+# 16. Jeśli trzeba, ustaw uprawnienia
+chown -R www-data:www-data /var/www/
+chmod -R 755 /var/www/
+
+# 17. Sprawdź czy PM2 działa poprawnie
+pm2 restart all
+pm2 save
+
+# 18. Sprawdź logi aplikacji
+pm2 logs --lines 50
+
+# 19. Testuj API endpoints
+curl https://losuje.pl/api/health
+curl https://losuje.pl/api/firebase-test
+
+# 20. Sprawdź czy frontend się ładuje
+curl -I https://losuje.pl
+curl -I https://losuje-generator.pl
+
+# Komendy pomocnicze:
+
+# Restart nginx
+systemctl restart nginx
+
+# Restart PM2
+pm2 restart all
+
+# Sprawdź miejsce na dysku
+df -h
+
+# Sprawdź użycie pamięci
+free -h
+
+# Sprawdź procesy
+ps aux | grep node
+ps aux | grep nginx
+
+# Sprawdź firewall
+ufw status
+
+# Sprawdź logi systemowe
+journalctl -u nginx -f
+journalctl -u pm2-root -f
