@@ -535,6 +535,7 @@ function App() {
   
   // Routing - sprawdź czy użytkownik jest zalogowany
   const isLoggedIn = !!user;
+  console.log('🔍 isLoggedIn check:', { isLoggedIn, user: user ? user.email : 'null' });
   
   // Obsługa parametrów URL dla stron landing page - tylko dla niezalogowanych użytkowników
   useEffect(() => {
@@ -562,12 +563,18 @@ function App() {
 
   // Nasłuchiwanie zmian stanu autentykacji Firebase
   useEffect(() => {
+    console.log('🔍 Inicjalizacja onAuthStateChange...');
+    
     const unsubscribe = onAuthStateChange((user) => {
+      console.log('🔍 onAuthStateChange callback:', user ? `Zalogowany: ${user.email}` : 'Niezalogowany');
+      
       setUser(user);
       if (user) {
+        console.log('✅ Ustawiam zalogowanego użytkownika:', user.email);
         setUserName(user.displayName || user.email?.split('@')[0] || 'Użytkownik');
         setUserEmail(user.email || '');
       } else {
+        console.log('❌ Ustawiam niezalogowanego użytkownika');
         setUserName("");
         setUserEmail("");
       }
