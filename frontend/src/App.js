@@ -16,6 +16,8 @@ import LanguageSwitcher from './components/LanguageSwitcher';
 import HomePage from './components/HomePage';
 import SchonheimGenerator from './components/SchonheimGenerator';
 import { logoutUser, onAuthStateChange } from './utils/firebaseAuth';
+import { getRedirectResult } from 'firebase/auth';
+import { auth } from './utils/firebase';
 import {
   getUserSubscription,
   getPaymentHistory,
@@ -563,8 +565,9 @@ function App() {
 
   // Nasłuchiwanie zmian stanu autentykacji Firebase
   useEffect(() => {
-    console.log('🔍 Inicjalizacja onAuthStateChange...');
+    console.log('🔍 Inicjalizacja Firebase Auth...');
     
+    // 1. Nasłuchiwanie zmian stanu użytkownika
     const unsubscribe = onAuthStateChange((user) => {
       console.log('🔍 onAuthStateChange callback:', user ? `Zalogowany: ${user.email}` : 'Niezalogowany');
       
@@ -578,6 +581,20 @@ function App() {
         setUserName("");
         setUserEmail("");
       }
+      setIsLoading(false);
+    });
+
+    // 2. Obsługa logowania przez redirect
+    getRedirectResult(auth).then((result) => {
+      if (result?.user) {
+        console.log('✅ Zalogowany przez redirect:', result.user.email);
+        setUser(result.user);
+        setUserName(result.user.displayName || result.user.email?.split('@')[0] || 'Użytkownik');
+        setUserEmail(result.user.email || '');
+        setIsLoading(false);
+      }
+    }).catch((error) => {
+      console.error('❌ Błąd redirect login:', error);
       setIsLoading(false);
     });
 
