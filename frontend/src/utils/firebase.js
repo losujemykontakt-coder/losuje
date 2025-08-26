@@ -2,16 +2,26 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
-// Konfiguracja Firebase
+// Konfiguracja Firebase - dynamiczna domena
+const getAuthDomain = () => {
+  const hostname = window.location.hostname;
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return "losujemy.firebaseapp.com"; // Dla development
+  }
+  return hostname; // Dla produkcji (losuje.pl, losuje-generator.pl)
+};
+
 const firebaseConfig = {
   apiKey: "AIzaSyCZG2uHB2IZ__F6CxgOF2m4GhW-SafT2VM",
-  authDomain: "losujemy.firebaseapp.com",
+  authDomain: getAuthDomain(),
   projectId: "losujemy",
   storageBucket: "losujemy.firebasestorage.app",
   messagingSenderId: "271352474565",
   appId: "1:271352474565:web:7f8ea133aecf58d2eb79ac",
   measurementId: "G-ZF948JXHGX"
 };
+
+console.log('🔍 Firebase authDomain:', firebaseConfig.authDomain);
 
 // Inicjalizacja Firebase
 const app = initializeApp(firebaseConfig);
