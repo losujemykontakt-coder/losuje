@@ -125,7 +125,15 @@ export const confirmPasswordResetWithCode = async (oobCode, newPassword) => {
 
 // Nasłuchiwanie zmian stanu autentykacji
 export const onAuthStateChange = (callback) => {
-  return onAuthStateChanged(auth, callback);
+  console.log('🔍 onAuthStateChange wywołane z auth:', auth);
+  console.log('🔍 auth.currentUser:', auth.currentUser);
+  
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    console.log('🔍 onAuthStateChanged callback wywołane:', user ? `Zalogowany: ${user.email}` : 'Niezalogowany');
+    callback(user);
+  });
+  
+  return unsubscribe;
 };
 
 // Aktualizacja profilu użytkownika

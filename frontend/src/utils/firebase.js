@@ -15,9 +15,11 @@ const firebaseConfig = {
 
 // Inicjalizacja Firebase
 const app = initializeApp(firebaseConfig);
+console.log('🔍 Firebase app zainicjalizowany:', app);
 
 // Eksportuj Auth, Firestore i Google Provider
 export const auth = getAuth(app);
+console.log('🔍 Firebase auth zainicjalizowany:', auth);
 export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
 
