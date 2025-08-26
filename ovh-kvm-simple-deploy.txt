@@ -1,0 +1,46 @@
+# Uproszczone komendy do wdrożenia na OVH przez KVM
+
+# 1. Połącz się z serwerem
+ssh root@51.77.220.61
+
+# 2. Przejdź do katalogu i pobierz zmiany
+cd /var/www/losuje.pl
+git pull origin main
+
+# 3. Restart backend
+pm2 restart all
+
+# 4. Sprawdź Firebase Admin
+node test-firebase-admin.js
+
+# 5. Wdróż nginx (jeśli plik istnieje)
+if [ -f "deploy-nginx-config.sh" ]; then
+    chmod +x deploy-nginx-config.sh
+    ./deploy-nginx-config.sh
+fi
+
+# 6. Sprawdź status
+pm2 status
+systemctl status nginx
+curl http://localhost:3002/health
+
+# 7. Sprawdź domeny
+curl -I https://losuje.pl
+curl -I https://losuje-generator.pl
+
+# Alternatywnie - ręczne komendy:
+
+# Sprawdź backend
+pm2 status
+pm2 logs --lines 10
+
+# Sprawdź nginx
+nginx -t
+systemctl reload nginx
+
+# Sprawdź porty
+netstat -tlnp | grep :3002
+
+# Sprawdź logi
+tail -f /var/log/nginx/error.log
+pm2 logs --lines 20
