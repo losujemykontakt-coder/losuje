@@ -5,6 +5,8 @@ import './index.css';
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
 import reportWebVitals from './reportWebVitals';
+import './utils/firebase'; // Inicjalizacja Firebase
+console.log('🔍 index.js - Firebase importowany');
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
