@@ -5,7 +5,7 @@ import { getFirestore } from 'firebase/firestore';
 // Konfiguracja Firebase dla PWA (losuje-generator.pl)
 const firebaseConfig = {
   apiKey: "AIzaSyCZG2uHB2IZ__F6CxgOF2m4GhW-SafT2VM",
-  authDomain: "losuje-generator.pl", // Nowa domena dla PWA
+  authDomain: "losujemy.firebaseapp.com", // Używamy standardowej domeny Firebase
   projectId: "losujemy",
   storageBucket: "losujemy.firebasestorage.app",
   messagingSenderId: "271352474565",

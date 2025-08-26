@@ -34,3 +34,7 @@ echo "📱 Budowanie PWA..."
 echo "✅ Aktualizacja zakończona!"
 echo "🌐 Sprawdź: https://losuje.pl"
 echo "📱 Sprawdź: https://losuje-generator.pl"
+
+
+
+

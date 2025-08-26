@@ -187,7 +187,7 @@ app.get('/api/health', (req, res) => {
   
   // Sprawdź czy CORS działa
   const origin = req.headers.origin;
-  const allowedOrigins = ['https://losuje.pl', 'http://localhost:3000', 'http://127.0.0.1:3000'];
+  const allowedOrigins = ['https://losuje.pl', 'https://losuje-generator.pl', 'http://localhost:3000', 'http://127.0.0.1:3000'];
   
   if (origin && allowedOrigins.includes(origin)) {
     console.log('✅ CORS: Origin dozwolony:', origin);
@@ -212,6 +212,60 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Endpoint testowy dla PWA (losuje-generator.pl)
+app.get('/api/pwa/health', (req, res) => {
+  console.log('=== PWA HEALTH CHECK ===');
+  console.log('Request from PWA:', req.headers.origin);
+  console.log('User-Agent:', req.headers['user-agent']);
+  
+  const origin = req.headers.origin;
+  const isPWA = origin === 'https://losuje-generator.pl';
+  
+  res.json({
+    success: true,
+    message: 'PWA Backend działa poprawnie',
+    timestamp: new Date().toISOString(),
+    isPWA: isPWA,
+    origin: origin,
+    firebase: {
+      configured: true,
+      authDomain: 'losujemy.firebaseapp.com',
+      projectId: 'losujemy'
+    },
+    cors: {
+      working: true,
+      allowed: ['https://losuje.pl', 'https://losuje-generator.pl', 'http://localhost:3000', 'http://127.0.0.1:3000']
+    }
+  });
+});
+
+// Endpoint testowy dla PWA (losuje-generator.pl)
+app.get('/api/pwa/health', (req, res) => {
+  console.log('=== PWA HEALTH CHECK ===');
+  console.log('Request from PWA:', req.headers.origin);
+  console.log('User-Agent:', req.headers['user-agent']);
+  
+  const origin = req.headers.origin;
+  const isPWA = origin === 'https://losuje-generator.pl';
+  
+  res.json({
+    success: true,
+    message: 'PWA Backend działa poprawnie',
+    timestamp: new Date().toISOString(),
+    isPWA: isPWA,
+    origin: origin,
+    firebase: {
+      configured: true,
+      authDomain: 'losujemy.firebaseapp.com',
+      projectId: 'losujemy'
+    },
+    cors: {
+      working: true,
+      allowed: ['https://losuje.pl', 'https://losuje-generator.pl', 'http://localhost:3000', 'http://127.0.0.1:3000']
+    }
+  });
+});
+
 // Endpoint do testowania połączenia z płatnościami
 app.post('/api/payment/test', (req, res) => {
   console.log('=== TEST PŁATNOŚCI ===');
@@ -227,7 +281,7 @@ app.post('/api/payment/test', (req, res) => {
   
   // Sprawdź czy CORS działa
   const origin = req.headers.origin;
-  const allowedOrigins = ['https://losuje.pl', 'http://localhost:3000', 'http://127.0.0.1:3000'];
+  const allowedOrigins = ['https://losuje.pl', 'https://losuje-generator.pl', 'http://localhost:3000', 'http://127.0.0.1:3000'];
   
   if (origin && allowedOrigins.includes(origin)) {
     console.log('✅ CORS: Origin dozwolony:', origin);
@@ -2419,7 +2473,7 @@ app.get('/api/payment/status/:sessionId', async (req, res) => {
 });
 
 // Uruchomienie serwera - na końcu pliku
-app.listen(config.PORT, () => {
+app.listen(config.PORT, '0.0.0.0', () => {
   console.log('🚀 === BACKEND STARTED ===');
   console.log(`🌐 Serwer działa na http://localhost:${config.PORT}`);
   console.log(`🔧 Środowisko: ${config.NODE_ENV}`);
@@ -2663,7 +2717,16 @@ app.post('/api/auth/firebase-login', async (req, res) => {
     let loginResult = null;
     try {
       const { registerLogin } = require('./firebase-talismans');
-      loginResult = await registerLogin(uid);
+      
+      // Dodaj timeout dla Firebase (10 sekund)
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Firebase timeout')), 10000)
+      );
+      
+      loginResult = await Promise.race([
+        registerLogin(uid),
+        timeoutPromise
+      ]);
     } catch (talismanError) {
       console.warn('⚠️ Błąd systemu talizmanów:', talismanError.message);
       // Kontynuuj bez systemu talizmanów
@@ -2754,10 +2817,34 @@ app.post('/api/auth/register-login', async (req, res) => {
   try {
     console.log('🔍 Rejestruję logowanie dla UID:', userId);
     
-    // Importuj funkcje Firebase
+    // Sprawdź czy Firebase jest dostępny
+    const { db } = require('./firebase-admin');
+    if (!db) {
+      console.log('⚠️ Firebase nie jest dostępny - zwracam sukces bez rejestracji');
+      return res.json({
+        success: true,
+        message: 'Logowanie zarejestrowane (demo)',
+        data: {
+          currentStreak: 0,
+          totalTokens: 0,
+          newToken: false
+        }
+      });
+    }
+    
+    // Importuj funkcje Firebase z timeout
     const { registerLogin } = require('./firebase-talismans');
     
-    const loginResult = await registerLogin(userId);
+    // Dodaj timeout dla Firebase (10 sekund)
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Firebase timeout')), 10000)
+    );
+    
+    const loginResult = await Promise.race([
+      registerLogin(userId),
+      timeoutPromise
+    ]);
+    
     console.log('🔍 Wynik rejestracji logowania:', loginResult);
     
     res.json({
@@ -2771,6 +2858,21 @@ app.post('/api/auth/register-login', async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Błąd rejestrowania logowania:', error);
+    
+    // Jeśli to timeout, zwróć sukces bez rejestracji
+    if (error.message.includes('timeout')) {
+      console.log('⚠️ Firebase timeout - zwracam sukces bez rejestracji');
+      return res.json({
+        success: true,
+        message: 'Logowanie zarejestrowane (timeout)',
+        data: {
+          currentStreak: 0,
+          totalTokens: 0,
+          newToken: false
+        }
+      });
+    }
+    
     res.status(500).json({ 
       success: false,
       error: 'Błąd serwera',

@@ -1,14 +1,13 @@
 {
   "data": {
     "frequencyData": {
-      "1": 158,
-      "2": 23,
+      "1": 162,
+      "2": 24,
       "3": 18,
       "5": 6,
       "6": 3,
       "7": 3,
       "9": 3,
-      "16": 5,
       "25": 3,
       "35": 9,
       "40": 3,
@@ -41,13 +40,13 @@
       90
     ],
     "patterns": {
-      "evenOdd": "49:221",
+      "evenOdd": "45:225",
       "lowHigh": "234:36",
       "sumRange": "NaN-NaN"
     },
     "euroNumbers": null,
-    "lastUpdated": "2025-08-23T16:10:39.405Z"
+    "lastUpdated": "2025-08-26T09:37:39.213Z"
   },
-  "timestamp": "2025-08-23T16:10:39.405Z",
+  "timestamp": "2025-08-26T09:37:39.213Z",
   "game": "multiMulti"
 }

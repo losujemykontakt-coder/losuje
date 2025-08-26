@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { loginUser, loginWithGoogle } from '../../utils/firebaseAuth';
+import { loginUser, loginWithGoogle } from '../../utils/firebaseAuthPWA';
 
 const Login = ({ onLogin, onSwitchToRegister, onSwitchToForgot, styles }) => {
   const [email, setEmail] = useState("");
@@ -23,7 +23,8 @@ const Login = ({ onLogin, onSwitchToRegister, onSwitchToForgot, styles }) => {
         setMessage(result.error || "Błąd logowania");
       }
     } catch (err) {
-      setMessage("Błąd połączenia z Firebase");
+      console.error('Błąd w handleSubmit:', err);
+      setMessage("Błąd połączenia z Firebase. Sprawdź internet i spróbuj ponownie.");
     }
     setLoading(false);
   };
@@ -43,7 +44,7 @@ const Login = ({ onLogin, onSwitchToRegister, onSwitchToForgot, styles }) => {
       }
     } catch (err) {
       console.error('Błąd w handleGoogleLogin:', err);
-      setMessage("Błąd logowania przez Google");
+      setMessage("Błąd logowania przez Google. Sprawdź internet i spróbuj ponownie.");
     }
     setGoogleLoading(false);
   };

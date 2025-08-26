@@ -6,7 +6,7 @@ const config = {
   JWT_SECRET: process.env.JWT_SECRET || 'twoj_silny_jwt_secret_2024_lotek_generator_bezpieczny_123456789',
   
   // Port serwera
-  PORT: process.env.PORT || 3001,
+  PORT: process.env.PORT || 3002,
   
   // Środowisko - z zmiennej środowiskowej
   NODE_ENV: process.env.NODE_ENV || 'production',

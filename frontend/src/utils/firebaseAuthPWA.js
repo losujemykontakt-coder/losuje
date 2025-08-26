@@ -60,13 +60,33 @@ export const loginUser = async (email, password) => {
     const user = userCredential.user;
     
     // Aktualizuj ostatnie logowanie
-    await updateDoc(doc(db, 'users', user.uid), {
-      lastLogin: serverTimestamp()
-    });
+    try {
+      await updateDoc(doc(db, 'users', user.uid), {
+        lastLogin: serverTimestamp()
+      });
+    } catch (firestoreError) {
+      console.warn('⚠️ Błąd aktualizacji Firestore:', firestoreError.message);
+      // Kontynuuj mimo błędu Firestore
+    }
     
     return { success: true, user };
   } catch (error) {
     console.error('Błąd logowania:', error);
+    
+    // Obsługa specyficznych błędów Firebase
+    if (error.code === 'auth/user-not-found') {
+      return { success: false, error: 'Użytkownik nie istnieje' };
+    }
+    if (error.code === 'auth/wrong-password') {
+      return { success: false, error: 'Nieprawidłowe hasło' };
+    }
+    if (error.code === 'auth/too-many-requests') {
+      return { success: false, error: 'Zbyt wiele prób logowania. Spróbuj ponownie później' };
+    }
+    if (error.code === 'auth/network-request-failed') {
+      return { success: false, error: 'Błąd połączenia sieciowego. Sprawdź internet' };
+    }
+    
     return { success: false, error: error.message };
   }
 };
@@ -78,32 +98,62 @@ export const loginWithGoogle = async () => {
     const user = result.user;
     
     // Sprawdź czy użytkownik już istnieje
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
-    
-    if (!userDoc.exists()) {
-      // Utwórz nowego użytkownika
-      await setDoc(doc(db, 'users', user.uid), {
-        email: user.email,
-        displayName: user.displayName,
-        createdAt: serverTimestamp(),
-        isPremium: false,
-        trialActive: true,
-        trialStartDate: serverTimestamp(),
-        trialEndDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 dni
-        subscriptionActive: false,
-        coins: 100, // Domyślne monety
-        lastLogin: serverTimestamp()
-      });
-    } else {
-      // Aktualizuj ostatnie logowanie
-      await updateDoc(doc(db, 'users', user.uid), {
-        lastLogin: serverTimestamp()
-      });
+    try {
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      
+      if (!userDoc.exists()) {
+        // Utwórz nowego użytkownika
+        try {
+          await setDoc(doc(db, 'users', user.uid), {
+            email: user.email,
+            displayName: user.displayName,
+            createdAt: serverTimestamp(),
+            isPremium: false,
+            trialActive: true,
+            trialStartDate: serverTimestamp(),
+            trialEndDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 dni
+            subscriptionActive: false,
+            coins: 100, // Domyślne monety
+            lastLogin: serverTimestamp()
+          });
+        } catch (firestoreError) {
+          console.warn('⚠️ Błąd tworzenia użytkownika w Firestore:', firestoreError.message);
+          // Kontynuuj mimo błędu Firestore
+        }
+      } else {
+        // Aktualizuj ostatnie logowanie
+        try {
+          await updateDoc(doc(db, 'users', user.uid), {
+            lastLogin: serverTimestamp()
+          });
+        } catch (firestoreError) {
+          console.warn('⚠️ Błąd aktualizacji Firestore:', firestoreError.message);
+          // Kontynuuj mimo błędu Firestore
+        }
+      }
+    } catch (firestoreError) {
+      console.warn('⚠️ Błąd sprawdzania użytkownika w Firestore:', firestoreError.message);
+      // Kontynuuj mimo błędu Firestore
     }
     
     return { success: true, user };
   } catch (error) {
     console.error('Błąd logowania Google:', error);
+    
+    // Obsługa specyficznych błędów Firebase
+    if (error.code === 'auth/popup-blocked') {
+      return { success: false, error: 'Popup został zablokowany. Zezwól na popupy dla tej strony.' };
+    }
+    if (error.code === 'auth/popup-closed-by-user') {
+      return { success: false, error: 'Okno logowania zostało zamknięte.' };
+    }
+    if (error.code === 'auth/network-request-failed') {
+      return { success: false, error: 'Błąd połączenia sieciowego. Sprawdź internet.' };
+    }
+    if (error.code === 'auth/cancelled-popup-request') {
+      return { success: false, error: 'Logowanie zostało anulowane.' };
+    }
+    
     return { success: false, error: error.message };
   }
 };
