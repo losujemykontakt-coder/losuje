@@ -276,12 +276,12 @@ const MagicznyZestawDnia = ({ onUseInGenerator }) => {
       { name: 'description', content: 'Generator Liczb Lotto AI - Darmowy generator z zaawansowanymi algorytmami matematycznymi. Systemy skrócone, ILP, covering design. Losuj szczęśliwe liczby Lotto z gwarancją trafień.' },
       { name: 'keywords', content: 'generator liczb lotto, generator lotto, darmowy generator lotto, AI generator lotto, systemy skrócone lotto, algorytmy matematyczne lotto, ILP lotto, covering design lotto, szczęśliwe liczby lotto, losowanie lotto' },
       { name: 'author', content: 'Losuje.pl' },
-      { property: 'og:title', content: 'Generator Liczb Lotto AI | Darmowy Generator Lotto z Algorytmami Matematycznymi' },
+      { property: 'og:title', content: 'Najlepszy Generator Liczb Lotto AI' },
       { property: 'og:description', content: 'Generator Liczb Lotto AI - Darmowy generator z zaawansowanymi algorytmami matematycznymi. Systemy skrócone, ILP, covering design. Losuj szczęśliwe liczby Lotto z gwarancją trafień.' },
       { property: 'og:type', content: 'website' },
       { property: 'og:url', content: window.location.href },
       { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: 'Generator Liczb Lotto AI | Darmowy Generator Lotto z Algorytmami Matematycznymi' },
+      { name: 'twitter:title', content: 'Najlepszy Generator Liczb Lotto AI' },
       { name: 'twitter:description', content: 'Generator Liczb Lotto AI - Darmowy generator z zaawansowanymi algorytmami matematycznymi. Systemy skrócone, ILP, covering design.' }
     ];
 
