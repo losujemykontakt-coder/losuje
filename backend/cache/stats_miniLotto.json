@@ -1,7 +1,7 @@
 {
   "data": {
     "frequencyData": {
-      "1": 143,
+      "1": 153,
       "2": 18,
       "3": 18,
       "5": 6,
@@ -19,7 +19,7 @@
       "90": 3,
       "99": 9
     },
-    "totalDraws": 49,
+    "totalDraws": 51,
     "avgSum": null,
     "sumRange": [
       null,
@@ -40,13 +40,13 @@
       90
     ],
     "patterns": {
-      "evenOdd": "39:206",
-      "lowHigh": "194:51",
+      "evenOdd": "39:216",
+      "lowHigh": "204:51",
       "sumRange": "NaN-NaN"
     },
     "euroNumbers": null,
-    "lastUpdated": "2025-08-27T08:44:36.127Z"
+    "lastUpdated": "2025-08-27T08:54:37.290Z"
   },
-  "timestamp": "2025-08-27T08:44:36.127Z",
+  "timestamp": "2025-08-27T08:54:37.290Z",
   "game": "miniLotto"
 }

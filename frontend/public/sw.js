@@ -1,4 +1,4 @@
-const CACHE_NAME = 'losuje-generator-v1';
+const CACHE_NAME = 'losuje-generator-v2';
 const urlsToCache = [
   '/',
   '/manifest.json',
@@ -23,17 +23,38 @@ self.addEventListener('install', event => {
 
 // Fetch event
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Return cached version or fetch from network
-        return response || fetch(event.request).catch(error => {
-          console.log('Fetch failed:', error);
-          // Jeśli fetch się nie udał, zwróć pustą odpowiedź
-          return new Response('Network error', { status: 503 });
-        });
-      })
-  );
+  // Sprawdź czy to żądanie HTML
+  if (event.request.headers.get('accept').includes('text/html')) {
+    // Dla HTML zawsze pobierz z sieci, nie używaj cache
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          // Sprawdź czy odpowiedź jest OK
+          if (response.status === 200) {
+            return response;
+          }
+          // Jeśli nie, spróbuj z cache
+          return caches.match(event.request);
+        })
+        .catch(error => {
+          console.log('Fetch failed, trying cache:', error);
+          return caches.match(event.request);
+        })
+    );
+  } else {
+    // Dla innych zasobów używaj cache first
+    event.respondWith(
+      caches.match(event.request)
+        .then(response => {
+          // Return cached version or fetch from network
+          return response || fetch(event.request).catch(error => {
+            console.log('Fetch failed:', error);
+            // Jeśli fetch się nie udał, zwróć pustą odpowiedź
+            return new Response('Network error', { status: 503 });
+          });
+        })
+    );
+  }
 });
 
 // Activate event
