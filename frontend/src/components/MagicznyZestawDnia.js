@@ -273,16 +273,16 @@ const MagicznyZestawDnia = ({ onUseInGenerator }) => {
   useEffect(() => {
     // Dodaj meta tagi dynamicznie
     const metaTags = [
-      { name: 'description', content: 'Magiczny zestaw dnia - losuj szczęśliwe liczby Lotto z naszym magicznym generatorem. Darmowy generator liczb Lotto z animacjami.' },
-      { name: 'keywords', content: 'magiczny zestaw dnia, generator liczb lotto, szczęśliwe liczby, losowanie lotto, darmowy generator, animowany generator' },
-      { name: 'author', content: 'Lotek Generator' },
-      { property: 'og:title', content: 'Magiczny Zestaw Dnia - Generator Liczb Lotto' },
-      { property: 'og:description', content: 'Losuj szczęśliwe liczby Lotto z naszym magicznym generatorem. Animowane losowanie z efektami wizualnymi.' },
+      { name: 'description', content: 'Generator Liczb Lotto AI - Darmowy generator z zaawansowanymi algorytmami matematycznymi. Systemy skrócone, ILP, covering design. Losuj szczęśliwe liczby Lotto z gwarancją trafień.' },
+      { name: 'keywords', content: 'generator liczb lotto, generator lotto, darmowy generator lotto, AI generator lotto, systemy skrócone lotto, algorytmy matematyczne lotto, ILP lotto, covering design lotto, szczęśliwe liczby lotto, losowanie lotto' },
+      { name: 'author', content: 'Losuje.pl' },
+      { property: 'og:title', content: 'Generator Liczb Lotto AI | Darmowy Generator Lotto z Algorytmami Matematycznymi' },
+      { property: 'og:description', content: 'Generator Liczb Lotto AI - Darmowy generator z zaawansowanymi algorytmami matematycznymi. Systemy skrócone, ILP, covering design. Losuj szczęśliwe liczby Lotto z gwarancją trafień.' },
       { property: 'og:type', content: 'website' },
       { property: 'og:url', content: window.location.href },
       { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:title', content: 'Magiczny Zestaw Dnia - Generator Liczb Lotto' },
-      { name: 'twitter:description', content: 'Losuj szczęśliwe liczby Lotto z naszym magicznym generatorem.' }
+      { name: 'twitter:title', content: 'Generator Liczb Lotto AI | Darmowy Generator Lotto z Algorytmami Matematycznymi' },
+      { name: 'twitter:description', content: 'Generator Liczb Lotto AI - Darmowy generator z zaawansowanymi algorytmami matematycznymi. Systemy skrócone, ILP, covering design.' }
     ];
 
     metaTags.forEach(tag => {

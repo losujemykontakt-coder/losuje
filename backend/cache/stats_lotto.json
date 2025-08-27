@@ -9,7 +9,6 @@
       "7": 3,
       "9": 3,
       "25": 3,
-      "28": 18,
       "35": 9,
       "40": 3,
       "49": 3,
@@ -20,7 +19,7 @@
       "90": 3,
       "99": 9
     },
-    "totalDraws": 44,
+    "totalDraws": 41,
     "avgSum": null,
     "sumRange": [
       null,
@@ -30,8 +29,8 @@
       1,
       2,
       3,
-      28,
-      35
+      35,
+      85
     ],
     "coldNumbers": [
       40,
@@ -41,13 +40,13 @@
       90
     ],
     "patterns": {
-      "evenOdd": "57:207",
-      "lowHigh": "195:69",
+      "evenOdd": "39:207",
+      "lowHigh": "195:51",
       "sumRange": "NaN-NaN"
     },
     "euroNumbers": null,
-    "lastUpdated": "2025-08-26T18:10:11.603Z"
+    "lastUpdated": "2025-08-27T08:30:11.688Z"
   },
-  "timestamp": "2025-08-26T18:10:11.603Z",
+  "timestamp": "2025-08-27T08:30:11.688Z",
   "game": "lotto"
 }

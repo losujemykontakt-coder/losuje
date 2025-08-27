@@ -1,7 +1,7 @@
 {
-  "short_name": "Losuje Generator",
-  "name": "Magiczny Zestaw Dnia - Generator Liczb Lotto",
-  "description": "Losuj szczęśliwe liczby Lotto z naszym magicznym generatorem. Darmowy generator liczb Lotto z animacjami i efektami wizualnymi.",
+  "short_name": "Generator Lotto AI",
+  "name": "Generator Liczb Lotto AI | Darmowy Generator Lotto z Algorytmami Matematycznymi",
+  "description": "Generator Liczb Lotto AI - Darmowy generator z zaawansowanymi algorytmami matematycznymi. Systemy skrócone, ILP, covering design. Losuj szczęśliwe liczby Lotto z gwarancją trafień.",
   "icons": [
     {
       "src": "favicon.ico",

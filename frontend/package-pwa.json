@@ -1,7 +1,7 @@
 {
   "name": "losuje-generator-pwa",
   "version": "1.0.0",
-  "description": "Magiczny Zestaw Dnia - Generator Liczb Lotto PWA",
+  "description": "Generator Liczb Lotto AI - Darmowy Generator Lotto z Algorytmami Matematycznymi PWA",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
