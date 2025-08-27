@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Favicon PNG</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        canvas { border: 1px solid #ccc; margin: 10px; }
+        button { padding: 10px 20px; margin: 5px; background: #1e3a8a; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Generator Favicon PNG</h1>
+    <button onclick="generateFavicon()">Wygeneruj Favicon 32x32</button>
+    <br>
+    <canvas id="faviconCanvas" width="32" height="32"></canvas>
+    <br>
+    <a id="downloadLink" style="display:none;">Pobierz favicon.png</a>
+
+    <script>
+        function generateFavicon() {
+            const canvas = document.getElementById('faviconCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Tło - ciemne koło
+            ctx.fillStyle = '#1e3a8a';
+            ctx.beginPath();
+            ctx.arc(16, 16, 15, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Obramowanie złote
+            ctx.strokeStyle = '#FFD700';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            
+            // Kula lotto - gradient
+            const gradient = ctx.createRadialGradient(16, 16, 0, 16, 16, 10);
+            gradient.addColorStop(0, '#FFD700');
+            gradient.addColorStop(0.7, '#FFA000');
+            gradient.addColorStop(1, '#FF8C00');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(16, 16, 10, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Obramowanie kuli
+            ctx.strokeStyle = '#FF8C00';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            
+            // Błysk na kuli
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.beginPath();
+            ctx.arc(13, 13, 2.5, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.beginPath();
+            ctx.arc(19, 12, 1, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Liczba na kuli
+            ctx.fillStyle = '#1e3a8a';
+            ctx.font = 'bold 8px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('7', 16, 16);
+            
+            // Link do pobierania
+            const link = document.getElementById('downloadLink');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'favicon.png';
+            link.style.display = 'inline-block';
+            link.textContent = 'Pobierz favicon.png';
+        }
+    </script>
+</body>
+</html>
