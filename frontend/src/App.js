@@ -569,6 +569,8 @@ function App() {
   // Nasłuchiwanie zmian stanu autentykacji Firebase
   useEffect(() => {
     console.log('🔍 Inicjalizacja Firebase Auth...');
+    console.log('🔍 Firebase auth object:', auth);
+    console.log('🔍 Current user:', auth.currentUser);
     
     // 1. Nasłuchiwanie zmian stanu użytkownika
     const unsubscribe = onAuthStateChange((user) => {

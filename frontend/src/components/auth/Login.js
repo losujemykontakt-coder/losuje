@@ -10,40 +10,50 @@ const Login = ({ onLogin, onSwitchToRegister, onSwitchToForgot, styles }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('🔄 Login handleSubmit wywołany:', { email, password: '***' });
     setMessage("");
     setLoading(true);
     
     try {
+      console.log('🔄 Wywołuję loginUser...');
       const result = await loginUser(email, password);
+      console.log('🔄 loginUser result:', result);
       
       if (result.success) {
+        console.log('✅ Logowanie udane, wywołuję onLogin');
         onLogin(result.user.uid, result.user);
         setMessage("");
       } else {
+        console.error('❌ Logowanie nieudane:', result.error);
         setMessage(result.error || "Błąd logowania");
       }
     } catch (err) {
-      console.error('Błąd w handleSubmit:', err);
+      console.error('❌ Błąd w handleSubmit:', err);
       setMessage("Błąd połączenia z Firebase. Sprawdź internet i spróbuj ponownie.");
     }
     setLoading(false);
   };
 
   const handleGoogleLogin = async () => {
+    console.log('🔄 Google Login handleGoogleLogin wywołany');
     setMessage("");
     setGoogleLoading(true);
     
     try {
+      console.log('🔄 Wywołuję loginWithGoogle...');
       const result = await loginWithGoogle();
+      console.log('🔄 loginWithGoogle result:', result);
       
       if (result.success) {
+        console.log('✅ Google logowanie udane, wywołuję onLogin');
         onLogin(result.user.uid, result.user);
         setMessage("");
       } else {
+        console.error('❌ Google logowanie nieudane:', result.error);
         setMessage(result.error || "Błąd logowania przez Google");
       }
     } catch (err) {
-      console.error('Błąd w handleGoogleLogin:', err);
+      console.error('❌ Błąd w handleGoogleLogin:', err);
       setMessage("Błąd logowania przez Google. Sprawdź internet i spróbuj ponownie.");
     }
     setGoogleLoading(false);

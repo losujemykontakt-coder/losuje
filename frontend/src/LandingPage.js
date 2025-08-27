@@ -3268,7 +3268,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
               />
             </div>
             
-            <div className="hero-title" style={{ 
+            <h1 className="hero-title" style={{ 
               fontSize: "clamp(32px, 5vw, 56px)", 
               fontWeight: "800", 
               color: "#424242", 
@@ -3281,8 +3281,8 @@ const LandingPage = ({ onLogin, onRegister }) => {
               margin: "0 auto 24px",
               textAlign: "center"
             }}>
-              {t('landing.hero.title')}
-            </div>
+              Generator Liczb Lotto AI | Darmowy Generator z Algorytmami Matematycznymi
+            </h1>
             <p className="hero-description" style={{ 
               fontSize: "clamp(16px, 2.5vw, 20px)", 
               color: "#666", 
@@ -3292,8 +3292,8 @@ const LandingPage = ({ onLogin, onRegister }) => {
               margin: "0 auto 48px",
               textAlign: "center"
             }}>
-              🎯 Wykorzystaj AI, prawa matematyczne które AI wymyślił oraz zaawansowane statystyki z analizy milionów losowań. 
-              Systemy skrócone z gwarancją trafień i ILP! 🚀
+              🎯 Darmowy Generator Liczb Lotto AI z zaawansowanymi algorytmami matematycznymi. Systemy skrócone, ILP, covering design. 
+              Losuj szczęśliwe liczby Lotto z gwarancją trafień! 🚀
             </p>
             <div className="hero-buttons" style={{ 
               display: "flex", 

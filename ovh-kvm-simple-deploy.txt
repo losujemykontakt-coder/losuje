@@ -44,3 +44,5 @@ netstat -tlnp | grep :3002
 # Sprawdź logi
 tail -f /var/log/nginx/error.log
 pm2 logs --lines 20
+
+

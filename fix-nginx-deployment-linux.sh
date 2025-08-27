@@ -80,3 +80,4 @@ echo "   - PWA: /var/www/losuje-generator.pl/dist"
 echo ""
 echo "🔧 Aby sprawdzić status nginx: systemctl status nginx"
 echo "🔧 Aby sprawdzić logi nginx: tail -f /var/log/nginx/error.log"
+

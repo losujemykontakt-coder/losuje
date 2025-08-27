@@ -122,3 +122,5 @@ echo "🔧 Aby sprawdzić logi:"
 echo "   - PM2: pm2 logs --lines 50"
 echo "   - Nginx: tail -f /var/log/nginx/error.log"
 echo "   - System: journalctl -u nginx -f"
+
+

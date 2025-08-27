@@ -1,14 +1,15 @@
 {
   "data": {
     "frequencyData": {
-      "1": 162,
-      "2": 24,
+      "1": 144,
+      "2": 18,
       "3": 18,
       "5": 6,
       "6": 3,
       "7": 3,
       "9": 3,
       "25": 3,
+      "28": 18,
       "35": 9,
       "40": 3,
       "49": 3,
@@ -19,7 +20,7 @@
       "90": 3,
       "99": 9
     },
-    "totalDraws": 45,
+    "totalDraws": 44,
     "avgSum": null,
     "sumRange": [
       null,
@@ -29,8 +30,8 @@
       1,
       2,
       3,
-      35,
-      85
+      28,
+      35
     ],
     "coldNumbers": [
       40,
@@ -40,13 +41,13 @@
       90
     ],
     "patterns": {
-      "evenOdd": "45:225",
-      "lowHigh": "219:51",
+      "evenOdd": "57:207",
+      "lowHigh": "195:69",
       "sumRange": "NaN-NaN"
     },
     "euroNumbers": null,
-    "lastUpdated": "2025-08-26T09:37:11.634Z"
+    "lastUpdated": "2025-08-26T18:10:11.603Z"
   },
-  "timestamp": "2025-08-26T09:37:11.634Z",
+  "timestamp": "2025-08-26T18:10:11.603Z",
   "game": "lotto"
 }

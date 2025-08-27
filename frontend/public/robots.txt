@@ -1,3 +1,9 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+
+# Sitemap
+Sitemap: https://losuje-generator.pl/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1

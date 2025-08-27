@@ -38,3 +38,4 @@ echo "📱 Sprawdź: https://losuje-generator.pl"
 
 
 
+
