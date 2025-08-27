@@ -26,8 +26,8 @@
     </style>
   </defs>
   
-  <!-- "L" złote -->
-  <text x="20" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="url(#goldGradient)">
+  <!-- "L" niebieskie -->
+  <text x="20" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1e3a8a">
     L
   </text>
   
