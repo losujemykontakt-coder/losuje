@@ -828,7 +828,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
     {
       icon: "🎮",
       title: "AI Mini Gry",
-      description: "Slot Machine Lotto, Magiczny Zestaw Dnia i inne gry dla rozrywki i testowania szczęścia."
+      description: "Slot Machine Lotto, Generator Liczb Lotto AI i inne gry dla rozrywki i testowania szczęścia."
     }
   ];
 
@@ -3281,7 +3281,7 @@ const LandingPage = ({ onLogin, onRegister }) => {
               margin: "0 auto 24px",
               textAlign: "center"
             }}>
-              Generator Liczb Lotto AI | Darmowy Generator z Algorytmami Matematycznymi
+              Najlepszy Generator Liczb Lotto AI
             </h1>
             <p className="hero-description" style={{ 
               fontSize: "clamp(16px, 2.5vw, 20px)", 
