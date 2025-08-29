@@ -140,7 +140,7 @@ const HomePage = ({ user }) => {
                    whileTap={{ scale: 0.95 }}
                    transition={{ duration: 0.3, delay: 0.8 }}
                    onClick={() => navigate('/my-lucky-numbers')}
-                   className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold text-lg sm:text-xl md:text-2xl px-8 sm:px-12 md:px-16 py-4 sm:py-6 md:py-8 rounded-full shadow-2xl transform transition-all duration-300 relative overflow-hidden group w-full max-w-lg h-16 sm:h-20 md:h-24 flex items-center justify-center"
+                   className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-6 rounded-full shadow-2xl transform transition-all duration-300 relative overflow-hidden group w-full max-w-lg h-12 sm:h-16 md:h-20 flex items-center justify-center"
                  >
                    <motion.div
                      className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -148,7 +148,10 @@ const HomePage = ({ user }) => {
                      whileHover={{ x: "100%" }}
                      transition={{ duration: 0.6 }}
                    />
-                   <span className="relative z-10">🍀 Twoje szczęśliwe liczby na dziś</span>
+                   <span className="relative z-10">
+                     <span className="hidden sm:inline">🍀 Twoje szczęśliwe liczby na dziś</span>
+                     <span className="sm:hidden">🍀 Szczęśliwe liczby</span>
+                   </span>
                  </motion.button>
                  
                  <motion.button
@@ -161,7 +164,7 @@ const HomePage = ({ user }) => {
                    whileTap={{ scale: 0.95 }}
                    transition={{ duration: 0.3, delay: 1 }}
                    onClick={handleStartDrawing}
-                   className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold text-lg sm:text-xl md:text-2xl px-8 sm:px-12 md:px-16 py-4 sm:py-6 md:py-8 rounded-full shadow-2xl transform transition-all duration-300 relative overflow-hidden group w-full max-w-lg h-16 sm:h-20 md:h-24 flex items-center justify-center"
+                   className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-6 rounded-full shadow-2xl transform transition-all duration-300 relative overflow-hidden group w-full max-w-lg h-12 sm:h-16 md:h-20 flex items-center justify-center"
                  >
                    <motion.div
                      className="absolute inset-0 bg-gradient-to-r from-yellow-300 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -182,7 +185,7 @@ const HomePage = ({ user }) => {
                   whileTap={{ scale: 0.95 }}
                   transition={{ duration: 0.3, delay: 1.2 }}
                   onClick={() => navigate('/gry')}
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold text-lg sm:text-xl md:text-2xl px-8 sm:px-12 md:px-16 py-4 sm:py-6 md:py-8 rounded-full shadow-2xl transform transition-all duration-300 relative overflow-hidden group w-full max-w-2xl h-16 sm:h-20 md:h-24 flex items-center justify-center"
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-6 rounded-full shadow-2xl transform transition-all duration-300 relative overflow-hidden group w-full max-w-2xl h-12 sm:h-16 md:h-20 flex items-center justify-center"
                 >
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -203,7 +206,7 @@ const HomePage = ({ user }) => {
                   whileTap={{ scale: 0.95 }}
                   transition={{ duration: 0.3, delay: 1.4 }}
                   onClick={() => navigate('/systems')}
-                  className="bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 text-white font-bold text-lg sm:text-xl md:text-2xl px-8 sm:px-12 md:px-16 py-4 sm:py-6 md:py-8 rounded-full shadow-2xl transform transition-all duration-300 relative overflow-hidden group w-full max-w-lg h-16 sm:h-20 md:h-24 flex items-center justify-center"
+                  className="bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 text-white font-bold text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-6 rounded-full shadow-2xl transform transition-all duration-300 relative overflow-hidden group w-full max-w-lg h-12 sm:h-16 md:h-20 flex items-center justify-center"
                 >
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-violet-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -224,7 +227,7 @@ const HomePage = ({ user }) => {
                   whileTap={{ scale: 0.95 }}
                   transition={{ duration: 0.3, delay: 1.6 }}
                   onClick={() => navigate('/ai-ultra-pro')}
-                  className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold text-lg sm:text-xl md:text-2xl px-8 sm:px-12 md:px-16 py-4 sm:py-6 md:py-8 rounded-full shadow-2xl transform transition-all duration-300 relative overflow-hidden group w-full max-w-lg h-16 sm:h-20 md:h-24 flex items-center justify-center"
+                  className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-6 rounded-full shadow-2xl transform transition-all duration-300 relative overflow-hidden group w-full max-w-lg h-12 sm:h-16 md:h-20 flex items-center justify-center"
                 >
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -260,9 +263,8 @@ const HomePage = ({ user }) => {
                     initial={{ y: 30, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.6, delay: 1.4 }}
-                    className="leading-tight flex items-start"
+                    className="leading-tight text-center"
                   >
-                    <span className="text-green-600 text-2xl mr-4 mt-1 flex-shrink-0">✅</span>
                     <span>Nasz system opiera się na prawach matematycznych oraz strategiach tworzonych przez sztuczną inteligencję.</span>
                   </motion.div>
 
@@ -270,9 +272,8 @@ const HomePage = ({ user }) => {
                     initial={{ y: 30, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.6, delay: 1.6 }}
-                    className="leading-tight flex items-start"
+                    className="leading-tight text-center"
                   >
-                    <span className="text-green-600 text-2xl mr-4 mt-1 flex-shrink-0">✅</span>
                     <span>Celem jest ograniczanie budżetu i wsparcie odpowiedzialnej gry.</span>
                   </motion.div>
 
@@ -280,9 +281,8 @@ const HomePage = ({ user }) => {
                     initial={{ y: 30, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.6, delay: 1.8 }}
-                    className="leading-tight flex items-start"
+                    className="leading-tight text-center"
                   >
-                    <span className="text-green-600 text-2xl mr-4 mt-1 flex-shrink-0">✅</span>
                     <span>Żaden system nie gwarantuje wygranej – traktuj to jako zabawę i inspirację.</span>
                   </motion.div>
                 </div>

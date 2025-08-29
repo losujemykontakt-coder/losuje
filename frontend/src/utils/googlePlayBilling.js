@@ -48,8 +48,8 @@ class GooglePlayBilling {
         id: 'premium_lifetime',
         name: 'Premium Dożywotni',
         description: 'Dostęp premium na zawsze',
-        price: '199.99 PLN',
-        priceMicros: 199990000,
+        price: '99.99 PLN',
+        priceMicros: 99990000,
         type: 'oneTime'
       },
       {
@@ -64,8 +64,8 @@ class GooglePlayBilling {
         id: 'coins_500',
         name: '500 Monet',
         description: '500 monet do talizmanów',
-        price: '19.99 PLN',
-        priceMicros: 19990000,
+        price: '9.99 PLN',
+        priceMicros: 9990000,
         type: 'oneTime'
       }
     ];

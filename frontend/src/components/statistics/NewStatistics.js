@@ -164,7 +164,7 @@ const NewStatistics = ({ selectedGame, onGameChange }) => {
       setError(null);
       
       console.log(`🔄 Pobieranie statystyk dla gry: ${gameType}`);
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/statistics/${gameType}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/statistics/${gameType}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -200,7 +200,7 @@ const NewStatistics = ({ selectedGame, onGameChange }) => {
       setUpdating(true);
       console.log(`🔄 Aktualizuję statystyki dla gry: ${selectedGame}`);
       
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/statistics/update`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/statistics/update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

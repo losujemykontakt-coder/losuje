@@ -116,13 +116,9 @@
 
 .history-actions {
   display: flex;
-  gap: 10px;
-}
-
-.history-actions {
-  display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .action-button {
@@ -139,6 +135,8 @@
   gap: 4px;
   min-width: 80px;
   justify-content: center;
+  flex: 1;
+  max-width: 120px;
 }
 
 .copy-button {
@@ -195,28 +193,17 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #fffde7 60%, #ffd700 100%);
-  box-shadow: 0 2px 8px 0 rgba(255, 215, 0, 0.18);
+  background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   color: #000;
   font-weight: 900;
   font-size: 16px;
   margin: 0 5px 5px 0;
   border: 2px solid #ffb300;
   position: relative;
-  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
 }
 
-.number-ball::before {
-  content: '';
-  position: absolute;
-  top: 6px;
-  left: 10px;
-  width: 12px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.7);
-  filter: blur(1px);
-}
+
 
 .euro-ball {
   display: inline-flex;
@@ -416,6 +403,8 @@
   .history-actions {
     align-self: center;
     width: 100%;
+    flex-direction: column;
+    gap: 6px;
   }
 
   .history-footer {
@@ -429,8 +418,7 @@
     height: 35px;
     font-size: 14px;
     color: #000;
-    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
-    border: 3px solid #ffb300;
+    border: 2px solid #ffb300;
     font-weight: 900;
   }
 
@@ -562,5 +550,6 @@
     justify-content: center;
     padding: 10px 16px;
     font-size: 1rem;
+    flex: none;
   }
 }

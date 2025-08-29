@@ -131,7 +131,7 @@ const PaymentButtons = ({
     }, timeoutDuration);
     
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'https://losuje.pl';
+      const apiUrl = process.env.NODE_ENV === 'development' ? '' : 'https://api-ocwyh3krkq-uc.a.run.app';
       
       // Test połączenia z backendem
       console.log('🔄 Test połączenia z backendem...');
@@ -248,7 +248,7 @@ const PaymentButtons = ({
     // Sprawdź status backendu
     const checkBackendStatus = async () => {
       try {
-        const apiUrl = process.env.REACT_APP_API_URL || 'https://losuje.pl';
+        const apiUrl = process.env.NODE_ENV === 'development' ? '' : 'https://api-ocwyh3krkq-uc.a.run.app';
         const response = await fetch(`${apiUrl}/api/health`, {
           method: 'GET',
           headers: {

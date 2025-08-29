@@ -448,7 +448,7 @@ function InfoModal({ isOpen, onClose, title, content }) {
 function App() {
   // Konfiguracja PayPal - memoizowana
   const paypalOptions = useMemo(() => {
-    const clientId = process.env.REACT_APP_PAYPAL_CLIENT_ID;
+    const clientId = process.env.REACT_APP_PAYPAL_CLIENT_ID || 'Affx9V_8v8IOGAfyMHPooVW70t1eAOGMSoCUCTW-9mrjeeTsHw14cwA6RqN8lqzFRSn7sHi9AG75BGlC';
     const envFromFile = process.env.REACT_APP_PAYPAL_ENVIRONMENT || 'live';
     
     // PayPal SDK oczekuje "production" zamiast "live"
@@ -460,6 +460,11 @@ function App() {
       originalEnv: envFromFile,
       currency: 'PLN'
     });
+    
+    if (!clientId) {
+      console.error('❌ BRAK PAYPAL CLIENT ID - PayPal nie będzie działać!');
+      return null;
+    }
     
     return {
       'client-id': clientId,
@@ -501,6 +506,15 @@ function App() {
   
   // Stan aktywnego talizmanu
   const [activeTalisman, setActiveTalisman] = useState(null);
+  
+  // State dla responsywności
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   // Funkcja do ładowania talizmanów użytkownika
   const loadUserTalismans = async (uid) => {
@@ -646,7 +660,8 @@ function App() {
     const loadActiveTalisman = async () => {
       if (user && user.uid) {
         try {
-          const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/talismans/${user.uid}`);
+          const apiUrl = process.env.NODE_ENV === 'development' ? '' : 'https://api-ocwyh3krkq-uc.a.run.app';
+          const response = await fetch(`${apiUrl}/api/talismans/${user.uid}`);
           const data = await response.json();
           
           if (data.success && data.activeTalisman) {
@@ -841,7 +856,7 @@ function App() {
   useEffect(() => {
     const fetchPaymentMethods = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/payment/methods`);
+        const response = await fetch(`/api/payment/methods`);
         const data = await response.json();
         
         if (data.success) {
@@ -1111,6 +1126,13 @@ function App() {
   const [systemGuarantee, setSystemGuarantee] = useState(3);
   const [systemType, setSystemType] = useState('classic'); // 'classic', 'schonheim' lub 'ilp'
   
+  // Efekt czyszczący wyniki przy zmianie typu systemu
+  useEffect(() => {
+    console.log('🔄 Zmiana typu systemu - czyszczenie wyników:', systemType);
+    // Wyczyść wyniki podstawowe
+    setResults([]);
+  }, [systemType]);
+  
   // Logika ILP
   const [ilpGame, setIlpGame] = useState("miniLotto");
   const [ilpNumbers, setIlpNumbers] = useState(7);
@@ -1244,7 +1266,7 @@ function App() {
     console.log(`🔄 Pobieram statystyki dla ${game}...`);
     
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/statistics/${game}`);
+      const response = await fetch(`/api/statistics/${game}`);
       console.log(`📊 Status odpowiedzi: ${response.status}`);
       
       if (response.ok) {
@@ -6191,12 +6213,21 @@ function App() {
       )}
       {results.length > 0 && results[0].numbers && (
         <div style={{ marginTop: 18 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-            <h3 style={{ color: "#222", margin: 0 }}>System skrócony:</h3>
-            <div style={{ display: "flex", gap: 12 }}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: 16 }}>
+            <div style={{ 
+              display: "flex", 
+              gap: windowWidth <= 768 ? "6px" : "12px",
+              flexWrap: "wrap",
+              justifyContent: "center"
+            }}>
               <button 
                 onClick={copySystemToClipboard}
-                style={actionButtonStyle}
+                style={{
+                  ...actionButtonStyle,
+                  fontSize: windowWidth <= 480 ? "12px" : windowWidth <= 768 ? "13px" : "14px",
+                  padding: windowWidth <= 480 ? "8px 12px" : windowWidth <= 768 ? "10px 16px" : "12px 20px",
+                  minWidth: windowWidth <= 480 ? "80px" : "auto"
+                }}
                 onMouseOver={(e) => {
                   e.target.style.transform = "translateY(-2px)";
                   e.target.style.boxShadow = "0 6px 16px rgba(25, 118, 210, 0.4)";
@@ -6206,14 +6237,17 @@ function App() {
                   e.target.style.boxShadow = "0 4px 12px rgba(25, 118, 210, 0.3)";
                 }}
               >
-                📋 Kopiuj system
+                {windowWidth <= 480 ? "📋" : windowWidth <= 768 ? "📋 System" : "📋 Kopiuj system"}
               </button>
               <button 
                 onClick={copyAllBetsToClipboard}
                 style={{
                   ...actionButtonStyle,
                   background: "linear-gradient(135deg, #ff9800 0%, #ffb300 100%)",
-                  boxShadow: "0 4px 12px rgba(255, 152, 0, 0.3)"
+                  boxShadow: "0 4px 12px rgba(255, 152, 0, 0.3)",
+                  fontSize: windowWidth <= 480 ? "12px" : windowWidth <= 768 ? "13px" : "14px",
+                  padding: windowWidth <= 480 ? "8px 12px" : windowWidth <= 768 ? "10px 16px" : "12px 20px",
+                  minWidth: windowWidth <= 480 ? "80px" : "auto"
                 }}
                 onMouseOver={(e) => {
                   e.target.style.transform = "translateY(-2px)";
@@ -6224,14 +6258,17 @@ function App() {
                   e.target.style.boxShadow = "0 4px 12px rgba(255, 152, 0, 0.3)";
                 }}
               >
-                🎯 Kopiuj zakłady
+                {windowWidth <= 480 ? "🎯" : windowWidth <= 768 ? "🎯 Zakłady" : "🎯 Kopiuj zakłady"}
               </button>
               <button 
                 onClick={generatePDF}
                 style={{
                   ...pdfButtonStyle,
                   background: "linear-gradient(90deg, #4caf50 0%, #45a049 100%)",
-                  boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)"
+                  boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)",
+                  fontSize: windowWidth <= 480 ? "12px" : windowWidth <= 768 ? "13px" : "14px",
+                  padding: windowWidth <= 480 ? "8px 12px" : windowWidth <= 768 ? "10px 16px" : "12px 20px",
+                  minWidth: windowWidth <= 480 ? "80px" : "auto"
                 }}
                 onMouseOver={(e) => {
                   e.target.style.transform = "translateY(-2px)";
@@ -6242,7 +6279,7 @@ function App() {
                   e.target.style.boxShadow = "0 4px 12px rgba(76, 175, 80, 0.3)";
                 }}
               >
-                📄 Pobierz PDF
+                {windowWidth <= 480 ? "📄" : windowWidth <= 768 ? "📄 PDF" : "📄 Pobierz PDF"}
               </button>
               <button 
                 onClick={() => isFavorite(results[0].numbers) ? removeFromFavorites(getFavoriteId(results[0].numbers)) : addToFavorites(results[0].numbers, "systems")}

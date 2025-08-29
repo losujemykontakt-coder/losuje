@@ -1,7 +1,7 @@
 // Dynamiczny URL API - localhost w development, losuje.pl w produkcji
 const API_BASE_URL = process.env.REACT_APP_API_URL 
   ? process.env.REACT_APP_API_URL
-  : 'https://losuje.pl';
+  : '';
 
 class PayPalService {
   // Tworzenie zamówienia PayPal

@@ -368,15 +368,15 @@ const AIPersonaMode = ({ selectedGame, onGenerate, isGenerating }) => {
                   width: getResponsiveValue('35px', '40px', '45px'),
                   height: getResponsiveValue('35px', '40px', '45px'),
                   borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #ff6b6b, #ee5a52)',
+                  background: 'linear-gradient(135deg, #ffd700, #ffb300)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: 'white',
+                  color: '#000',
                   fontWeight: 'bold',
                   fontSize: getResponsiveValue('14px', '16px', '18px'),
-                  boxShadow: '0 4px 15px rgba(255,107,107,0.4)',
-                  border: '3px solid rgba(255,255,255,0.3)'
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                  border: '2px solid #ffb300'
                 }}
               >
                 {num}
@@ -416,20 +416,20 @@ const AIPersonaMode = ({ selectedGame, onGenerate, isGenerating }) => {
               variants={ballVariants}
               initial="hidden"
               animate="visible"
-              style={{
-                width: getResponsiveValue('35px', '40px', '45px'),
-                height: getResponsiveValue('35px', '40px', '45px'),
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, #ff6b6b, #ee5a52)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontWeight: 'bold',
-                fontSize: getResponsiveValue('14px', '16px', '18px'),
-                boxShadow: '0 4px 15px rgba(255,107,107,0.4)',
-                border: '3px solid rgba(255,255,255,0.3)'
-              }}
+                              style={{
+                  width: getResponsiveValue('35px', '40px', '45px'),
+                  height: getResponsiveValue('35px', '40px', '45px'),
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #ffd700, #ffb300)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#000',
+                  fontWeight: 'bold',
+                  fontSize: getResponsiveValue('14px', '16px', '18px'),
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                  border: '2px solid #ffb300'
+                }}
             >
               {num}
             </motion.div>
@@ -493,15 +493,15 @@ const AIPersonaMode = ({ selectedGame, onGenerate, isGenerating }) => {
                             width: getResponsiveValue('40px', '45px', '50px'),
                             height: getResponsiveValue('40px', '45px', '50px'),
                             borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #ff6b6b, #ee5a52)',
+                            background: 'linear-gradient(135deg, #ffd700, #ffb300)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: 'white',
+                            color: '#000',
                             fontWeight: 'bold',
                             fontSize: getResponsiveValue('16px', '18px', '20px'),
-                            boxShadow: '0 6px 20px rgba(255,107,107,0.4)',
-                            border: '3px solid rgba(255,255,255,0.3)'
+                            boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                            border: '2px solid #ffb300'
                           }}
                         >
                           {num}
@@ -557,15 +557,15 @@ const AIPersonaMode = ({ selectedGame, onGenerate, isGenerating }) => {
                       width: getResponsiveValue('40px', '45px', '50px'),
                       height: getResponsiveValue('40px', '45px', '50px'),
                       borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #ff6b6b, #ee5a52)',
+                      background: 'linear-gradient(135deg, #ffd700, #ffb300)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: 'white',
+                      color: '#000',
                       fontWeight: 'bold',
                       fontSize: getResponsiveValue('16px', '18px', '20px'),
-                      boxShadow: '0 6px 20px rgba(255,107,107,0.4)',
-                      border: '3px solid rgba(255,255,255,0.3)'
+                      boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                      border: '2px solid #ffb300'
                     }}
                   >
                     {num}
@@ -624,18 +624,18 @@ const AIPersonaMode = ({ selectedGame, onGenerate, isGenerating }) => {
         disabled={isGenerating}
         style={{
           width: getResponsiveValue('180px', '220px', '250px'),
-          background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)',
+          background: 'linear-gradient(135deg, #ffd700 0%, #ffb300 100%)',
           border: 'none',
           borderRadius: getResponsiveValue('10px', '11px', '12px'),
           padding: getResponsiveValue('10px', '12px', '15px'),
-          color: 'white',
+          color: '#000',
           fontSize: getResponsiveValue('12px', '14px', '16px'),
           fontWeight: 'bold',
           cursor: isGenerating ? 'not-allowed' : 'pointer',
           opacity: isGenerating ? 0.7 : 1,
           transition: 'all 0.3s ease',
           marginTop: getResponsiveValue('15px', '18px', '20px'),
-          boxShadow: '0 4px 15px rgba(255,107,107,0.3)'
+          boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
         }}
       >
         {isGenerating ? '🔄 THINKING...' : '🤖 ASK AI'}

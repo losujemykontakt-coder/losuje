@@ -48,7 +48,7 @@ export const useLottoData = (gameType = 'lotto') => {
       setError(null);
       
       console.log(`🔄 Pobieranie danych dla gry: ${game}`);
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/statistics/${game}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/statistics/${game}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ export const useAllLottoData = () => {
       setError(null);
       
       console.log('🔄 Pobieranie danych dla wszystkich gier...');
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/statistics`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/statistics`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

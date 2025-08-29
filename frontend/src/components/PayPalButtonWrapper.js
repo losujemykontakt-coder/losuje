@@ -60,7 +60,10 @@ const PayPalButtonWrapper = ({
   };
 
   const handleCreateOrder = (data, actions) => {
-    const apiUrl = process.env.REACT_APP_API_URL || 'https://losuje.pl';
+    // W produkcji użyj bezpośredniego URL funkcji jako fallback
+    const apiUrl = process.env.NODE_ENV === 'development' ? '' : 'https://api-ocwyh3krkq-uc.a.run.app';
+    console.log('🔍 PayPal Create Order API URL:', `${apiUrl}/api/paypal/create`);
+    
     return fetch(`${apiUrl}/api/paypal/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -89,7 +92,10 @@ const PayPalButtonWrapper = ({
   };
 
   const handleApprove = (data, actions) => {
-    const apiUrl = process.env.REACT_APP_API_URL || 'https://losuje.pl';
+    // W produkcji użyj bezpośredniego URL funkcji jako fallback
+    const apiUrl = process.env.NODE_ENV === 'development' ? '' : 'https://api-ocwyh3krkq-uc.a.run.app';
+    console.log('🔍 PayPal Capture API URL:', `${apiUrl}/api/paypal/capture/${data.orderID}`);
+    
     return fetch(`${apiUrl}/api/paypal/capture/${data.orderID}`, {
       method: "POST",
       headers: {

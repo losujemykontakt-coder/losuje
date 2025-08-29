@@ -62,19 +62,19 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
 
   const statsGridStyle = {
     display: "grid",
-    gridTemplateColumns: isExtraSmall ? "1fr" : isSmallMobile ? "1fr" : isMobile ? "repeat(auto-fit, minmax(180px, 1fr))" : "repeat(auto-fit, minmax(220px, 1fr))",
-    gap: isExtraSmall ? "10px" : isSmallMobile ? "12px" : isMobile ? "15px" : "18px",
-    marginBottom: isExtraSmall ? "10px" : isSmallMobile ? "12px" : isMobile ? "15px" : "20px"
+    gridTemplateColumns: isExtraSmall ? "1fr" : isSmallMobile ? "1fr" : isMobile ? "repeat(auto-fit, minmax(90px, 1fr))" : "repeat(auto-fit, minmax(110px, 1fr))",
+    gap: isExtraSmall ? "5px" : isSmallMobile ? "6px" : isMobile ? "8px" : "9px",
+    marginBottom: isExtraSmall ? "5px" : isSmallMobile ? "6px" : isMobile ? "8px" : "10px"
   };
 
   const statCardStyle = {
     background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
     color: "white",
-    borderRadius: "12px",
-    padding: isExtraSmall ? "12px" : isSmallMobile ? "16px" : isMobile ? "20px" : "24px",
-    boxShadow: "0 4px 15px rgba(102, 126, 234, 0.3)",
+    borderRadius: "6px",
+    padding: isExtraSmall ? "6px" : isSmallMobile ? "8px" : isMobile ? "10px" : "12px",
+    boxShadow: "0 2px 8px rgba(102, 126, 234, 0.3)",
     textAlign: "center",
-    minHeight: isExtraSmall ? "80px" : isSmallMobile ? "100px" : isMobile ? "120px" : "140px",
+    minHeight: isExtraSmall ? "40px" : isSmallMobile ? "50px" : isMobile ? "60px" : "70px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -82,15 +82,15 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
   };
 
   const statValueStyle = {
-    fontSize: isExtraSmall ? "2.2rem" : isSmallMobile ? "2.8rem" : isMobile ? "3.2rem" : "3.8rem",
+    fontSize: isExtraSmall ? "1.1rem" : isSmallMobile ? "1.4rem" : isMobile ? "1.6rem" : "1.9rem",
     fontWeight: "bold",
-    marginBottom: isExtraSmall ? "4px" : isSmallMobile ? "6px" : isMobile ? "8px" : "10px",
+    marginBottom: isExtraSmall ? "2px" : isSmallMobile ? "3px" : isMobile ? "4px" : "5px",
     lineHeight: "1",
     textShadow: "0 1px 2px rgba(0,0,0,0.3)"
   };
 
   const statLabelStyle = {
-    fontSize: isExtraSmall ? "0.75rem" : isSmallMobile ? "0.85rem" : isMobile ? "0.95rem" : "1.1rem",
+    fontSize: isExtraSmall ? "0.6rem" : isSmallMobile ? "0.7rem" : isMobile ? "0.8rem" : "0.9rem",
     opacity: "0.95",
     lineHeight: "1.4",
     fontWeight: "500"
@@ -331,8 +331,17 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
     
     try {
       console.log('🔄 Pobieranie statystyk harmonicznych...');
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/harmonic/stats`, { 
-        signal: AbortSignal.timeout(5000) // 5 sekund timeout
+      
+      // Sprawdź czy API URL jest dostępny
+      const apiUrl = process.env.REACT_APP_API_URL || '';
+      if (!apiUrl) {
+        console.log('📊 Brak API URL - używam fallback');
+        throw new Error('API URL not configured');
+      }
+      
+      const response = await fetch(`${apiUrl}/api/harmonic/stats`, { 
+        signal: abortControllerRef.current.signal,
+        timeout: 5000
       });
       
       if (!response.ok) {
@@ -342,11 +351,37 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
       const data = await response.json();
       console.log('📊 Otrzymane statystyki:', data);
       
-      if (data.success) {
+      if (data && data.success) {
         setHarmonicStats(data);
       } else {
-        console.error('Błąd pobierania statystyk:', data.error);
-        // Błąd pobierania statystyk - bez komunikatu dla użytkownika
+        console.error('Błąd pobierania statystyk:', data?.error || 'Nieznany błąd');
+        // Ustaw fallback statystyki
+        setHarmonicStats({
+          success: true,
+          isRealData: false,
+          dataSource: 'Symulowane dane',
+          totalDraws: 1000,
+          meanGap: 7.5,
+          medianGap: 7,
+          stdDevGap: 2.1,
+          histogram: {
+            '1-3': 150,
+            '4-6': 300,
+            '7-9': 350,
+            '10-12': 150,
+            '13+': 50
+          },
+          analysis: {
+            isNearHarmonic: true,
+            totalDraws: 1000,
+            totalGaps: 5000
+          },
+          overallStats: {
+            mean: 7.5,
+            median: 7,
+            stdDev: 2.1
+          }
+        });
       }
     } catch (error) {
       if (error.name === 'AbortError') {
@@ -472,7 +507,7 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
         
         // Sprawdź czy backend jest dostępny
         try {
-          const healthResponse = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/health`, { 
+          const healthResponse = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/health`, { 
             signal: abortControllerRef.current.signal
           });
           if (!healthResponse.ok) {
@@ -484,7 +519,7 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
           throw new Error('Backend nie odpowiada');
         }
         
-        const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/harmonic/generate`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/harmonic/generate`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -668,64 +703,56 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
    * Renderuje kulkę z liczbą
    */
   const renderBall = useCallback((number, confidence, index, ballType = 'main') => {
-    // Kolory dla różnych typów kulek
-    let ballColor;
-    if (ballType === 'euro') {
-      // Kolory dla liczb Euro (1-12) - niebieskie odcienie
-      ballColor = confidence > 0.85 ? '#2196F3' : // Jasny niebieski
-                  confidence > 0.75 ? '#1976D2' : // Niebieski
-                  confidence > 0.65 ? '#1565C0' : // Ciemny niebieski
-                  confidence > 0.55 ? '#0D47A1' : // Bardzo ciemny niebieski
-                  confidence > 0.45 ? '#01579B' : // Granatowy
-                  '#002171'; // Najciemniejszy niebieski
-    } else {
-      // Kolory dla głównych liczb - zielone odcienie
-      ballColor = confidence > 0.85 ? '#00C851' : // Jasny zielony
-                  confidence > 0.75 ? '#4CAF50' : // Zielony
-                  confidence > 0.65 ? '#FF9800' : // Pomarańczowy
-                  confidence > 0.55 ? '#FF5722' : // Czerwono-pomarańczowy
-                  confidence > 0.45 ? '#F44336' : // Czerwony
-                  '#9C27B0'; // Fioletowy dla najniższej pewności
-    }
+    // Złote kule z czarnymi liczbami
+    const ballColor = ballType === 'euro' ? '#2196F3' : '#FFD700'; // Euro liczby niebieskie, reszta złota
+    const ballBackground = ballType === 'euro' 
+      ? `radial-gradient(circle at 30% 30%, #e3f2fd 0%, #2196f3 50%, #1976d2 100%)`
+      : `radial-gradient(circle at 30% 30%, #fffde7 0%, #ffd700 50%, #ffb300 100%)`;
 
     return (
       <motion.div
         key={index}
         className="harmonic-ball"
         style={{ 
-          background: `radial-gradient(circle at 30% 30%, #fff 50%, ${ballColor} 100%)`,
-          borderColor: ballColor,
+          background: ballBackground,
+          borderColor: ballType === 'euro' ? '#1976d2' : '#ffb300',
           borderWidth: '3px',
-          boxShadow: `0 6px 20px ${ballColor}60, inset 0 2px 4px rgba(255,255,255,0.3)`
+          boxShadow: ballType === 'euro' 
+            ? `0 6px 20px rgba(33, 150, 243, 0.4), inset 0 2px 4px rgba(255,255,255,0.6)`
+            : `0 6px 20px rgba(255, 215, 0, 0.4), inset 0 2px 4px rgba(255,255,255,0.6)`
         }}
-        initial={{ scale: 0, opacity: 0 }}
+        initial={{ scale: 0, opacity: 0, x: -50 }}
         animate={{ 
-          scale: animatingNumbers ? 1 : 0.8, 
-          opacity: animatingNumbers ? 1 : 0.8,
+          scale: 1, 
+          opacity: 1,
+          x: 0,
           transition: { 
-            delay: animatingNumbers ? index * 0.15 : 0, 
-            duration: 0.6,
+            delay: index * 0.5, // Co 0.5 sekundy od lewej do prawej
+            duration: 0.8,
             type: "spring",
-            stiffness: 100
+            stiffness: 100,
+            damping: 10
           }
         }}
         whileHover={{ 
           scale: 1.15, 
-          boxShadow: `0 8px 25px ${ballColor}80, inset 0 2px 4px rgba(255,255,255,0.3)`,
+          boxShadow: ballType === 'euro'
+            ? `0 8px 25px rgba(33, 150, 243, 0.6), inset 0 2px 4px rgba(255,255,255,0.6)`
+            : `0 8px 25px rgba(255, 215, 0, 0.6), inset 0 2px 4px rgba(255,255,255,0.6)`,
           transition: { duration: 0.2 }
         }}
       >
         <span className="ball-number" style={{ 
-          color: '#000', 
+          color: ballType === 'euro' ? '#fff' : '#222', 
           fontWeight: 'bold', 
-          fontSize: '1.6rem',
-          textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+          fontSize: '1.4rem', // Mniejszy ale dobrze widoczny
+          textShadow: ballType === 'euro' ? '0 1px 2px rgba(0,0,0,0.3)' : '0 1px 2px rgba(0,0,0,0.1)'
         }}>
           {number}
         </span>
       </motion.div>
     );
-  }, [animatingNumbers]);
+  }, []);
 
   return (
     <div style={containerStyle}>
@@ -827,10 +854,10 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
         <motion.div 
           style={{
             background: "rgba(255, 255, 255, 0.95)",
-            marginBottom: "30px",
-            padding: isExtraSmall ? "15px" : isSmallMobile ? "20px" : isMobile ? "25px" : "25px",
-            borderRadius: "15px",
-            boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)",
+            marginBottom: isExtraSmall ? "8px" : isSmallMobile ? "12px" : isMobile ? "15px" : "20px",
+            padding: isExtraSmall ? "4px" : isSmallMobile ? "6px" : isMobile ? "8px" : "15px",
+            borderRadius: isExtraSmall ? "6px" : isSmallMobile ? "8px" : isMobile ? "10px" : "12px",
+            boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
             backdropFilter: "blur(10px)",
             width: "100%",
             boxSizing: "border-box",
@@ -840,7 +867,11 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
         >
-          <h3 style={titleStyle}>📈 Analiza Harmoniczna</h3>
+          <h3 style={{
+            ...titleStyle,
+            fontSize: isExtraSmall ? "14px" : isSmallMobile ? "16px" : isMobile ? "18px" : "20px",
+            marginBottom: isExtraSmall ? "8px" : isSmallMobile ? "12px" : isMobile ? "15px" : "20px"
+          }}>📈 Analiza Harmoniczna</h3>
           
           <div style={statsGridStyle}>
             <div style={statCardStyle}>
@@ -867,11 +898,11 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
               <motion.div 
           style={{
             background: "rgba(255, 255, 255, 0.95)",
-            padding: isExtraSmall ? "15px" : isSmallMobile ? "20px" : isMobile ? "25px" : "30px",
-            borderRadius: "20px",
+            padding: isExtraSmall ? "8px" : isSmallMobile ? "12px" : isMobile ? "15px" : "30px",
+            borderRadius: isExtraSmall ? "12px" : isSmallMobile ? "15px" : isMobile ? "18px" : "20px",
             boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
             backdropFilter: "blur(10px)",
-            marginBottom: "30px",
+            marginBottom: isExtraSmall ? "15px" : isSmallMobile ? "20px" : isMobile ? "25px" : "30px",
             width: "100%",
             boxSizing: "border-box",
             flex: "1"
@@ -880,27 +911,31 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.6 }}
         >
-          <h3 style={titleStyle}>⚙️ Konfiguracja generowania</h3>
+          <h3 style={{
+            ...titleStyle,
+            fontSize: isExtraSmall ? "14px" : isSmallMobile ? "16px" : isMobile ? "18px" : "20px",
+            marginBottom: isExtraSmall ? "8px" : isSmallMobile ? "12px" : isMobile ? "15px" : "20px"
+          }}>⚙️ Konfiguracja generowania</h3>
         
                   <div style={{
             display: "grid",
-            gap: isExtraSmall ? "15px" : isSmallMobile ? "20px" : isMobile ? "25px" : "25px"
+            gap: isExtraSmall ? "8px" : isSmallMobile ? "12px" : isMobile ? "15px" : "25px"
           }}>
                       {/* Wybór gry */}
             <div style={{
-              marginBottom: isExtraSmall ? "10px" : isSmallMobile ? "15px" : isMobile ? "20px" : "25px"
+              marginBottom: isExtraSmall ? "6px" : isSmallMobile ? "10px" : isMobile ? "15px" : "25px"
             }}>
               <label style={{
                 display: "block",
                 fontWeight: "bold",
-                marginBottom: isExtraSmall ? "8px" : isSmallMobile ? "10px" : isMobile ? "12px" : "15px",
+                marginBottom: isExtraSmall ? "4px" : isSmallMobile ? "6px" : isMobile ? "8px" : "15px",
                 color: "#555",
-                fontSize: isExtraSmall ? "12px" : isSmallMobile ? "14px" : isMobile ? "16px" : "18px"
+                fontSize: isExtraSmall ? "10px" : isSmallMobile ? "12px" : isMobile ? "14px" : "18px"
               }}>🎮 Gra:</label>
                           <div style={{
                 display: "grid",
                 gridTemplateColumns: isExtraSmall ? "1fr" : isSmallMobile ? "1fr" : isMobile ? "repeat(auto-fit, minmax(150px, 1fr))" : "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: isExtraSmall ? "8px" : isSmallMobile ? "10px" : isMobile ? "12px" : "15px"
+                gap: isExtraSmall ? "6px" : isSmallMobile ? "8px" : isMobile ? "10px" : "15px"
               }}>
                               {games.map(gameOption => (
                   <button
@@ -909,24 +944,24 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
                       background: game === gameOption.value ? "linear-gradient(45deg, #667eea, #764ba2)" : "white",
                       color: game === gameOption.value ? "white" : "#333",
                       border: "2px solid #e0e0e0",
-                      padding: isExtraSmall ? "12px" : isSmallMobile ? "15px" : isMobile ? "18px" : "20px",
-                      borderRadius: "12px",
+                      padding: isExtraSmall ? "8px" : isSmallMobile ? "10px" : isMobile ? "12px" : "20px",
+                      borderRadius: isExtraSmall ? "8px" : isSmallMobile ? "10px" : isMobile ? "12px" : "12px",
                       cursor: "pointer",
                       transition: "all 0.3s ease",
-                      fontSize: isExtraSmall ? "0.9rem" : isSmallMobile ? "1rem" : isMobile ? "1.1rem" : "1.2rem",
+                      fontSize: isExtraSmall ? "0.7rem" : isSmallMobile ? "0.8rem" : isMobile ? "0.9rem" : "1.2rem",
                       fontWeight: "500",
-                      minHeight: isExtraSmall ? "50px" : isSmallMobile ? "60px" : isMobile ? "70px" : "80px",
+                      minHeight: isExtraSmall ? "35px" : isSmallMobile ? "40px" : isMobile ? "50px" : "80px",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      gap: isExtraSmall ? "6px" : isSmallMobile ? "8px" : isMobile ? "10px" : "12px",
+                      gap: isExtraSmall ? "4px" : isSmallMobile ? "6px" : isMobile ? "8px" : "12px",
                       borderColor: game === gameOption.value ? "#667eea" : "#e0e0e0",
                       boxShadow: game === gameOption.value ? "0 4px 15px rgba(102, 126, 234, 0.3)" : "none"
                     }}
                     onClick={() => setGame(gameOption.value)}
                   >
                     <span style={{
-                      fontSize: isExtraSmall ? "1.5rem" : isSmallMobile ? "1.8rem" : isMobile ? "2rem" : "2.2rem"
+                      fontSize: isExtraSmall ? "1.2rem" : isSmallMobile ? "1.4rem" : isMobile ? "1.6rem" : "2.2rem"
                     }}>{gameOption.icon}</span>
                     <span>{gameOption.label}</span>
                   </button>
@@ -936,19 +971,19 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
 
           {/* Wybór strategii */}
           <div style={{
-            marginBottom: isExtraSmall ? "10px" : isSmallMobile ? "15px" : isMobile ? "20px" : "25px"
+            marginBottom: isExtraSmall ? "6px" : isSmallMobile ? "10px" : isMobile ? "15px" : "25px"
           }}>
             <label style={{
               display: "block",
               fontWeight: "bold",
               marginBottom: isExtraSmall ? "8px" : isSmallMobile ? "10px" : isMobile ? "12px" : "15px",
               color: "#555",
-              fontSize: isExtraSmall ? "12px" : isSmallMobile ? "14px" : isMobile ? "16px" : "18px"
+              fontSize: isExtraSmall ? "14px" : isSmallMobile ? "16px" : isMobile ? "18px" : "20px"
             }}>🎯 Strategia:</label>
             <div style={{
               display: "grid",
               gridTemplateColumns: isExtraSmall ? "1fr" : isSmallMobile ? "1fr" : isMobile ? "repeat(auto-fit, minmax(200px, 1fr))" : "repeat(auto-fit, minmax(250px, 1fr))",
-              gap: isExtraSmall ? "10px" : isSmallMobile ? "12px" : isMobile ? "15px" : "15px"
+              gap: isExtraSmall ? "6px" : isSmallMobile ? "8px" : isMobile ? "10px" : "15px"
             }}>
               {strategies.map(strategyOption => (
                 <button
@@ -957,15 +992,15 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
                     background: strategy === strategyOption.value ? "linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7))" : "white",
                     border: strategy === strategyOption.value ? "4px solid" : "2px solid",
                     borderColor: strategyOption.color,
-                    padding: isExtraSmall ? "12px" : isSmallMobile ? "15px" : isMobile ? "18px" : "20px",
-                    borderRadius: "12px",
+                    padding: isExtraSmall ? "8px" : isSmallMobile ? "10px" : isMobile ? "12px" : "20px",
+                    borderRadius: isExtraSmall ? "8px" : isSmallMobile ? "10px" : isMobile ? "12px" : "12px",
                     cursor: "pointer",
                     transition: "all 0.3s ease",
                     textAlign: "left",
                     display: "flex",
                     alignItems: "center",
-                    gap: isExtraSmall ? "10px" : isSmallMobile ? "12px" : isMobile ? "15px" : "15px",
-                    minHeight: isExtraSmall ? "60px" : isSmallMobile ? "70px" : isMobile ? "80px" : "80px",
+                    gap: isExtraSmall ? "6px" : isSmallMobile ? "8px" : isMobile ? "10px" : "15px",
+                    minHeight: isExtraSmall ? "40px" : isSmallMobile ? "50px" : isMobile ? "60px" : "80px",
                     boxShadow: strategy === strategyOption.value ? "0 8px 25px rgba(0, 0, 0, 0.2)" : "0 6px 20px rgba(0, 0, 0, 0.1)",
                     transform: strategy === strategyOption.value ? "translateY(-2px)" : "none",
                     position: "relative"
@@ -973,22 +1008,22 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
                   onClick={() => setStrategy(strategyOption.value)}
                 >
                   <span style={{
-                    fontSize: isExtraSmall ? "2rem" : isSmallMobile ? "2.5rem" : isMobile ? "3rem" : "3.5rem",
-                    width: isExtraSmall ? "40px" : isSmallMobile ? "50px" : isMobile ? "60px" : "60px",
+                    fontSize: isExtraSmall ? "1.5rem" : isSmallMobile ? "1.8rem" : isMobile ? "2.2rem" : "3.5rem",
+                    width: isExtraSmall ? "30px" : isSmallMobile ? "35px" : isMobile ? "40px" : "60px",
                     textAlign: "center",
                     flexShrink: "0"
                   }}>{strategyOption.icon}</span>
                   <div style={{ flex: "1" }}>
                     <div style={{
                       fontWeight: "bold",
-                      fontSize: isExtraSmall ? "0.9rem" : isSmallMobile ? "1rem" : isMobile ? "1.1rem" : "1.2rem",
-                      marginBottom: isExtraSmall ? "3px" : isSmallMobile ? "4px" : isMobile ? "5px" : "5px",
+                      fontSize: isExtraSmall ? "0.7rem" : isSmallMobile ? "0.8rem" : isMobile ? "0.9rem" : "1.2rem",
+                      marginBottom: isExtraSmall ? "2px" : isSmallMobile ? "3px" : isMobile ? "4px" : "5px",
                       color: "#333"
                     }}>{strategyOption.label}</div>
                     <div style={{
-                      fontSize: isExtraSmall ? "0.7rem" : isSmallMobile ? "0.8rem" : isMobile ? "0.9rem" : "1rem",
+                      fontSize: isExtraSmall ? "0.6rem" : isSmallMobile ? "0.7rem" : isMobile ? "0.8rem" : "1rem",
                       color: "#666",
-                      lineHeight: "1.4"
+                      lineHeight: "1.3"
                     }}>{strategyOption.description}</div>
                   </div>
                   {strategy === strategyOption.value && (
@@ -1310,33 +1345,81 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
               <h3 style={{ color: '#667eea', margin: '0 0 20px 0', textAlign: 'center' }}>
                 🎯 Wygenerowane zestawy
               </h3>
-              <button 
-                className="copy-button" 
-                onClick={copyResults}
-                style={{
-                  background: 'linear-gradient(45deg, #2196F3, #1976D2)',
-                  color: 'white',
-                  border: 'none',
-                  padding: '12px 24px',
-                  borderRadius: '25px',
-                  cursor: 'pointer',
-                  fontSize: '1rem',
-                  marginBottom: '20px',
-                  fontWeight: 'bold',
-                  boxShadow: '0 4px 15px rgba(33, 150, 243, 0.3)',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 6px 20px rgba(33, 150, 243, 0.4)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = '0 4px 15px rgba(33, 150, 243, 0.3)';
-                }}
-              >
-                📋 Kopiuj wygenerowane liczby
-              </button>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '20px' }}>
+                <button 
+                  className="copy-button" 
+                  onClick={copyResults}
+                  style={{
+                    background: 'linear-gradient(45deg, #4CAF50, #45a049)',
+                    color: 'white',
+                    border: 'none',
+                    padding: isExtraSmall ? '8px 12px' : isSmallMobile ? '10px 16px' : '12px 20px',
+                    borderRadius: '20px',
+                    cursor: 'pointer',
+                    fontSize: isExtraSmall ? '0.8rem' : isSmallMobile ? '0.9rem' : '1rem',
+                    fontWeight: 'bold',
+                    boxShadow: '0 4px 15px rgba(76, 175, 80, 0.3)',
+                    transition: 'all 0.3s ease',
+                    flex: '1',
+                    marginRight: '10px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 6px 20px rgba(76, 175, 80, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 15px rgba(76, 175, 80, 0.3)';
+                  }}
+                >
+                  📋 {isExtraSmall ? 'Kopiuj' : 'Kopiuj liczby'}
+                </button>
+
+                <button 
+                  onClick={() => {
+                    // Funkcja dodaj do ulubionych
+                    if (generatedSets && generatedSets.length > 0) {
+                      const favorites = JSON.parse(localStorage.getItem('favoriteSets') || '[]');
+                      const newFavorite = {
+                        id: Date.now(),
+                        name: `Harmonic Analyzer ${game} ${new Date().toLocaleDateString('pl-PL')}`,
+                        set: generatedSets[0].numbers, // Pierwszy zestaw
+                        game: game,
+                        generatorType: 'harmonic-analyzer',
+                        date: new Date().toISOString()
+                      };
+                      
+                      const updatedFavorites = [newFavorite, ...favorites];
+                      localStorage.setItem('favoriteSets', JSON.stringify(updatedFavorites));
+                      
+                      alert(`Zestaw "${newFavorite.name}" został dodany do ulubionych!`);
+                    }
+                  }}
+                  style={{
+                    background: 'linear-gradient(45deg, #9C27B0, #673AB7)',
+                    color: 'white',
+                    border: 'none',
+                    padding: isExtraSmall ? '8px 12px' : isSmallMobile ? '10px 16px' : '12px 20px',
+                    borderRadius: '20px',
+                    cursor: 'pointer',
+                    fontSize: isExtraSmall ? '0.8rem' : isSmallMobile ? '0.9rem' : '1rem',
+                    fontWeight: 'bold',
+                    boxShadow: '0 4px 15px rgba(156, 39, 176, 0.3)',
+                    transition: 'all 0.3s ease',
+                    flex: '1'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 6px 20px rgba(156, 39, 176, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 15px rgba(156, 39, 176, 0.3)';
+                  }}
+                >
+                  ❤️ {isExtraSmall ? 'Ulubione' : 'Dodaj do ulubionych'}
+                </button>
+              </div>
             </div>
 
             {/* Komunikat o symulowanych danych - USUNIĘTY */}

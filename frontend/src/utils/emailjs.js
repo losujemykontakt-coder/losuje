@@ -19,7 +19,7 @@ export const initEmailJS = () => {
 
 // Funkcja wysyłania emaila resetowania hasła
 export const sendPasswordResetEmail = async (userEmail, resetToken, userName) => {
-  const resetLink = `https://losuje.pl/reset-password?token=${resetToken}`;
+  const resetLink = `${window.location.origin}/reset-password?token=${resetToken}`;
 
   const templateParams = {
     to_email: userEmail,

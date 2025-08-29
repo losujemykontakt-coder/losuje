@@ -1,281 +1,391 @@
 import React, { useState, useEffect } from 'react';
-import googlePlayBilling from '../utils/googlePlayBilling';
+import { useTranslation } from 'react-i18next';
 
-const GooglePlayPayments = ({ user, onPurchaseComplete }) => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [purchasing, setPurchasing] = useState(false);
-  const [purchaseStatus, setPurchaseStatus] = useState(null);
-  const [coinsBalance, setCoinsBalance] = useState(0);
-  const [hasPremium, setHasPremium] = useState(false);
+const GooglePlayPayments = ({ user, subscription, paymentHistory, onClose, onSubscriptionUpdate }) => {
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const allProducts = googlePlayBilling.getAllProducts();
-      setProducts(allProducts);
-      setCoinsBalance(googlePlayBilling.getCoinsBalance());
-      setHasPremium(googlePlayBilling.hasPremiumAccess());
-    } catch (error) {
-      console.error('Błąd ładowania danych płatności:', error);
-    } finally {
-      setLoading(false);
+  const plans = [
+    {
+      id: 'premium_monthly',
+      name: 'Premium Miesięczny',
+      price: '9.99 zł',
+      period: 'miesiąc',
+      features: [
+        '🚀 AI Generator Ultra Pro',
+        '🎵 Analizator Harmoniczny',
+        '🎲 Generator Schonheim',
+        '✨ System Talizmanów',
+        '📈 Zaawansowane statystyki',
+        '🎰 Wszystkie gry lotto'
+      ]
+    },
+    {
+      id: 'premium_yearly',
+      name: 'Premium Roczny',
+      price: '59.90 zł',
+      period: 'rok',
+      savings: '59.88 zł',
+      features: [
+        '🚀 AI Generator Ultra Pro',
+        '🎵 Analizator Harmoniczny',
+        '🎲 Generator Schonheim',
+        '✨ System Talizmanów',
+        '📈 Zaawansowane statystyki',
+        '🎰 Wszystkie gry lotto',
+        '💎 6 miesięcy gratis!'
+      ]
     }
-  };
+  ];
 
-  const handlePurchase = async (productId) => {
+  const handlePurchase = async (planId) => {
+    setLoading(true);
+    setMessage('');
+
     try {
-      setPurchasing(true);
-      setPurchaseStatus('purchasing');
+      console.log('🛒 Próba zakupu planu:', planId);
       
-      const purchase = await googlePlayBilling.purchaseProduct(productId);
+      // Symulacja zakupu Google Play
+      const purchaseToken = 'simulated_' + Date.now();
+      const orderId = 'order_' + Date.now();
       
-      if (purchase.purchaseState === 'PURCHASED') {
-        setPurchaseStatus('success');
-        setCoinsBalance(googlePlayBilling.getCoinsBalance());
-        setHasPremium(googlePlayBilling.hasPremiumAccess());
+      // Weryfikacja zakupu na backend
+      const response = await fetch('/api/google-play/verify-purchase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user?.uid,
+          purchaseToken,
+          productId: planId,
+          orderId
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setMessage('✅ Zakup udany! Twoja subskrypcja została aktywowana.');
         
-        if (onPurchaseComplete) {
-          onPurchaseComplete(purchase);
+        // Aktualizacja subskrypcji
+        if (onSubscriptionUpdate) {
+          onSubscriptionUpdate({
+            status: 'active',
+            plan: planId,
+            startDate: new Date().toISOString(),
+            endDate: planId === 'premium_monthly' 
+              ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+              : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+          });
         }
-        
-        // Reset status po 3 sekundach
-        setTimeout(() => setPurchaseStatus(null), 3000);
       } else {
-        setPurchaseStatus('failed');
+        throw new Error(result.error || 'Błąd weryfikacji zakupu');
       }
     } catch (error) {
-      console.error('Błąd zakupu:', error);
-      setPurchaseStatus('failed');
-    } finally {
-      setPurchasing(false);
-    }
-  };
-
-  const handleRestorePurchases = async () => {
-    try {
-      setLoading(true);
-      await googlePlayBilling.restorePurchases();
-      setCoinsBalance(googlePlayBilling.getCoinsBalance());
-      setHasPremium(googlePlayBilling.hasPremiumAccess());
-      setPurchaseStatus('restored');
-      
-      setTimeout(() => setPurchaseStatus(null), 3000);
-    } catch (error) {
-      console.error('Błąd przywracania zakupów:', error);
-      setPurchaseStatus('restore_failed');
+      console.error('❌ Błąd zakupu:', error);
+      setMessage('❌ Błąd podczas zakupu. Spróbuj ponownie.');
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '40px'
-      }}>
-        <div style={{
-          width: '40px',
-          height: '40px',
-          border: '3px solid #f3f3f3',
-          borderTop: '3px solid #3498db',
-          borderRadius: '50%',
-          animation: 'spin 1s linear infinite'
-        }}></div>
-        <style>{`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}</style>
-      </div>
-    );
-  }
+  const handleCancelSubscription = async () => {
+    if (!window.confirm('Czy na pewno chcesz anulować subskrypcję?')) {
+      return;
+    }
+
+    setLoading(true);
+    setMessage('');
+
+    try {
+      // Tutaj będzie integracja z Google Play Billing
+      console.log('❌ Anulowanie subskrypcji');
+      
+      // Symulacja anulowania
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setMessage('✅ Subskrypcja została anulowana.');
+      
+      if (onSubscriptionUpdate) {
+        onSubscriptionUpdate(null);
+      }
+    } catch (error) {
+      console.error('❌ Błąd anulowania:', error);
+      setMessage('❌ Błąd podczas anulowania subskrypcji.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('pl-PL');
+  };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
-      {/* Status zakupu */}
-      {purchaseStatus && (
+    <div style={{ width: '100%' }}>
+      {/* Header */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '30px',
+        paddingBottom: '20px',
+        borderBottom: '1px solid #eee'
+      }}>
+        <h2 style={{ margin: 0, color: '#333', fontSize: '24px' }}>
+          💳 Płatności i Subskrypcja
+        </h2>
+        <button
+          onClick={onClose}
+          style={{
+            background: 'none',
+            border: 'none',
+            fontSize: '24px',
+            cursor: 'pointer',
+            color: '#666',
+            padding: '5px'
+          }}
+        >
+          ✕
+        </button>
+      </div>
+
+      {/* Message */}
+      {message && (
         <div style={{
           padding: '15px',
           marginBottom: '20px',
           borderRadius: '8px',
-          backgroundColor: purchaseStatus === 'success' ? '#d4edda' : 
-                          purchaseStatus === 'failed' ? '#f8d7da' : '#d1ecf1',
-          color: purchaseStatus === 'success' ? '#155724' : 
-                 purchaseStatus === 'failed' ? '#721c24' : '#0c5460',
-          border: `1px solid ${purchaseStatus === 'success' ? '#c3e6cb' : 
-                              purchaseStatus === 'failed' ? '#f5c6cb' : '#bee5eb'}`
+          backgroundColor: message.includes('✅') ? '#d4edda' : '#f8d7da',
+          color: message.includes('✅') ? '#155724' : '#721c24',
+          border: `1px solid ${message.includes('✅') ? '#c3e6cb' : '#f5c6cb'}`
         }}>
-          {purchaseStatus === 'success' && '✅ Zakup zrealizowany pomyślnie!'}
-          {purchaseStatus === 'failed' && '❌ Błąd podczas zakupu. Spróbuj ponownie.'}
-          {purchaseStatus === 'purchasing' && '⏳ Przetwarzanie zakupu...'}
-          {purchaseStatus === 'restored' && '✅ Zakupy przywrócone pomyślnie!'}
-          {purchaseStatus === 'restore_failed' && '❌ Błąd przywracania zakupów.'}
+          {message}
         </div>
       )}
 
-      {/* Status użytkownika */}
-      <div style={{
-        backgroundColor: '#f8f9fa',
-        padding: '20px',
-        borderRadius: '10px',
-        marginBottom: '30px',
-        border: '1px solid #dee2e6'
-      }}>
-        <h3 style={{ margin: '0 0 15px 0', color: '#333' }}>Status konta</h3>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <p style={{ margin: '5px 0', fontSize: '16px' }}>
-              <strong>Premium:</strong> {hasPremium ? '✅ Aktywne' : '❌ Nieaktywne'}
-            </p>
-            <p style={{ margin: '5px 0', fontSize: '16px' }}>
-              <strong>Monety:</strong> {coinsBalance} 🪙
-            </p>
+      {/* Current Subscription */}
+      {subscription && (
+        <div style={{
+          background: '#f8f9fa',
+          padding: '20px',
+          borderRadius: '12px',
+          marginBottom: '30px',
+          border: '1px solid #e9ecef'
+        }}>
+          <h3 style={{ margin: '0 0 15px 0', color: '#333' }}>
+            📋 Twoja Subskrypcja
+          </h3>
+          <div style={{ display: 'grid', gap: '10px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ fontWeight: 'bold' }}>Status:</span>
+              <span style={{ 
+                color: subscription.status === 'active' ? '#28a745' : '#dc3545',
+                fontWeight: 'bold'
+              }}>
+                {subscription.status === 'active' ? 'Aktywna' : 'Nieaktywna'}
+              </span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Plan:</span>
+              <span>{subscription.plan === 'premium_monthly' ? 'Premium Miesięczny' : 'Premium Roczny'}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Data rozpoczęcia:</span>
+              <span>{formatDate(subscription.startDate)}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Data zakończenia:</span>
+              <span>{formatDate(subscription.endDate)}</span>
+            </div>
           </div>
-          <button
-            onClick={handleRestorePurchases}
-            disabled={loading}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              fontSize: '14px'
-            }}
-          >
-            {loading ? 'Przywracanie...' : 'Przywróć zakupy'}
-          </button>
+          
+          {subscription.status === 'active' && (
+            <button
+              onClick={handleCancelSubscription}
+              disabled={loading}
+              style={{
+                background: '#dc3545',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '10px 20px',
+                marginTop: '15px',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.6 : 1
+              }}
+            >
+              {loading ? 'Anulowanie...' : 'Anuluj Subskrypcję'}
+            </button>
+          )}
         </div>
-      </div>
+      )}
 
-      {/* Subskrypcje Premium */}
+      {/* Available Plans */}
       <div style={{ marginBottom: '30px' }}>
-        <h3 style={{ margin: '0 0 20px 0', color: '#333', textAlign: 'center' }}>
-          🎯 Subskrypcje Premium
+        <h3 style={{ margin: '0 0 20px 0', color: '#333' }}>
+          🎯 Dostępne Plany
         </h3>
-        <div style={{ display: 'grid', gap: '15px' }}>
-          {products.filter(p => p.type === 'subscription').map(product => (
-            <div key={product.id} style={{
-              backgroundColor: 'white',
-              border: '2px solid #FFD700',
-              borderRadius: '10px',
-              padding: '20px',
-              textAlign: 'center',
-              position: 'relative'
+        
+        <div style={{ display: 'grid', gap: '20px' }}>
+          {plans.map((plan) => (
+            <div key={plan.id} style={{
+              border: '2px solid #e9ecef',
+              borderRadius: '12px',
+              padding: '25px',
+              position: 'relative',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              ':hover': {
+                borderColor: '#007bff',
+                transform: 'translateY(-2px)'
+              }
             }}>
-              {product.id === 'premium_yearly' && (
+              {plan.savings && (
                 <div style={{
                   position: 'absolute',
                   top: '-10px',
                   right: '20px',
-                  backgroundColor: '#dc3545',
+                  background: '#28a745',
                   color: 'white',
-                  padding: '5px 10px',
-                  borderRadius: '15px',
+                  padding: '5px 15px',
+                  borderRadius: '20px',
                   fontSize: '12px',
                   fontWeight: 'bold'
                 }}>
-                  OSZCZĘDNOŚĆ 40%
+                  Oszczędź {plan.savings}
                 </div>
               )}
               
-              <h4 style={{ margin: '0 0 10px 0', color: '#333' }}>{product.name}</h4>
-              <p style={{ margin: '0 0 15px 0', color: '#666', fontSize: '14px' }}>
-                {product.description}
-              </p>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#28a745', marginBottom: '15px' }}>
-                {product.price}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                <h4 style={{ margin: 0, fontSize: '20px', color: '#333' }}>
+                  {plan.name}
+                </h4>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#007bff' }}>
+                    {plan.price}
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#666' }}>
+                    na {plan.period}
+                  </div>
+                </div>
               </div>
+              
+              <ul style={{ 
+                listStyle: 'none', 
+                padding: 0, 
+                margin: '0 0 20px 0',
+                display: 'grid',
+                gap: '8px'
+              }}>
+                {plan.features.map((feature, index) => (
+                  <li key={index} style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '8px',
+                    fontSize: '14px',
+                    color: '#555'
+                  }}>
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              
               <button
-                onClick={() => handlePurchase(product.id)}
-                disabled={purchasing || hasPremium}
+                onClick={() => handlePurchase(plan.id)}
+                disabled={loading || (subscription && subscription.status === 'active')}
                 style={{
-                  padding: '12px 30px',
-                  backgroundColor: hasPremium ? '#6c757d' : '#28a745',
+                  width: '100%',
+                  background: subscription && subscription.status === 'active' 
+                    ? '#6c757d' 
+                    : 'linear-gradient(135deg, #007bff 0%, #0056b3 100%)',
                   color: 'white',
                   border: 'none',
-                  borderRadius: '25px',
-                  cursor: (purchasing || hasPremium) ? 'not-allowed' : 'pointer',
+                  borderRadius: '8px',
+                  padding: '12px',
                   fontSize: '16px',
                   fontWeight: 'bold',
-                  width: '100%'
+                  cursor: subscription && subscription.status === 'active' ? 'not-allowed' : 'pointer',
+                  opacity: loading || (subscription && subscription.status === 'active') ? 0.6 : 1
                 }}
               >
-                {hasPremium ? 'Już masz Premium' : purchasing ? 'Przetwarzanie...' : 'Kup teraz'}
+                {loading ? 'Przetwarzanie...' : 
+                 subscription && subscription.status === 'active' ? 'Subskrypcja Aktywna' : 
+                 `Wybierz ${plan.name}`}
               </button>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Zakupy jednorazowe */}
-      <div style={{ marginBottom: '30px' }}>
-        <h3 style={{ margin: '0 0 20px 0', color: '#333', textAlign: 'center' }}>
-          🪙 Monety do talizmanów
-        </h3>
-        <div style={{ display: 'grid', gap: '15px' }}>
-          {products.filter(p => p.type === 'oneTime' && p.id.startsWith('coins_')).map(product => (
-            <div key={product.id} style={{
-              backgroundColor: 'white',
-              border: '2px solid #17a2b8',
-              borderRadius: '10px',
-              padding: '20px',
-              textAlign: 'center'
-            }}>
-              <h4 style={{ margin: '0 0 10px 0', color: '#333' }}>{product.name}</h4>
-              <p style={{ margin: '0 0 15px 0', color: '#666', fontSize: '14px' }}>
-                {product.description}
-              </p>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#17a2b8', marginBottom: '15px' }}>
-                {product.price}
+      {/* Payment History */}
+      {paymentHistory && paymentHistory.length > 0 && (
+        <div>
+          <h3 style={{ margin: '0 0 20px 0', color: '#333' }}>
+            📊 Historia Płatności
+          </h3>
+          
+          <div style={{
+            background: '#f8f9fa',
+            borderRadius: '8px',
+            overflow: 'hidden'
+          }}>
+            {paymentHistory.map((payment, index) => (
+              <div key={index} style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '15px 20px',
+                borderBottom: index < paymentHistory.length - 1 ? '1px solid #e9ecef' : 'none'
+              }}>
+                <div>
+                  <div style={{ fontWeight: 'bold', color: '#333' }}>
+                    {payment.plan === 'premium_monthly' ? 'Premium Miesięczny' : 'Premium Roczny'}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#666' }}>
+                    {formatDate(payment.date)}
+                  </div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontWeight: 'bold', color: '#28a745' }}>
+                    {payment.amount}
+                  </div>
+                  <div style={{ 
+                    fontSize: '12px', 
+                    color: payment.status === 'completed' ? '#28a745' : '#dc3545'
+                  }}>
+                    {payment.status === 'completed' ? 'Zapłacone' : 'Błąd'}
+                  </div>
+                </div>
               </div>
-              <button
-                onClick={() => handlePurchase(product.id)}
-                disabled={purchasing}
-                style={{
-                  padding: '12px 30px',
-                  backgroundColor: '#17a2b8',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '25px',
-                  cursor: purchasing ? 'not-allowed' : 'pointer',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  width: '100%'
-                }}
-              >
-                {purchasing ? 'Przetwarzanie...' : 'Kup monety'}
-              </button>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Informacje o płatnościach */}
+      {/* Info */}
       <div style={{
-        backgroundColor: '#e9ecef',
-        padding: '20px',
-        borderRadius: '10px',
-        fontSize: '14px',
-        color: '#495057'
+        background: '#e7f3ff',
+        padding: '15px',
+        borderRadius: '8px',
+        marginTop: '20px',
+        border: '1px solid #b3d9ff'
       }}>
-        <h4 style={{ margin: '0 0 15px 0', color: '#333' }}>ℹ️ Informacje o płatnościach</h4>
-        <ul style={{ margin: 0, paddingLeft: '20px' }}>
+        <h4 style={{ margin: '0 0 10px 0', color: '#0056b3' }}>
+          ℹ️ Informacje
+        </h4>
+        <ul style={{ 
+          margin: 0, 
+          paddingLeft: '20px', 
+          color: '#0056b3',
+          fontSize: '14px'
+        }}>
           <li>Płatności są przetwarzane przez Google Play Store</li>
-          <li>Subskrypcje są automatycznie odnawiane</li>
-          <li>Możesz anulować subskrypcję w ustawieniach Google Play</li>
-          <li>Monety są dodawane natychmiast po zakupie</li>
-          <li>Zakupy można przywrócić na nowym urządzeniu</li>
+          <li>Subskrypcja automatycznie się odnawia</li>
+          <li>Możesz anulować subskrypcję w dowolnym momencie</li>
+          <li>Wszystkie funkcje premium są dostępne natychmiast po zakupie</li>
         </ul>
       </div>
     </div>

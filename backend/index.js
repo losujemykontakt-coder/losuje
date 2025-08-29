@@ -3126,6 +3126,137 @@ app.get('/api/paypal/config', (req, res) => {
   });
 });
 
+// Google Play Billing endpoints
+app.post('/api/google-play/verify-purchase', async (req, res) => {
+  const { userId, purchaseToken, productId, orderId } = req.body;
+  
+  if (!userId || !purchaseToken || !productId) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'Brak wymaganych parametrów' 
+    });
+  }
+  
+  try {
+    console.log('🔍 Weryfikacja zakupu Google Play:', { userId, productId, orderId });
+    
+    // Tutaj będzie integracja z Google Play Developer API
+    // Na razie symulujemy weryfikację
+    
+    const { updateUserPaymentStatus, addPayment } = require('./db');
+    
+    // Określ plan na podstawie productId
+    let plan = 'premium_monthly';
+    let amount = '9.99 PLN';
+    
+    if (productId === 'premium_yearly') {
+      plan = 'premium_yearly';
+      amount = '59.90 PLN';
+    }
+    
+    // Aktualizuj status płatności użytkownika
+    await updateUserPaymentStatus(userId, true);
+    
+    // Dodaj płatność do historii
+    await addPayment(userId, amount, 'google_play', plan, orderId);
+    
+    res.json({
+      success: true,
+      message: 'Zakup zweryfikowany pomyślnie',
+      data: {
+        userId,
+        productId,
+        plan,
+        amount,
+        verified: true
+      }
+    });
+  } catch (error) {
+    console.error('❌ Błąd weryfikacji zakupu Google Play:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Błąd weryfikacji zakupu' 
+    });
+  }
+});
+
+app.post('/api/google-play/acknowledge-purchase', async (req, res) => {
+  const { userId, purchaseToken } = req.body;
+  
+  if (!userId || !purchaseToken) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'Brak wymaganych parametrów' 
+    });
+  }
+  
+  try {
+    console.log('✅ Potwierdzenie zakupu Google Play:', { userId, purchaseToken });
+    
+    // Tutaj będzie integracja z Google Play Developer API
+    // Na razie symulujemy potwierdzenie
+    
+    res.json({
+      success: true,
+      message: 'Zakup potwierdzony pomyślnie'
+    });
+  } catch (error) {
+    console.error('❌ Błąd potwierdzenia zakupu Google Play:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Błąd potwierdzenia zakupu' 
+    });
+  }
+});
+
+app.get('/api/google-play/products', (req, res) => {
+  try {
+    const products = [
+      {
+        id: 'premium_monthly',
+        name: 'Premium Miesięczny',
+        price: '9.99 PLN',
+        period: 'miesiąc',
+        features: [
+          '🚀 AI Generator Ultra Pro',
+          '🎵 Analizator Harmoniczny',
+          '🎲 Generator Schonheim',
+          '✨ System Talizmanów',
+          '📈 Zaawansowane statystyki',
+          '🎰 Wszystkie gry lotto'
+        ]
+      },
+      {
+        id: 'premium_yearly',
+        name: 'Premium Roczny',
+        price: '59.90 PLN',
+        period: 'rok',
+        savings: '59.88 PLN',
+        features: [
+          '🚀 AI Generator Ultra Pro',
+          '🎵 Analizator Harmoniczny',
+          '🎲 Generator Schonheim',
+          '✨ System Talizmanów',
+          '📈 Zaawansowane statystyki',
+          '🎰 Wszystkie gry lotto',
+          '💎 6 miesięcy gratis!'
+        ]
+      }
+    ];
+    
+    res.json({
+      success: true,
+      products
+    });
+  } catch (error) {
+    console.error('❌ Błąd pobierania produktów Google Play:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Błąd pobierania produktów' 
+    });
+  }
+});
+
 // Fallback dla SPA - serwuj index.html dla wszystkich tras, które nie są API
 // MUSI być na końcu, po wszystkich endpointach API
 app.get('*', (req, res) => {

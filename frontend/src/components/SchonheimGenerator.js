@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 const SchonheimGenerator = () => {
+  // Hook do śledzenia szerokości ekranu
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const [selectedGame, setSelectedGame] = useState('lotto'); // wybrana gra
   const [selectedNumbers, setSelectedNumbers] = useState([]); // wybrany zbiór liczb
   const [v, setV] = useState(10); // liczba wybranych liczb
@@ -23,6 +31,23 @@ const SchonheimGenerator = () => {
     kaskada: { name: 'Kaskada', range: 24, pick: 12, guarantees: [3, 4, 5, 6, 7, 8, 9, 10, 11] },
     keno: { name: 'Keno', range: 70, pick: 10, guarantees: [3, 4, 5, 6, 7, 8, 9] }
   };
+
+  // Efekt czyszczący wyniki przy zmianie gry
+  useEffect(() => {
+    console.log('🔄 Zmiana gry - czyszczenie wyników:', selectedGame);
+    setResults(null);
+    setGeneratedBets([]);
+    setSelectedNumbers([]);
+    setUserBets(0);
+    
+    // Ustaw domyślne wartości dla nowej gry
+    const config = gameConfigs[selectedGame];
+    if (config) {
+      setK(config.pick);
+      setT(Math.min(config.guarantees[0] || 3, config.pick - 1));
+      setV(Math.min(config.pick + 4, config.range));
+    }
+  }, [selectedGame]);
 
   // Funkcja generująca losowy zbiór liczb
   const generateRandomNumberSet = (count, maxNumber) => {
@@ -133,6 +158,7 @@ const SchonheimGenerator = () => {
   const generateSystem = async () => {
     setIsGenerating(true);
     setGeneratedBets([]);
+    setResults(null); // Wyczyść poprzednie wyniki
     
     try {
       const gameConfig = gameConfigs[selectedGame];
@@ -168,6 +194,9 @@ const SchonheimGenerator = () => {
 
   // Funkcja obliczająca wszystkie granice (zachowana dla kompatybilności)
   const calculateBounds = () => {
+    setGeneratedBets([]); // Wyczyść wygenerowane zakłady
+    setResults(null); // Wyczyść poprzednie wyniki
+    
     const simpleBound = calculateSimpleBound();
     const schonheimBound = calculateSchonheimBound(v, k, t);
     
@@ -246,18 +275,19 @@ const SchonheimGenerator = () => {
         <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-blue-500 mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
       
-      <div className="max-w-4xl mx-auto relative z-10">
+      <div className="max-w-4xl mx-auto relative z-10" style={{ padding: window.innerWidth <= 280 ? "8px" : "0" }}>
         {/* Nagłówek */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-8"
+          style={{ padding: window.innerWidth <= 280 ? "8px" : "0" }}
         >
-                      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">
+                      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4" style={{ fontSize: window.innerWidth <= 280 ? "20px" : "24px" }}>
             🧮 Generator Systemów Schönheima
           </h1>
-          <p className="text-blue-200 text-lg">
+          <p className="text-blue-200 text-lg" style={{ fontSize: window.innerWidth <= 280 ? "14px" : "18px" }}>
             Oblicz granice dla systemów skróconych Lotto
           </p>
         </motion.div>
@@ -268,11 +298,12 @@ const SchonheimGenerator = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           className="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-8 border border-white/20"
+          style={{ padding: window.innerWidth <= 280 ? "12px" : "24px", margin: window.innerWidth <= 280 ? "16px 8px" : "32px 0" }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" style={{ gap: window.innerWidth <= 280 ? "12px" : "16px" }}>
             {/* Wybór gry */}
             <div className="flex flex-col justify-end">
-              <label className="block text-white font-medium mb-2">
+              <label className="block text-white font-medium mb-2" style={{ fontSize: window.innerWidth <= 280 ? "12px" : "14px" }}>
                 Wybierz grę
               </label>
               <div className="relative">
@@ -284,6 +315,10 @@ const SchonheimGenerator = () => {
                     const config = gameConfigs[e.target.value];
                     setK(config.pick);
                     setT(config.guarantees[0]);
+                  }}
+                  style={{
+                    fontSize: window.innerWidth <= 280 ? "12px" : "14px",
+                    height: window.innerWidth <= 280 ? "40px" : "48px"
                   }}
                   className="w-full px-4 py-2 bg-white/20 border border-white/30 rounded-lg text-white focus:outline-none focus:border-blue-400 h-12 appearance-none cursor-pointer pr-10 flex items-center leading-normal"
                 >
@@ -360,25 +395,74 @@ const SchonheimGenerator = () => {
               <label className="block text-white font-medium mb-2">
                 Twoje zakłady (opcjonalnie)
               </label>
-              <input
-                type="number"
-                value={userBets}
-                onChange={(e) => setUserBets(e.target.value)}
-                min="0"
-                className="w-full px-4 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-blue-400 h-12 flex items-center leading-normal"
-                placeholder="Do porównania"
-              />
+              <div className="flex items-center gap-2" style={{
+                gap: window.innerWidth <= 320 ? "4px" : (window.innerWidth <= 480 ? "6px" : "8px"),
+                width: window.innerWidth <= 480 ? "100%" : "auto"
+              }}>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setUserBets(Math.max(0, parseInt(userBets) - 1 || 0))}
+                  style={{
+                    width: window.innerWidth <= 320 ? "32px" : (window.innerWidth <= 480 ? "36px" : "44px"),
+                    height: window.innerWidth <= 320 ? "32px" : (window.innerWidth <= 480 ? "36px" : "44px"),
+                    fontSize: window.innerWidth <= 320 ? "12px" : (window.innerWidth <= 480 ? "14px" : "18px"),
+                    minWidth: window.innerWidth <= 320 ? "32px" : (window.innerWidth <= 480 ? "36px" : "44px")
+                  }}
+                  className="bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-colors flex items-center justify-center shadow-lg"
+                >
+                  -
+                </motion.button>
+                <input
+                  type="number"
+                  value={userBets}
+                  onChange={(e) => setUserBets(e.target.value)}
+                  min="0"
+                  className="flex-1 px-4 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-blue-400 flex items-center leading-normal text-center"
+                  placeholder="0"
+                  style={{
+                    fontSize: window.innerWidth <= 320 ? "12px" : (window.innerWidth <= 480 ? "14px" : "16px"),
+                    height: window.innerWidth <= 320 ? "32px" : (window.innerWidth <= 480 ? "36px" : "44px"),
+                    padding: window.innerWidth <= 320 ? "4px 8px" : "8px 16px",
+                    width: window.innerWidth <= 320 ? "50%" : (window.innerWidth <= 480 ? "60%" : "auto")
+                  }}
+                />
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setUserBets(parseInt(userBets) + 1 || 1)}
+                  style={{
+                    width: window.innerWidth <= 320 ? "32px" : (window.innerWidth <= 480 ? "36px" : "44px"),
+                    height: window.innerWidth <= 320 ? "32px" : (window.innerWidth <= 480 ? "36px" : "44px"),
+                    fontSize: window.innerWidth <= 320 ? "12px" : (window.innerWidth <= 480 ? "14px" : "18px"),
+                    minWidth: window.innerWidth <= 320 ? "32px" : (window.innerWidth <= 480 ? "36px" : "44px")
+                  }}
+                  className="bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-colors flex items-center justify-center shadow-lg"
+                >
+                  +
+                </motion.button>
+              </div>
             </div>
           </div>
 
           {/* Przyciski */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center" style={{ 
+            padding: window.innerWidth <= 480 ? "8px" : "0",
+            marginTop: window.innerWidth <= 480 ? "12px" : "16px"
+          }}>
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={generateSystem}
               disabled={isGenerating}
-              className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 px-6 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed min-w-[200px]"
+              style={{
+                width: window.innerWidth <= 480 ? "100%" : "auto",
+                fontSize: window.innerWidth <= 480 ? "14px" : "16px",
+                padding: window.innerWidth <= 480 ? "12px 16px" : "12px 24px",
+                margin: window.innerWidth <= 480 ? "4px 0" : "0",
+                minWidth: window.innerWidth <= 480 ? "auto" : "200px"
+              }}
+              className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 px-6 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isGenerating ? '⏳ Generuję...' : '🎯 Generuj system zakładów'}
             </motion.button>
@@ -387,22 +471,46 @@ const SchonheimGenerator = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={calculateBounds}
-              className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg min-w-[200px]"
+              style={{
+                width: window.innerWidth <= 480 ? "100%" : "auto",
+                fontSize: window.innerWidth <= 480 ? "14px" : "16px",
+                padding: window.innerWidth <= 480 ? "12px 16px" : "12px 24px",
+                margin: window.innerWidth <= 480 ? "4px 0" : "0",
+                minWidth: window.innerWidth <= 480 ? "auto" : "200px"
+              }}
+              className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg"
             >
               🧮 Oblicz tylko granice
             </motion.button>
           </div>
           
-          {/* Wybór własnych liczb */}
-          <div className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
-              <h4 className="text-white font-medium">🎯 Wybór liczb ({selectedNumbers.length}/{v})</h4>
-              <div className="flex flex-wrap gap-2 items-center">
+                      {/* Wybór własnych liczb */}
+                            <div className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10" style={{ 
+                  padding: window.innerWidth <= 320 ? "16px" : (window.innerWidth <= 480 ? "12px" : "16px"),
+                  marginTop: window.innerWidth <= 480 ? "12px" : "24px"
+                }}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
+                <h4 className="text-white font-medium" style={{ 
+                  fontSize: window.innerWidth <= 480 ? "14px" : "16px",
+                  textAlign: window.innerWidth <= 480 ? "center" : "left"
+                }}>🎯 Wybór liczb ({selectedNumbers.length}/{v})</h4>
+                <div className="flex flex-wrap gap-2 items-center justify-center" style={{ 
+                  gap: window.innerWidth <= 320 ? "6px" : (window.innerWidth <= 480 ? "8px" : "8px"),
+                  width: window.innerWidth <= 480 ? "100%" : "auto",
+                  flexDirection: window.innerWidth <= 480 ? "column" : "row"
+                }}>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setShowCustomInput(!showCustomInput)}
-                  className="px-3 py-2 bg-purple-500/30 text-purple-200 rounded-lg text-sm font-medium hover:bg-purple-500/50 transition-colors h-10 flex items-center justify-center"
+                  style={{
+                    fontSize: window.innerWidth <= 320 ? "12px" : (window.innerWidth <= 480 ? "14px" : "14px"),
+                    padding: window.innerWidth <= 320 ? "8px 12px" : (window.innerWidth <= 480 ? "12px 16px" : "8px 12px"),
+                    height: window.innerWidth <= 320 ? "36px" : (window.innerWidth <= 480 ? "44px" : "40px"),
+                    width: window.innerWidth <= 480 ? "100%" : "auto",
+                    minWidth: window.innerWidth <= 480 ? "auto" : "120px"
+                  }}
+                  className="px-3 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors flex items-center justify-center shadow-lg"
                 >
                   {showCustomInput ? '✕ Zamknij' : '➕ Dodaj własne'}
                 </motion.button>
@@ -410,7 +518,14 @@ const SchonheimGenerator = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={generateRandomNumbers}
-                  className="px-3 py-2 bg-green-500/30 text-green-200 rounded-lg text-sm font-medium hover:bg-green-500/50 transition-colors h-10 flex items-center justify-center"
+                  style={{
+                    fontSize: window.innerWidth <= 320 ? "12px" : (window.innerWidth <= 480 ? "14px" : "14px"),
+                    padding: window.innerWidth <= 320 ? "8px 12px" : (window.innerWidth <= 480 ? "12px 16px" : "8px 12px"),
+                    height: window.innerWidth <= 320 ? "36px" : (window.innerWidth <= 480 ? "44px" : "40px"),
+                    width: window.innerWidth <= 480 ? "100%" : "auto",
+                    minWidth: window.innerWidth <= 480 ? "auto" : "120px"
+                  }}
+                  className="px-3 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors flex items-center justify-center shadow-lg"
                 >
                   🎲 Losuj
                 </motion.button>
@@ -418,7 +533,14 @@ const SchonheimGenerator = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={clearNumbers}
-                  className="px-3 py-2 bg-red-500/30 text-red-200 rounded-lg text-sm font-medium hover:bg-red-500/50 transition-colors h-10 flex items-center justify-center"
+                  style={{
+                    fontSize: window.innerWidth <= 320 ? "12px" : (window.innerWidth <= 480 ? "14px" : "14px"),
+                    padding: window.innerWidth <= 320 ? "8px 12px" : (window.innerWidth <= 480 ? "12px 16px" : "8px 12px"),
+                    height: window.innerWidth <= 320 ? "36px" : (window.innerWidth <= 480 ? "44px" : "40px"),
+                    width: window.innerWidth <= 480 ? "100%" : "auto",
+                    minWidth: window.innerWidth <= 480 ? "auto" : "120px"
+                  }}
+                  className="px-3 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors flex items-center justify-center shadow-lg"
                 >
                   🗑️ Wyczyść
                 </motion.button>
@@ -443,7 +565,7 @@ const SchonheimGenerator = () => {
                   onClick={addCustomNumber}
                   className="px-4 py-2 bg-blue-500/30 text-blue-200 rounded-lg font-medium hover:bg-blue-500/50 transition-colors h-10 flex items-center justify-center"
                 >
-                  ➕ Dodaj
+                  ➕
                 </motion.button>
               </div>
             )}
@@ -491,8 +613,9 @@ const SchonheimGenerator = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
             className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20"
+            style={{ padding: window.innerWidth <= 280 ? "12px" : "24px", margin: window.innerWidth <= 280 ? "16px 8px" : "32px 0" }}
           >
-            <h2 className="text-2xl font-bold text-white mb-6 text-center">
+            <h2 className="text-2xl font-bold text-white mb-6 text-center" style={{ fontSize: window.innerWidth <= 280 ? "18px" : "24px", marginBottom: window.innerWidth <= 280 ? "16px" : "24px" }}>
               📊 Wyniki obliczeń
             </h2>
 
@@ -515,53 +638,101 @@ const SchonheimGenerator = () => {
             )}
 
             {/* Tabelka wyników */}
-            <div className="overflow-x-auto mb-6">
+            <div className="mb-6">
               <table className="w-full text-white">
                 <thead>
                   <tr className="border-b border-white/20">
-                    <th className="text-left py-3 px-4 font-bold">Typ granicy</th>
-                    <th className="text-left py-3 px-4 font-bold">Wartość</th>
-                    <th className="text-left py-3 px-4 font-bold">Wzór</th>
+                    <th className="text-left py-3 px-4 font-bold" style={{ 
+                      fontSize: windowWidth <= 480 ? "10px" : "14px",
+                      padding: windowWidth <= 480 ? "6px 4px" : "12px 16px",
+                      whiteSpace: windowWidth <= 480 ? "nowrap" : "normal",
+                      width: windowWidth <= 480 ? "25%" : "auto"
+                    }}>Typ granicy</th>
+                    <th className="text-left py-3 px-4 font-bold" style={{ 
+                      fontSize: windowWidth <= 480 ? "10px" : "14px",
+                      padding: windowWidth <= 480 ? "6px 4px" : "12px 16px",
+                      whiteSpace: windowWidth <= 480 ? "nowrap" : "normal",
+                      width: windowWidth <= 480 ? "20%" : "auto"
+                    }}>Wartość</th>
+                    <th className="text-left py-3 px-4 font-bold" style={{ 
+                      fontSize: windowWidth <= 480 ? "10px" : "14px",
+                      padding: windowWidth <= 480 ? "6px 4px" : "12px 16px",
+                      whiteSpace: windowWidth <= 480 ? "nowrap" : "normal",
+                      width: windowWidth <= 480 ? "55%" : "auto"
+                    }}>Wzór</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr className="border-b border-white/10">
-                    <td className="py-3 px-4">
+                    <td className="py-3 px-4" style={{ 
+                      fontSize: windowWidth <= 480 ? "9px" : "14px",
+                      padding: windowWidth <= 480 ? "6px 4px" : "12px 16px"
+                    }}>
                       <span className="text-blue-300 font-medium">Prosta granica</span>
                     </td>
-                    <td className="py-3 px-4">
-                      <span className="text-2xl font-bold text-blue-400">
+                    <td className="py-3 px-4" style={{ 
+                      fontSize: windowWidth <= 480 ? "9px" : "14px",
+                      padding: windowWidth <= 480 ? "6px 4px" : "12px 16px"
+                    }}>
+                      <span className="text-2xl font-bold text-blue-400" style={{ 
+                        fontSize: windowWidth <= 480 ? "16px" : "24px"
+                      }}>
                         {results.simpleBound}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-sm text-gray-300">
+                    <td className="py-3 px-4 text-sm text-gray-300" style={{ 
+                      fontSize: windowWidth <= 480 ? "8px" : "14px",
+                      padding: windowWidth <= 480 ? "6px 4px" : "12px 16px"
+                    }}>
                       ⌈ C({results.selectedNumbers?.length || v},{t}) / C({k},{t}) ⌉
                     </td>
                   </tr>
                   <tr className="border-b border-white/10">
-                    <td className="py-3 px-4">
+                    <td className="py-3 px-4" style={{ 
+                      fontSize: windowWidth <= 480 ? "9px" : "14px",
+                      padding: windowWidth <= 480 ? "6px 4px" : "12px 16px"
+                    }}>
                       <span className="text-purple-300 font-medium">Granica Schönheima</span>
                     </td>
-                    <td className="py-3 px-4">
-                      <span className="text-2xl font-bold text-purple-400">
+                    <td className="py-3 px-4" style={{ 
+                      fontSize: windowWidth <= 480 ? "9px" : "14px",
+                      padding: windowWidth <= 480 ? "6px 4px" : "12px 16px"
+                    }}>
+                      <span className="text-2xl font-bold text-purple-400" style={{ 
+                        fontSize: windowWidth <= 480 ? "16px" : "24px"
+                      }}>
                         {results.schonheimBound}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-sm text-gray-300">
+                    <td className="py-3 px-4 text-sm text-gray-300" style={{ 
+                      fontSize: windowWidth <= 480 ? "8px" : "14px",
+                      padding: windowWidth <= 480 ? "6px 4px" : "12px 16px"
+                    }}>
                       ⌈ {results.selectedNumbers?.length || v}/{k} × C({(results.selectedNumbers?.length || v)-1},{k-1},{t-1}) ⌉
                     </td>
                   </tr>
                   {results.actualBets !== undefined && (
                     <tr className="border-b border-white/10 bg-green-500/10">
-                      <td className="py-3 px-4">
+                      <td className="py-3 px-4" style={{ 
+                        fontSize: windowWidth <= 480 ? "9px" : "14px",
+                        padding: windowWidth <= 480 ? "6px 4px" : "12px 16px"
+                      }}>
                         <span className="text-green-300 font-medium">Wygenerowane zakłady</span>
                       </td>
-                      <td className="py-3 px-4">
-                        <span className="text-2xl font-bold text-green-400">
+                      <td className="py-3 px-4" style={{ 
+                        fontSize: windowWidth <= 480 ? "9px" : "14px",
+                        padding: windowWidth <= 480 ? "6px 4px" : "12px 16px"
+                      }}>
+                        <span className="text-2xl font-bold text-green-400" style={{ 
+                          fontSize: windowWidth <= 480 ? "16px" : "24px"
+                        }}>
                           {results.actualBets}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-300">
+                      <td className="py-3 px-4 text-sm text-gray-300" style={{ 
+                        fontSize: windowWidth <= 480 ? "8px" : "14px",
+                        padding: windowWidth <= 480 ? "6px 4px" : "12px 16px"
+                      }}>
                         Algorytm Schönheima
                       </td>
                     </tr>
@@ -569,6 +740,31 @@ const SchonheimGenerator = () => {
                 </tbody>
               </table>
             </div>
+
+            {/* Informacje o systemie */}
+            {generatedBets.length > 0 && (
+              <div className="mb-6 p-4 bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-lg border border-green-400/30">
+                <h3 className="text-lg font-bold text-white mb-4">📊 Informacje o systemie</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="text-center p-3 bg-white/10 rounded-lg">
+                    <div className="text-2xl font-bold text-green-400">{generatedBets.length}</div>
+                    <div className="text-sm text-green-200">Liczba zakładów</div>
+                  </div>
+                  <div className="text-center p-3 bg-white/10 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-400">{t} z {k}</div>
+                    <div className="text-sm text-blue-200">Gwarancja trafień</div>
+                  </div>
+                  <div className="text-center p-3 bg-white/10 rounded-lg">
+                    <div className="text-2xl font-bold text-purple-400">{results?.schonheimBound || 'N/A'}</div>
+                    <div className="text-sm text-purple-200">Skuteczność (granica)</div>
+                  </div>
+                  <div className="text-center p-3 bg-white/10 rounded-lg">
+                    <div className="text-2xl font-bold text-yellow-400">{(generatedBets.length * 3).toFixed(2)} zł</div>
+                    <div className="text-sm text-yellow-200">Koszt (3 zł/zakład)</div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Wygenerowane zakłady */}
             {generatedBets.length > 0 && (
@@ -592,7 +788,10 @@ const SchonheimGenerator = () => {
                 </div>
                 
                 {/* Przyciski akcji */}
-                <div className="flex flex-wrap gap-3 mt-4">
+                <div className="flex flex-wrap gap-3 mt-4" style={{ 
+                  gap: window.innerWidth <= 480 ? "8px" : "12px",
+                  flexDirection: window.innerWidth <= 480 ? "column" : "row"
+                }}>
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -602,7 +801,13 @@ const SchonheimGenerator = () => {
                       ).join('\n');
                       navigator.clipboard.writeText(betsText);
                     }}
-                    className="px-4 py-2 bg-blue-500/30 text-blue-200 rounded-lg hover:bg-blue-500/40 transition-colors border border-blue-400/30"
+                    style={{
+                      fontSize: window.innerWidth <= 480 ? "14px" : "14px",
+                      padding: window.innerWidth <= 480 ? "12px 16px" : "12px 16px",
+                      width: window.innerWidth <= 480 ? "100%" : "auto",
+                      minWidth: window.innerWidth <= 480 ? "auto" : "160px"
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg font-medium"
                   >
                     📋 Kopiuj zakłady
                   </motion.button>
@@ -611,12 +816,67 @@ const SchonheimGenerator = () => {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => {
-                      const betsForLotto = generatedBets.map(bet => bet.join(',')).join('\n');
-                      navigator.clipboard.writeText(betsForLotto);
+                      const printContent = `
+                        System Schönheima - ${results?.gameConfig?.name || 'Lotto'}
+                        Liczby: ${results?.selectedNumbers?.join(', ') || ''}
+                        Gwarancja: ${t} z ${k}
+                        Liczba zakładów: ${generatedBets.length}
+                        
+                        Zakłady:
+                        ${generatedBets.map((bet, index) => `Zakład ${index + 1}: ${bet.join(', ')}`).join('\n')}
+                      `;
+                      const printWindow = window.open('', '_blank');
+                      printWindow.document.write(`
+                        <html>
+                          <head><title>System Schönheima</title></head>
+                          <body style="font-family: Arial, sans-serif; padding: 20px;">
+                            <pre style="white-space: pre-wrap;">${printContent}</pre>
+                          </body>
+                        </html>
+                      `);
+                      printWindow.document.close();
+                      printWindow.print();
                     }}
-                    className="px-4 py-2 bg-green-500/30 text-green-200 rounded-lg hover:bg-green-500/40 transition-colors border border-green-400/30"
+                    style={{
+                      fontSize: window.innerWidth <= 480 ? "14px" : "14px",
+                      padding: window.innerWidth <= 480 ? "12px 16px" : "12px 16px",
+                      width: window.innerWidth <= 480 ? "100%" : "auto",
+                      minWidth: window.innerWidth <= 480 ? "auto" : "160px"
+                    }}
+                    className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors shadow-lg font-medium"
                   >
-                    🎰 Kopiuj dla Lotto
+                    🖨️ Wydrukuj zakłady
+                  </motion.button>
+                  
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => {
+                      const favorite = {
+                        id: Date.now(),
+                        game: results?.gameConfig?.name || 'Lotto',
+                        numbers: results?.selectedNumbers || [],
+                        bets: generatedBets,
+                        guarantee: `${t} z ${k}`,
+                        date: new Date().toISOString(),
+                        generatorType: 'schonheim'
+                      };
+                      
+                      const existingFavorites = JSON.parse(localStorage.getItem('lottoFavorites') || '[]');
+                      existingFavorites.push(favorite);
+                      localStorage.setItem('lottoFavorites', JSON.stringify(existingFavorites));
+                      
+                      alert('✅ Dodano do ulubionych!');
+                    }}
+                    style={{
+                      fontSize: window.innerWidth <= 480 ? "14px" : "14px",
+                      padding: window.innerWidth <= 480 ? "12px 16px" : "12px 16px",
+                      width: window.innerWidth <= 480 ? "100%" : "auto",
+                      minWidth: window.innerWidth <= 480 ? "auto" : "160px"
+                    }}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow-lg font-medium"
+                  >
+                    ❤️ Dodaj do ulubionych
                   </motion.button>
                 </div>
               </div>
@@ -715,8 +975,9 @@ const SchonheimGenerator = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-8 bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20"
+          style={{ padding: window.innerWidth <= 280 ? "12px" : "24px", margin: window.innerWidth <= 280 ? "16px 8px" : "32px 0" }}
         >
-          <h3 className="text-xl font-bold text-white mb-4">📝 Przykłady użycia</h3>
+          <h3 className="text-xl font-bold text-white mb-4" style={{ fontSize: window.innerWidth <= 280 ? "16px" : "20px", marginBottom: window.innerWidth <= 280 ? "12px" : "16px" }}>📝 Przykłady użycia</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-4 bg-blue-500/20 rounded-lg border border-blue-400/30">

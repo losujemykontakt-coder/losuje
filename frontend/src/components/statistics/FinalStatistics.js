@@ -314,7 +314,7 @@ const FinalStatistics = ({ selectedGame, onGameChange }) => {
         const controller = new AbortController();
         timeoutId = setTimeout(() => controller.abort(), 10000);
         
-        const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/statistics/${gameType}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/statistics/${gameType}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -390,7 +390,7 @@ const FinalStatistics = ({ selectedGame, onGameChange }) => {
       
       // Próbuj aktualizować przez backend
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/statistics/update`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/statistics/update`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

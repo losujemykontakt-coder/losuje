@@ -3,7 +3,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 const Talizmany = ({ user, talismanDefinitions }) => {
-  console.log('🔍 Talizmany component rendered with:', { user, talismanDefinitions });
+  console.log('🔍 Talizmany component rendered with:', { 
+    user: user ? {
+      uid: user.uid,
+      email: user.email,
+      hasGetIdToken: typeof user.getIdToken === 'function',
+      type: typeof user,
+      keys: Object.keys(user || {})
+    } : null, 
+    talismanDefinitions 
+  });
   
   // Prosty test renderowania
   console.log('🔍 Talizmany component is rendering!');
@@ -287,7 +296,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       
       // Najpierw sprawdź czy backend działa
       try {
-        const baseUrl = process.env.NODE_ENV === 'development' ? '' : (process.env.REACT_APP_API_URL || 'https://losuje.pl');
+        const baseUrl = process.env.NODE_ENV === 'development' ? '' : 'https://api-ocwyh3krkq-uc.a.run.app';
         const testResponse = await fetch(`${baseUrl}/api/test`, {
           method: 'GET',
           signal: AbortSignal.timeout(10000) // 10 sekund timeout
@@ -307,12 +316,50 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 sekund timeout
       
-      // Użyj proxy w trybie development, a REACT_APP_API_URL w produkcji
-      const baseUrl = process.env.NODE_ENV === 'development' ? '' : (process.env.REACT_APP_API_URL || 'https://losuje.pl');
+      // W produkcji użyj bezpośredniego URL funkcji jako fallback
+      const baseUrl = process.env.NODE_ENV === 'development' ? '' : 'https://api-ocwyh3krkq-uc.a.run.app';
+      
+      // Pobierz token Firebase Auth
+      let token;
+      try {
+        console.log('🔍 Próba pobrania tokenu dla user:', {
+          uid: user?.uid,
+          hasGetIdToken: typeof user?.getIdToken === 'function',
+          type: typeof user
+        });
+        
+        if (user && typeof user.getIdToken === 'function') {
+          console.log('🔍 Używam user.getIdToken()');
+          token = await user.getIdToken();
+        } else if (user && user.uid) {
+          // Jeśli user nie ma getIdToken, spróbuj pobrać token z auth
+          console.log('🔍 User nie ma getIdToken, próbuję auth.currentUser');
+          const { auth } = await import('../utils/firebase.js');
+          console.log('🔍 Auth zaimportowany:', auth);
+          const currentUser = auth.currentUser;
+          console.log('🔍 Current user:', currentUser ? 'istnieje' : 'nie istnieje');
+          if (currentUser) {
+            token = await currentUser.getIdToken();
+          } else {
+            console.warn('⚠️ Brak aktywnego użytkownika Firebase');
+            throw new Error('Brak aktywnego użytkownika Firebase');
+          }
+        } else {
+          console.warn('⚠️ Nieprawidłowy obiekt user:', user);
+          throw new Error('Nieprawidłowy obiekt user');
+        }
+        
+        console.log('🔍 Token pobrany pomyślnie, długość:', token?.length);
+      } catch (tokenError) {
+        console.error('❌ Błąd pobierania tokenu:', tokenError);
+        throw tokenError;
+      }
+      
       const response = await fetch(`${baseUrl}/api/talismans/${uid}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         signal: controller.signal
       });
@@ -334,9 +381,9 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       console.log('🔍 data.eligibility:', data.eligibility);
       console.log('🔍 data.talismans:', data.talismans);
       console.log('🔍 data.activeTalisman:', data.activeTalisman);
-      console.log('🔍 data.bonuses:', data.bonuses);
-      console.log('🔍 Liczba żetonów:', data.streak?.total_tokens);
-      console.log('🔍 Seria logowań:', data.streak?.current_streak);
+      console.log('🔍 data.bonuses:', data.bonuses || 'undefined');
+      console.log('🔍 Liczba żetonów:', data.streak?.total_tokens || 'undefined');
+      console.log('🔍 Seria logowań:', data.streak?.current_streak || 'undefined');
       
       if (data.success) {
         console.log('✅ Ustawiam dane z API');
@@ -516,7 +563,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       console.log('🔍 Demo: talizman', talismanId, 'posiadany:', talismanId <= 2);
       return talismanId <= 2;
     }
-    return talismans.some(t => t.talisman_id === talismanId && t.owned);
+    return (talismans || []).some(t => t.talisman_id === talismanId && t.owned);
   };
 
   const isTalismanActive = (talismanId) => {
@@ -529,7 +576,12 @@ const Talizmany = ({ user, talismanDefinitions }) => {
   };
 
   const canGrantTalisman = (talismanId) => {
-    const talisman = finalTalismanDefinitions[talismanId - 1];
+    const talisman = finalTalismanDefinitions?.[talismanId - 1];
+    if (!talisman) {
+      console.log('🔍 Talizman nie znaleziony:', talismanId);
+      return false;
+    }
+    
     if (showFallback) {
       // W trybie fallback pokaż przycisk "Odbierz!" dla pierwszych 3 talizmanów
       console.log('🔍 Demo: talizman', talismanId, 'można odebrać:', talismanId <= 3);
@@ -542,7 +594,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       return false;
     }
     
-    return eligibility.availableTalismans && 
+    return eligibility?.availableTalismans && 
            eligibility.availableTalismans.includes(talisman.requirement) &&
            !isTalismanOwned(talismanId);
   };
@@ -567,8 +619,9 @@ const Talizmany = ({ user, talismanDefinitions }) => {
   console.log('🔍 Final progress:', progress);
   
   console.log('🔍 Render - loading:', loading, 'user:', !!user, 'hasBasicData:', hasBasicData);
-  console.log('🔍 Render - streak:', streak);
-  console.log('🔍 Render - żetony:', streak?.total_tokens);
+  console.log('🔍 Render - streak:', streak || 'undefined');
+  console.log('🔍 Render - żetony:', streak?.total_tokens || 'undefined');
+  console.log('🔍 Render - finalTalismanDefinitions count:', finalTalismanDefinitions?.length || 'undefined');
   
   if (loading) {
     console.log('🔍 Pokazuję loading screen');
@@ -683,38 +736,69 @@ const Talizmany = ({ user, talismanDefinitions }) => {
         )}
                   <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2 sm:p-3 md:p-4 max-w-sm sm:max-w-md mx-auto">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-white text-xs sm:text-sm md:text-base truncate">Seria: {streak?.current_streak || 0} dni</span>
-              <span className="text-yellow-300 font-bold text-xs sm:text-sm md:text-base ml-2">🎯 {streak?.total_tokens || 0}</span>
+              <span className="text-white text-xs sm:text-sm md:text-base truncate">🔥 Seria: {streak?.current_streak || 0} dni</span>
+              <span className="text-yellow-300 font-bold text-xs sm:text-sm md:text-base ml-2">🎯 {streak?.total_tokens || 0} żetonów</span>
             </div>
+            
+            {/* Powiadomienie o nowym żetonie */}
+            {streak?.newToken && (
+              <div className="bg-green-500/20 border border-green-500 rounded-lg p-2 mb-2">
+                <p className="text-green-200 text-xs sm:text-sm font-bold text-center">
+                  🎉 +1 żeton za dzisiejsze logowanie!
+                </p>
+              </div>
+            )}
+            
             {process.env.NODE_ENV === 'development' && (
               <div className="text-xs text-white/60 mt-1 break-all">
                 Debug: streak = {JSON.stringify(streak)}
               </div>
             )}
-                      {progress && (
+            
+            {/* Pasek postępu do następnego talizmanu */}
+            {progress && (
               <div className="mb-2">
                 <div className="flex justify-between text-xs sm:text-sm text-white/80 mb-1">
-                  <span className="truncate">Następny: {progress.current}/{progress.required}</span>
-                  <span className="ml-1 sm:ml-2">{Math.round(progress.progress)}%</span>
+                  <span className="truncate">📈 Następny talizman: {progress.current}/{progress.required}</span>
+                  <span className="ml-1 sm:ml-2 font-bold">{Math.round(progress.progress)}%</span>
                 </div>
-                <div className="w-full bg-gray-700 rounded-full h-1.5 sm:h-2">
+                <div className="w-full bg-gray-700 rounded-full h-2 sm:h-3 relative overflow-hidden">
                   <motion.div
-                    className="bg-gradient-to-r from-yellow-400 to-orange-500 h-1.5 sm:h-2 rounded-full"
+                    className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 h-2 sm:h-3 rounded-full relative"
                     initial={{ width: 0 }}
                     animate={{ width: `${progress.progress}%` }}
-                    transition={{ duration: 1 }}
-                  />
+                    transition={{ duration: 1.5, ease: "easeOut" }}
+                  >
+                    {/* Animowany gradient */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                      animate={{ x: ['-100%', '100%'] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    />
+                  </motion.div>
+                </div>
+                <div className="text-center mt-1">
+                  <span className="text-white/60 text-xs">
+                    {progress.required - progress.current} żetonów do następnego talizmanu
+                  </span>
                 </div>
               </div>
             )}
+            
+            {/* Demo pasek postępu */}
             {showFallback && (
               <div className="mb-2">
                 <div className="flex justify-between text-xs sm:text-sm text-white/80 mb-1">
-                  <span className="truncate">Demo: 0/8</span>
-                  <span className="ml-1 sm:ml-2">0%</span>
+                  <span className="truncate">📈 Demo: 0/8</span>
+                  <span className="ml-1 sm:ml-2 font-bold">0%</span>
                 </div>
-                <div className="w-full bg-gray-700 rounded-full h-1.5 sm:h-2">
-                  <div className="bg-gradient-to-r from-yellow-400 to-orange-500 h-1.5 sm:h-2 rounded-full" style={{ width: '0%' }} />
+                <div className="w-full bg-gray-700 rounded-full h-2 sm:h-3">
+                  <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 h-2 sm:h-3 rounded-full" style={{ width: '0%' }} />
+                </div>
+                <div className="text-center mt-1">
+                  <span className="text-white/60 text-xs">
+                    8 żetonów do pierwszego talizmanu
+                  </span>
                 </div>
                 {process.env.NODE_ENV === 'development' && (
                   <div className="text-xs text-white/60 mt-1 break-all">
@@ -728,7 +812,12 @@ const Talizmany = ({ user, talismanDefinitions }) => {
 
       {/* Siatka talizmanów */}
       <div style={talismanGridStyle}>
-        {finalTalismanDefinitions.map((talisman, index) => {
+        {(finalTalismanDefinitions || []).map((talisman, index) => {
+          if (!talisman || !talisman.id) {
+            console.warn('⚠️ Nieprawidłowy talizman:', talisman);
+            return null;
+          }
+          
           const owned = isTalismanOwned(talisman.id);
           const active = isTalismanActive(talisman.id);
           const canGrant = canGrantTalisman(talisman.id);
@@ -759,24 +848,12 @@ const Talizmany = ({ user, talismanDefinitions }) => {
                     justifyContent: "center",
                     marginBottom: isExtraSmall ? "4px" : isSmallMobile ? "6px" : isMobile ? "8px" : "10px"
                   }}>
-                    {talisman.icon === '🐎' ? (
-                      <img 
-                        src="/horseshoe.png" 
-                        alt="Podkowa" 
-                        style={{
-                          width: "100%",
-                          height: "auto",
-                          maxWidth: isExtraSmall ? "2rem" : isSmallMobile ? "2.5rem" : isMobile ? "3.5rem" : "3rem"
-                        }}
-                      />
-                    ) : (
-                      <span style={{
-                        ...talismanIconStyle,
-                        fontSize: isExtraSmall ? "2rem" : isSmallMobile ? "2.5rem" : isMobile ? "3.5rem" : "3rem"
-                      }}>
-                        {talisman.icon}
-                      </span>
-                    )}
+                    <span style={{
+                      ...talismanIconStyle,
+                      fontSize: isExtraSmall ? "2rem" : isSmallMobile ? "2.5rem" : isMobile ? "3.5rem" : "3rem"
+                    }}>
+                      {talisman.icon}
+                    </span>
                   </div>
                   
                   {/* Nazwa */}

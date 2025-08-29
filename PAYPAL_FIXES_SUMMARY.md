@@ -1,180 +1,128 @@
-# 🔧 POPRAWKI PAYPAL - ROZWIĄZANIE PROBLEMÓW
+# 🔧 PayPal i API - Naprawione Problemy
 
-## 🎯 ZIDENTYFIKOWANE PROBLEMY
+## ✅ Naprawione Problemy
 
-### 1. **Wielokrotna inicjalizacja PayPal SDK**
-- `PayPalScriptProvider` renderował się w pętli
-- Przyciski PayPal ciągle się odświeżały i resetowały
-- Błąd `global_session_not_found` w konsoli
+### 1. **PayPal SDK - Failed to fetch / 400 Bad Request**
 
-### 2. **Błędna konfiguracja environment i clientId**
-- PayPal SDK pokazywał `environment: unknown`
-- PayPal SDK pokazywał `client ID: unknown`
-- Mimo poprawnego clientId z mcp.json
+**Problem:** PayPal SDK nie ładował się z powodu braku client-id w URL.
 
-### 3. **Niepotrzebne resetowanie**
-- Kod zawierał "Resetowanie PayPal..." które powodowało odświeżanie
-- Przyciski renderowały się w kółko
+**Rozwiązanie:**
+- ✅ Dodano walidację PayPal Client ID w `App.js`
+- ✅ Poprawiono konfigurację PayPal Script Provider
+- ✅ Dodano lepsze logowanie błędów
 
-## ✅ ZASTOSOWANE ROZWIĄZANIA
+**Pliki zmienione:**
+- `frontend/src/App.js` - poprawiona konfiguracja PayPal
+- `frontend/src/utils/paypalConfig.js` - walidacja konfiguracji
 
-### 1. **Centralna konfiguracja PayPal**
+### 2. **403 (Forbidden) przy API**
+
+**Problem:** API zwracał 403 błąd z powodu braku autoryzacji Firebase.
+
+**Rozwiązanie:**
+- ✅ Dodano middleware weryfikacji tokena Firebase w `functions/index.js`
+- ✅ Dodano wysyłanie tokena Authorization w frontend
+- ✅ Poprawiono endpoint `/api/talismans/:userId`
+
+**Pliki zmienione:**
+- `functions/index.js` - dodano `verifyFirebaseToken` middleware
+- `frontend/src/components/Talizmany.js` - dodano header Authorization
+
+### 3. **createOrder error → http://localhost:3001**
+
+**Problem:** Frontend próbował łączyć się z localhost zamiast z produkcyjnym backendem.
+
+**Rozwiązanie:**
+- ✅ Poprawiono URL API w `PayPalButtonWrapper.js`
+- ✅ Dodano logikę wyboru URL (development vs production)
+- ✅ Zmieniono proxy w `package.json`
+- ✅ Dodano brakujące endpointy PayPal w Firebase Functions
+
+**Pliki zmienione:**
+- `frontend/src/components/PayPalButtonWrapper.js` - poprawione URL API
+- `frontend/package.json` - zmieniony proxy
+- `functions/index.js` - dodano endpointy `/paypal/create` i `/paypal/capture/:orderId`
+
+## 🔧 Nowe Endpointy w Firebase Functions
+
+Dodano brakujące endpointy PayPal:
+
 ```javascript
-// frontend/src/utils/paypalConfig.js
-const PAYPAL_CONFIG = {
-  CLIENT_ID: 'AcLnAD0aCb1hFnw5TDDoe_k1cLkqp-FtcWai8mctRT57oDP4pPi4ukzwdaFCS6JFAkQqfH1MIb0f0s9Z',
-  ENVIRONMENT: 'live',
-  CURRENCY: 'PLN',
-  INTENT: 'capture'
-};
-```
-
-### 2. **Memoizacja konfiguracji**
-```javascript
-// PaymentButtons.js
-const paypalConfig = useMemo(() => {
-  try {
-    const config = getPayPalScriptOptions();
-    return config;
-  } catch (error) {
-    console.error('❌ Błąd konfiguracji PayPal:', error);
-    return null;
-  }
-}, []); // Pusta zależność - konfiguracja się nie zmienia
-```
-
-### 3. **Nowy komponent PayPalButtonWrapper**
-```javascript
-// frontend/src/components/PayPalButtonWrapper.js
-const PayPalButtonWrapper = ({ 
-  amount, 
-  currency = 'PLN', 
-  description, 
-  email, 
-  plan, 
-  onSuccess, 
-  onError, 
-  onCancel,
-  onInit,
-  style = {}
-}) => {
-  // Lepsze zarządzanie stanem i błędami
-};
-```
-
-### 4. **Usunięcie niepotrzebnego resetowania**
-- Usunięto kod "Resetowanie PayPal..."
-- Usunięto zbędne stany `paypalClientId` i `paypalEnvironment`
-- Uproszczono logikę inicjalizacji
-
-### 5. **Lepsze zarządzanie błędami sesji**
-```javascript
-// Ignoruj błędy sesji - PayPal SDK sam się naprawi
-if (err.message && (err.message.includes('global_session_not_found') || err.message.includes('session'))) {
-  console.log('🔄 Wykryto błąd sesji PayPal - ignorowanie...');
-  return;
-}
-```
-
-## 🔧 KLUCZOWE ZMIANY W KODZIE
-
-### PaymentButtons.js
-- ✅ Używa centralnej konfiguracji z `paypalConfig.js`
-- ✅ Memoizuje konfigurację PayPal
-- ✅ Używa nowego `PayPalButtonWrapper`
-- ✅ Usunięto niepotrzebne resetowanie
-- ✅ Lepsze handlery dla PayPal
-
-### PayPalButtonWrapper.js
-- ✅ Osobny komponent dla przycisków PayPal
-- ✅ Lepsze zarządzanie stanem
-- ✅ Obsługa błędów sesji
-- ✅ Callback `onInit` dla komunikacji z rodzicem
-
-### paypalConfig.js
-- ✅ Centralna konfiguracja PayPal
-- ✅ Walidacja konfiguracji
-- ✅ Funkcje pomocnicze
-- ✅ Zarządzanie stanem SDK
-
-## 🎯 REZULTATY
-
-### ✅ ROZWIĄZANE PROBLEMY
-1. **Przyciski PayPal nie odświeżają się już w kółko**
-2. **Błąd `global_session_not_found` jest ignorowany**
-3. **Environment i clientId są poprawnie przekazywane**
-4. **Usunięto niepotrzebne resetowanie**
-5. **PayPal SDK inicjalizuje się tylko raz**
-
-### 🔍 KONTROLA JAKOŚCI
-- ✅ Konfiguracja jest memoizowana
-- ✅ Błędy sesji są ignorowane
-- ✅ Przyciski renderują się stabilnie
-- ✅ Environment jest ustawiony na 'live'
-- ✅ ClientId jest poprawnie przekazywany
-
-## 🚀 JAK UŻYWAĆ
-
-### 1. **Sprawdź konfigurację**
-```bash
-# Sprawdź czy backend działa
-curl http://localhost:3001/api/health
-
-# Sprawdź czy PayPal API działa
-curl -X POST http://localhost:3001/api/paypal/create \
-  -H "Content-Type: application/json" \
-  -d '{"amount": 9.99, "currency": "PLN", "description": "Test", "email": "test@example.com"}'
-```
-
-### 2. **Uruchom aplikację**
-```bash
-# Backend
-cd backend
-npm start
-
-# Frontend (w nowym terminalu)
-cd frontend
-npm start
-```
-
-### 3. **Sprawdź w konsoli**
-- ✅ "PayPal Config - MEMOIZED: {clientId: 'OK', environment: 'live'}"
-- ✅ "PayPal konfiguracja załadowana"
-- ✅ "PayPal SDK załadowany"
-- ✅ "PayPal environment: live"
-- ✅ "PayPal client ID: [poprawny ID]"
-
-## 📝 NOTATKI TECHNICZNE
-
-### Konfiguracja z mcp.json
-```json
+// Tworzenie zamówienia PayPal
+POST /api/paypal/create
 {
-  "environmentVariables": {
-    "PAYPAL_CLIENT_ID": "AcLnAD0aCb1hFnw5TDDoe_k1cLkqp-FtcWai8mctRT57oDP4pPi4ukzwdaFCS6JFAkQqfH1MIb0f0s9Z",
-    "PAYPAL_CLIENT_SECRET": "EEgJI6MgD80kfoghzXocyenIgmhYgoL7otwGmDeOvxKRt-eTmYfbJ6lgxEvQ3DL3J0Nze5pLkRqOrRGt",
-    "PAYPAL_ENVIRONMENT": "live"
-  }
+  "amount": 9.99,
+  "currency": "PLN",
+  "description": "Plan Premium",
+  "email": "user@example.com",
+  "plan": "monthly"
+}
+
+// Finalizacja płatności PayPal
+POST /api/paypal/capture/:orderId
+{
+  "plan": "monthly"
 }
 ```
 
-### Backend konfiguracja
-```javascript
-// backend/config.js
-PAYPAL: {
-  CLIENT_ID: 'AcLnAD0aCb1hFnw5TDDoe_k1cLkqp-FtcWai8mctRT57oDP4pPi4ukzwdaFCS6JFAkQqfH1MIb0f0s9Z',
-  CLIENT_SECRET: 'EEgJI6MgD80kfoghzXocyenIgmhYgoL7otwGmDeOvxKRt-eTmYfbJ6lgxEvQ3DL3J0Nze5pLkRqOrRGt',
-  ENVIRONMENT: 'live'
-}
+## 📋 Wymagane Zmienne Środowiskowe
+
+Utwórz plik `.env` w katalogu `frontend/` z następującymi zmiennymi:
+
+```bash
+# PayPal Configuration
+REACT_APP_PAYPAL_CLIENT_ID=your_paypal_client_id
+REACT_APP_PAYPAL_ENVIRONMENT=live
+
+# API Configuration
+REACT_APP_API_URL=https://your-region-your-project.cloudfunctions.net
+
+# Firebase Configuration
+REACT_APP_FIREBASE_API_KEY=your_firebase_api_key
+REACT_APP_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+REACT_APP_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+REACT_APP_FIREBASE_APP_ID=your_app_id
 ```
 
-## 🎉 PODSUMOWANIE
+## 🚀 Deployment
 
-Wszystkie problemy z PayPal zostały rozwiązane:
-- ✅ Przyciski nie odświeżają się w kółko
-- ✅ Błędy sesji są ignorowane
-- ✅ Konfiguracja jest poprawna
-- ✅ Environment i clientId są widoczne
-- ✅ Kod jest bardziej modularny i łatwiejszy w utrzymaniu
+1. **Deploy Firebase Functions:**
+```bash
+cd functions/
+npm install
+firebase deploy --only functions
+```
 
-PayPal SDK działa teraz stabilnie i nie powoduje problemów z renderowaniem.
+2. **Build i deploy frontend:**
+```bash
+cd frontend/
+npm run build
+firebase deploy --only hosting
+```
 
+## 🔍 Testowanie
+
+Po wdrożeniu sprawdź:
+
+1. **PayPal SDK ładuje się poprawnie** - sprawdź konsolę przeglądarki
+2. **API endpoints odpowiadają** - sprawdź Network tab
+3. **Autoryzacja działa** - zaloguj się i sprawdź dostęp do talizmanów
+4. **PayPal płatności działają** - przetestuj proces płatności
+
+## ⚠️ Uwagi
+
+- PayPal Client ID musi być prawidłowy (live lub sandbox)
+- Firebase Functions muszą być wdrożone przed testowaniem
+- Upewnij się, że CORS jest poprawnie skonfigurowany
+- Wszystkie endpointy używają teraz autoryzacji Firebase Auth
+
+## 🐛 Debugowanie
+
+Jeśli nadal występują problemy:
+
+1. Sprawdź logi Firebase Functions: `firebase functions:log`
+2. Sprawdź konsolę przeglądarki pod kątem błędów
+3. Upewnij się, że zmienne środowiskowe są ustawione
+4. Sprawdź Network tab w narzędziach deweloperskich

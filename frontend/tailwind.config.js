@@ -6,6 +6,11 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        'xs': '235px',
+        'xl': '1100px',
+        '2xl': '1300px',
+      },
       colors: {
         'lotto-yellow': '#FFC107',
         'lotto-orange': '#FF9800',

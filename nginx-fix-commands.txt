@@ -28,3 +28,9 @@ curl -I https://losuje-generator.pl
 # 9. Sprawdź backend
 curl http://localhost:3001/health
 
+
+
+
+
+
+

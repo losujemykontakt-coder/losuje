@@ -1,7 +1,7 @@
 // Funkcje autoryzacji
 export const loginUser = async (email, password) => {
   try {
-    const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/login`, {
+    const res = await fetch(`${process.env.REACT_APP_API_URL || ''}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -15,7 +15,7 @@ export const loginUser = async (email, password) => {
 
 export const registerUser = async (email, password, name) => {
   try {
-    const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/register`, {
+    const res = await fetch(`${process.env.REACT_APP_API_URL || ''}/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password, name }),
@@ -52,7 +52,7 @@ export const checkUserAccess = async () => {
   }
 
   try {
-    const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/stats/lotto`, {
+    const res = await fetch(`${process.env.REACT_APP_API_URL || ''}/api/stats/lotto`, {
       method: "GET",
       headers: { 
         "Content-Type": "application/json",

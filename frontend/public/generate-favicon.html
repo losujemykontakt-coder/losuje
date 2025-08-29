@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Favicon</title>
+</head>
+<body>
+    <h1>Favicon Generator</h1>
+    <canvas id="canvas" width="32" height="32" style="border: 1px solid #ccc;"></canvas>
+    <br><br>
+    <button onclick="generateFavicon()">Generate Favicon</button>
+    <br><br>
+    <a id="downloadLink" style="display: none;">Download favicon.ico</a>
+
+    <script>
+        function generateFavicon() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Wyczyść canvas
+            ctx.clearRect(0, 0, 32, 32);
+            
+            // Tło - ciemne koło z gradientem
+            const bgGradient = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+            bgGradient.addColorStop(0, '#1e3a8a');
+            bgGradient.addColorStop(1, '#1e40af');
+            
+            ctx.fillStyle = bgGradient;
+            ctx.beginPath();
+            ctx.arc(16, 16, 15.5, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Obramowanie złote
+            ctx.strokeStyle = '#FFD700';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            
+            // Złota kula lotto
+            const ballGradient = ctx.createRadialGradient(12, 12, 0, 16, 16, 11);
+            ballGradient.addColorStop(0, '#FFEB3B');
+            ballGradient.addColorStop(0.3, '#FFD700');
+            ballGradient.addColorStop(0.7, '#FFA000');
+            ballGradient.addColorStop(1, '#FF8C00');
+            
+            ctx.fillStyle = ballGradient;
+            ctx.beginPath();
+            ctx.arc(16, 16, 11, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Obramowanie kuli
+            ctx.strokeStyle = '#FF8C00';
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+            
+            // Główny highlight na kuli
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.beginPath();
+            ctx.arc(12, 12, 3, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.beginPath();
+            ctx.arc(12, 12, 1.5, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Dodatkowe refleksy
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.beginPath();
+            ctx.arc(20, 11, 1.2, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.beginPath();
+            ctx.arc(18, 20, 0.8, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Szczęśliwa liczba na kuli
+            ctx.fillStyle = '#1e3a8a';
+            ctx.font = 'bold 7px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('7', 16, 19);
+            
+            // Konwertuj do ICO i udostępnij do pobrania
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const link = document.getElementById('downloadLink');
+                link.href = url;
+                link.download = 'favicon.ico';
+                link.style.display = 'block';
+                link.textContent = 'Download favicon.ico';
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+

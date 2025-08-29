@@ -8,6 +8,15 @@ import SchonheimGenerator from './SchonheimGenerator';
 
 const GryPoZalogowaniu = ({ user, userSubscription }) => {
   const navigate = useNavigate();
+  
+  // Hook do śledzenia szerokości ekranu
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
   const [numbers, setNumbers] = useState([]);
   const [euroNumbers, setEuroNumbers] = useState([]);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -1165,7 +1174,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
     return () => clearInterval(interval);
   }, [isCatchBallActive, catchBallBalls.length]);
 
-  // Funkcja dla Kręć Kołem Liczb - ZMODYFIKOWANA
+  // Funkcja dla Kręć Kołem Liczb - DOKŁADNIE JAK NA LOSUJEMY.WEB.APP
   const handleWheelSpin = async () => {
     if (!hasAccess) {
       setShowPaymentModal(true);
@@ -1190,9 +1199,10 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
     setIsWheelSpinning(true);
     playClickSound();
     
-    // Losuj liczbę 1-49
+    // Losuj liczbę 1-49 i oblicz kąt zatrzymania
     const randomNumber = Math.floor(Math.random() * 49) + 1;
-    const spinAngle = Math.random() * 360 + 720; // 2-3 pełne obroty
+    const targetAngle = (randomNumber - 1) * (360 / 49); // Kąt dla wylosowanej liczby
+    const spinAngle = Math.random() * 360 + 720 + targetAngle; // 2-3 pełne obroty + kąt docelowy
     
     setWheelAngle(spinAngle);
     
@@ -1654,11 +1664,15 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                             stiffness: 200,
                             damping: 15
                           }}
-                          className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center text-black font-bold text-sm md:text-base shadow-lg border-2 border-black"
+                          className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 rounded-full flex items-center justify-center text-black font-bold text-sm md:text-base shadow-lg border-2 border-yellow-700 relative overflow-hidden"
                           whileHover={{ 
                             scale: 1.2, 
-                            boxShadow: "0 0 30px rgba(0, 0, 0, 0.5)",
+                            boxShadow: "0 0 30px rgba(255, 215, 0, 0.8)",
                             rotate: 360
+                          }}
+                          style={{
+                            background: "radial-gradient(circle at 30% 30%, #fffde7 0%, #ffd700 50%, #ffb300 100%)",
+                            boxShadow: "0 4px 12px rgba(255, 215, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.6)"
                           }}
                         >
                           {number}
@@ -1774,14 +1788,51 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                   exit={{ opacity: 0, y: 20, scale: 0.8 }}
                   transition={{ duration: 0.6, delay: 0.5, type: "spring" }}
                   onClick={copyNumbers}
-                  className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold text-sm sm:text-base rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border border-yellow-300 backdrop-blur-sm"
+                  className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold text-sm sm:text-base rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border border-green-300 backdrop-blur-sm"
                   whileHover={{ 
                     scale: 1.05,
-                    boxShadow: "0 0 30px rgba(255, 193, 7, 0.5)"
+                    boxShadow: "0 0 30px rgba(76, 175, 80, 0.5)"
                   }}
                   whileTap={{ scale: 0.95 }}
                 >
                   📋 Kopiuj liczby
+                </motion.button>
+                
+                <motion.button
+                  initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 20, scale: 0.8 }}
+                  transition={{ duration: 0.6, delay: 0.7, type: "spring" }}
+                  onClick={() => {
+                    // Funkcja dodaj do ulubionych
+                    const numbersToSave = selectedGame === 'eurojackpot' 
+                      ? [...numbers, ...euroNumbers] 
+                      : numbers;
+                    
+                    const favorites = JSON.parse(localStorage.getItem('favoriteSets') || '[]');
+                    const newFavorite = {
+                      id: Date.now(),
+                      name: `Generator ${selectedGame} ${new Date().toLocaleDateString('pl-PL')}`,
+                      set: numbersToSave,
+                      game: selectedGame,
+                      generatorType: 'magic-ball',
+                      date: new Date().toISOString()
+                    };
+                    
+                    const updatedFavorites = [newFavorite, ...favorites];
+                    localStorage.setItem('favoriteSets', JSON.stringify(updatedFavorites));
+                    
+                    // Pokaż powiadomienie
+                    alert(`Zestaw "${newFavorite.name}" został dodany do ulubionych!`);
+                  }}
+                  className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold text-sm sm:text-base rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border border-red-300 backdrop-blur-sm"
+                  whileHover={{ 
+                    scale: 1.05,
+                    boxShadow: "0 0 30px rgba(244, 67, 54, 0.5)"
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  ❤️ Dodaj do ulubionych
                 </motion.button>
               </div>
             )}
@@ -2227,11 +2278,14 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                         initial={{ scale: 0, rotate: -180 }}
                         animate={{ scale: 1, rotate: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg border-2 ${
-                          selectedGame === 'eurojackpot' && index >= 5
-                            ? 'bg-gradient-to-br from-blue-400 to-blue-600 border-blue-300'
-                            : 'bg-gradient-to-br from-green-400 to-green-600 border-green-300'
-                        }`}
+                        className="w-12 h-12 rounded-full flex items-center justify-center text-black font-bold text-lg shadow-lg border-2 border-yellow-700 relative overflow-hidden"
+                        style={{
+                          background: selectedGame === 'eurojackpot' && index >= 5
+                            ? "radial-gradient(circle at 30% 30%, #e3f2fd 0%, #2196f3 50%, #1976d2 100%)"
+                            : "radial-gradient(circle at 30% 30%, #fffde7 0%, #ffd700 50%, #ffb300 100%)",
+                          boxShadow: "0 4px 12px rgba(255, 215, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.6)",
+                          color: selectedGame === 'eurojackpot' && index >= 5 ? '#fff' : '#222'
+                        }}
                       >
                         {number}
                       </motion.div>
@@ -2464,6 +2518,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                       onClick={() => {
                         const numbersText = mysticalNumbers.join(', ');
                         navigator.clipboard.writeText(numbersText);
+                        alert('📋 Liczby skopiowane do schowka!');
                       }}
                       className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-300"
                       whileHover={{ scale: 1.05 }}
@@ -2474,16 +2529,33 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                     
                     <motion.button
                       onClick={() => {
-                        // Przekierowanie do generatora z wylosowanymi liczbami
+                        // Dodaj do ulubionych
                         const numbersText = mysticalNumbers.join(', ');
-                        // Tutaj można dodać logikę przekierowania do /generator
-                        console.log('Przekierowanie do generatora z liczbami:', numbersText);
+                        const favoriteSet = {
+                          numbers: numbersText,
+                          game: selectedGame,
+                          date: new Date().toLocaleDateString('pl-PL'),
+                          name: `Mystical Drawing ${selectedGame} ${new Date().toLocaleDateString('pl-PL')}`,
+                          type: 'mystical-drawing',
+                          timestamp: Date.now()
+                        };
+                        
+                        const existingFavorites = JSON.parse(localStorage.getItem('favoriteSets') || '[]');
+                        existingFavorites.push(favoriteSet);
+                        localStorage.setItem('favoriteSets', JSON.stringify(existingFavorites));
+                        
+                        alert('✅ Zestaw dodany do ulubionych!');
+                        
+                        // Przekieruj do sekcji Moje konto po 1 sekundzie
+                        setTimeout(() => {
+                          navigate('/account');
+                        }, 1000);
                       }}
-                      className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold rounded-full hover:from-cyan-600 hover:to-blue-600 transition-all duration-300"
+                      className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold rounded-full hover:from-purple-700 hover:to-blue-700 transition-all duration-300"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      🎯 Użyj zestawu w generatorze
+                      ❤️ Dodaj do ulubionych
                     </motion.button>
                   </div>
                 </motion.div>
@@ -2660,6 +2732,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                       onClick={() => {
                         const numbersText = catchBallNumbers.join(', ');
                         navigator.clipboard.writeText(numbersText);
+                        alert('📋 Liczby skopiowane do schowka!');
                       }}
                       className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold rounded-full hover:from-green-600 hover:to-emerald-600 transition-all duration-300"
                       whileHover={{ scale: 1.05 }}
@@ -2671,13 +2744,31 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                     <motion.button
                       onClick={() => {
                         const numbersText = catchBallNumbers.join(', ');
-                        console.log('Przekierowanie do generatora z liczbami:', numbersText);
+                        const favoriteSet = {
+                          numbers: numbersText,
+                          game: selectedGame,
+                          date: new Date().toLocaleDateString('pl-PL'),
+                          name: `Catch Ball ${selectedGame} ${new Date().toLocaleDateString('pl-PL')}`,
+                          type: 'catch-ball',
+                          timestamp: Date.now()
+                        };
+                        
+                        const existingFavorites = JSON.parse(localStorage.getItem('favoriteSets') || '[]');
+                        existingFavorites.push(favoriteSet);
+                        localStorage.setItem('favoriteSets', JSON.stringify(existingFavorites));
+                        
+                        alert('✅ Zestaw dodany do ulubionych!');
+                        
+                        // Przekieruj do sekcji Moje konto po 1 sekundzie
+                        setTimeout(() => {
+                          navigate('/account');
+                        }, 1000);
                       }}
-                      className="px-6 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold rounded-full hover:from-teal-600 hover:to-cyan-600 transition-all duration-300"
+                      className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold rounded-full hover:from-purple-700 hover:to-blue-700 transition-all duration-300"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      🎯 Użyj zestawu w generatorze
+                      ❤️ Dodaj do ulubionych
                     </motion.button>
                     
                     <motion.button
@@ -2730,12 +2821,12 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                 <p className="text-yellow-200 text-sm mt-2">🎯 Strzałka na środku wskazuje wylosowaną liczbę na górze</p>
               </div>
 
-              {/* Koło fortuny - ZMODYFIKOWANE */}
+              {/* Koło fortuny - LICZBY WEWNĄTRZ KOŁA */}
               <div className="relative z-10 text-center mb-8">
                 <div className="relative w-64 h-64 md:w-80 md:h-80 sm:w-56 sm:h-56 xs:w-48 xs:h-48 mx-auto">
-                  {/* Koło z liczbami 1-49 */}
+                  {/* Koło z gradientem I LICZBAMI WEWNĄTRZ */}
                   <motion.div
-                    className="w-full h-full rounded-full border-4 border-red-400 relative overflow-hidden"
+                    className="w-full h-full rounded-full border-4 border-red-400 relative"
                     style={{
                       background: 'conic-gradient(from 0deg, #ef4444, #f97316, #eab308, #84cc16, #22c55e, #14b8a6, #06b6d4, #3b82f6, #8b5cf6, #ec4899, #f43f5e, #ef4444)',
                     }}
@@ -2747,15 +2838,24 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                       ease: "easeOut",
                     }}
                   >
-                    {/* Liczby 1-49 na krawędzi koła - DOKŁADNE POZYCJONOWANIE */}
+                    {/* Liczby 1-49 WEWNĄTRZ KOŁA NA BRZEGACH - OBRACAJĄ SIĘ Z KOŁEM */}
                     {[...Array(49)].map((_, i) => (
                       <div
                         key={i}
-                        className="absolute w-4 h-4 md:w-6 md:h-6 sm:w-5 sm:h-5 xs:w-4 xs:h-4 bg-white rounded-full flex items-center justify-center text-xs md:text-sm sm:text-xs xs:text-xs font-bold border-2 border-red-300 shadow-lg z-10"
+                        className="absolute bg-white rounded-full flex items-center justify-center text-xs font-bold border border-gray-300 shadow-sm"
                         style={{
+                          width: '24px',
+                          height: '24px',
                           left: '50%',
                           top: '50%',
-                          transform: `translate(-50%, -50%) rotate(${i * (360 / 49)}deg) translateY(-${window.innerWidth < 500 ? '100px' : '120px'})`,
+                          transform: `translate(-50%, -50%) rotate(${i * (360 / 49)}deg) translateY(-${window.innerWidth < 500 ? '110px' : '130px'})`,
+                          zIndex: 20,
+                          fontSize: '10px',
+                          fontWeight: 'bold',
+                          color: '#000',
+                          backgroundColor: '#ffffff',
+                          border: '1px solid #333',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
                         }}
                       >
                         {i + 1}
@@ -2763,35 +2863,15 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                     ))}
                   </motion.div>
                   
-                  {/* Strzałka zawsze na środku wskazująca do góry - NIERUCHOMA */}
-                  <motion.div 
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-b-40 border-l-transparent border-r-transparent border-b-yellow-400 z-30 shadow-lg"
-                    animate={{
-                      scale: [1, 1.1, 1],
-                      filter: ["drop-shadow(0 0 5px rgba(255, 255, 0, 0.5))", "drop-shadow(0 0 15px rgba(255, 255, 0, 0.8))", "drop-shadow(0 0 5px rgba(255, 255, 0, 0.5))"]
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  ></motion.div>
+                  {/* Czerwona kropka w środku jako strzałka - NIERUCHOMA */}
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow-lg z-50"></div>
                   
-                  {/* Dodatkowa strzałka dla lepszej widoczności */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-36 border-l-transparent border-r-transparent border-b-white z-40"></div>
-                  
-                  {/* Wylosowana liczba na górze - PO WYLOSOWANIU */}
+                  {/* Wylosowana liczba na górze - JAK NA ZRZUCIE */}
                   {wheelNumbers.length > 0 && (
                     <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-8 bg-yellow-400 text-black font-bold text-lg px-3 py-1 rounded-full border-2 border-white shadow-lg z-50">
                       {wheelNumbers[wheelNumbers.length - 1]}
                     </div>
                   )}
-                  
-                  {/* Środek koła z dodatkowym wskaźnikiem */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-red-500 rounded-full border-4 border-white shadow-lg z-50"></div>
-                  
-                  {/* Dodatkowa strzałka tekstowa na górze */}
-                  <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-red-500 font-bold text-lg z-50">⬆️</div>
                 </div>
                 
                 {/* Przycisk kręcenia */}
@@ -2838,6 +2918,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                       onClick={() => {
                         const numbersText = wheelNumbers.join(', ');
                         navigator.clipboard.writeText(numbersText);
+                        alert('📋 Liczby skopiowane do schowka!');
                       }}
                       className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold rounded-full hover:from-red-600 hover:to-pink-600 transition-all duration-300"
                       whileHover={{ scale: 1.05 }}
@@ -2849,13 +2930,31 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                     <motion.button
                       onClick={() => {
                         const numbersText = wheelNumbers.join(', ');
-                        console.log('Przekierowanie do generatora z liczbami:', numbersText);
+                        const favoriteSet = {
+                          numbers: numbersText,
+                          game: selectedGame,
+                          date: new Date().toLocaleDateString('pl-PL'),
+                          name: `Wheel Fortune ${selectedGame} ${new Date().toLocaleDateString('pl-PL')}`,
+                          type: 'wheel-fortune',
+                          timestamp: Date.now()
+                        };
+                        
+                        const existingFavorites = JSON.parse(localStorage.getItem('favoriteSets') || '[]');
+                        existingFavorites.push(favoriteSet);
+                        localStorage.setItem('favoriteSets', JSON.stringify(existingFavorites));
+                        
+                        alert('✅ Zestaw dodany do ulubionych!');
+                        
+                        // Przekieruj do sekcji Moje konto po 1 sekundzie
+                        setTimeout(() => {
+                          navigate('/account');
+                        }, 1000);
                       }}
-                      className="px-6 py-3 bg-gradient-to-r from-pink-500 to-red-500 text-white font-bold rounded-full hover:from-pink-600 hover:to-red-600 transition-all duration-300"
+                      className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold rounded-full hover:from-purple-700 hover:to-blue-700 transition-all duration-300"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      🎯 Użyj zestawu w generatorze
+                      ❤️ Dodaj do ulubionych
                     </motion.button>
                     
                     <motion.button
@@ -2932,12 +3031,42 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
               {selectedGame === "eurojackpot" ? (
                 <>
                   <h4 className="text-orange-200 font-bold text-center mb-6">🎯 Liczby główne (1-50) - wybierz 5</h4>
-                  <div className="grid grid-cols-10 gap-2 max-w-2xl mx-auto mb-8">
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: windowWidth <= 321 ? 'repeat(4, 1fr)' : 
+                                       windowWidth <= 639 ? 'repeat(4, 1fr)' :
+                                       windowWidth <= 768 ? 'repeat(6, 1fr)' :
+                                       windowWidth <= 1024 ? 'repeat(8, 1fr)' :
+                                       windowWidth <= 1099 ? 'repeat(10, 1fr)' :
+                                       windowWidth <= 1299 ? 'repeat(7, 1fr)' : 'repeat(8, 1fr)',
+                    gap: `clamp(4px, ${Math.max(4, windowWidth * 0.01)}px, 40px)`,
+                    maxWidth: windowWidth <= 321 ? '320px' : 
+                              windowWidth <= 639 ? '320px' :
+                              windowWidth <= 768 ? '672px' :
+                              windowWidth <= 1024 ? '1024px' :
+                              windowWidth <= 1099 ? '1024px' :
+                              windowWidth <= 1299 ? '1024px' : '1152px',
+                    margin: '0 auto 32px auto',
+                    padding: windowWidth <= 310 ? '12px' : `clamp(4px, ${Math.max(4, windowWidth * 0.02)}px, 32px)`
+                  }}>
                     {Array.from({ length: 50 }, (_, index) => (
                       <motion.button
                         key={`main-${index}`}
                         onClick={() => handleNumberPickerBallClick(`main-${index}`)}
-                        className={`w-10 h-10 rounded-full border-2 font-bold text-sm transition-all duration-300 ${
+                        style={{
+                          width: `clamp(40px, ${Math.max(40, windowWidth * 0.15)}px, 80px)`,
+                          height: `clamp(40px, ${Math.max(40, windowWidth * 0.15)}px, 80px)`,
+                          borderRadius: '50%',
+                          border: '2px solid',
+                          fontWeight: 'bold',
+                          fontSize: `clamp(14px, ${Math.max(14, windowWidth * 0.04)}px, 24px)`,
+                          transition: 'all 0.3s',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer'
+                        }}
+                        className={`${
                           revealedBalls[`main-${index}`] 
                             ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-black border-yellow-300 shadow-lg' 
                             : 'bg-gradient-to-br from-orange-400/30 to-yellow-400/30 text-orange-200 border-orange-300 hover:scale-110'
@@ -2951,12 +3080,42 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                   </div>
                   
                   <h4 className="text-orange-200 font-bold text-center mb-6">🇪🇺 Liczby Euro (1-12) - wybierz 2</h4>
-                  <div className="grid grid-cols-6 gap-2 max-w-md mx-auto">
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: windowWidth <= 321 ? 'repeat(4, 1fr)' : 
+                                       windowWidth <= 639 ? 'repeat(4, 1fr)' :
+                                       windowWidth <= 768 ? 'repeat(6, 1fr)' :
+                                       windowWidth <= 1024 ? 'repeat(8, 1fr)' :
+                                       windowWidth <= 1099 ? 'repeat(10, 1fr)' :
+                                       windowWidth <= 1299 ? 'repeat(7, 1fr)' : 'repeat(8, 1fr)',
+                    gap: `clamp(4px, ${Math.max(4, windowWidth * 0.01)}px, 40px)`,
+                    maxWidth: windowWidth <= 321 ? '320px' : 
+                              windowWidth <= 639 ? '320px' :
+                              windowWidth <= 768 ? '672px' :
+                              windowWidth <= 1024 ? '1024px' :
+                              windowWidth <= 1099 ? '1024px' :
+                              windowWidth <= 1299 ? '1024px' : '1152px',
+                    margin: '0 auto 32px auto',
+                    padding: windowWidth <= 310 ? '12px' : `clamp(4px, ${Math.max(4, windowWidth * 0.02)}px, 32px)`
+                  }}>
                     {Array.from({ length: 12 }, (_, index) => (
                       <motion.button
                         key={`euro-${index}`}
                         onClick={() => handleNumberPickerBallClick(`euro-${index}`)}
-                        className={`w-10 h-10 rounded-full border-2 font-bold text-sm transition-all duration-300 ${
+                        style={{
+                          width: `clamp(40px, ${Math.max(40, windowWidth * 0.15)}px, 80px)`,
+                          height: `clamp(40px, ${Math.max(40, windowWidth * 0.15)}px, 80px)`,
+                          borderRadius: '50%',
+                          border: '2px solid',
+                          fontWeight: 'bold',
+                          fontSize: `clamp(14px, ${Math.max(14, windowWidth * 0.04)}px, 24px)`,
+                          transition: 'all 0.3s',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer'
+                        }}
+                        className={`${
                           revealedBalls[`euro-${index}`] 
                             ? 'bg-gradient-to-br from-purple-600 to-purple-700 text-white border-purple-500 shadow-lg' 
                             : 'bg-gradient-to-br from-purple-500/30 to-purple-600/30 text-purple-200 border-purple-400 hover:scale-110'
@@ -2972,12 +3131,42 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
               ) : selectedGame === "ekstra-pensja" ? (
                 <>
                   <h4 className="text-orange-200 font-bold text-center mb-6">💰 Liczby główne (1-35) - wybierz 5</h4>
-                  <div className="grid grid-cols-10 gap-2 max-w-2xl mx-auto mb-8">
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: windowWidth <= 321 ? 'repeat(4, 1fr)' : 
+                                       windowWidth <= 639 ? 'repeat(4, 1fr)' :
+                                       windowWidth <= 768 ? 'repeat(6, 1fr)' :
+                                       windowWidth <= 1024 ? 'repeat(8, 1fr)' :
+                                       windowWidth <= 1099 ? 'repeat(10, 1fr)' :
+                                       windowWidth <= 1299 ? 'repeat(7, 1fr)' : 'repeat(8, 1fr)',
+                    gap: `clamp(4px, ${Math.max(4, windowWidth * 0.01)}px, 40px)`,
+                    maxWidth: windowWidth <= 321 ? '320px' : 
+                              windowWidth <= 639 ? '320px' :
+                              windowWidth <= 768 ? '672px' :
+                              windowWidth <= 1024 ? '1024px' :
+                              windowWidth <= 1099 ? '1024px' :
+                              windowWidth <= 1299 ? '1024px' : '1152px',
+                    margin: '0 auto 32px auto',
+                    padding: windowWidth <= 310 ? '12px' : `clamp(4px, ${Math.max(4, windowWidth * 0.02)}px, 32px)`
+                  }}>
                     {Array.from({ length: 35 }, (_, index) => (
                       <motion.button
                         key={`main-${index}`}
                         onClick={() => handleNumberPickerBallClick(`main-${index}`)}
-                        className={`w-10 h-10 rounded-full border-2 font-bold text-sm transition-all duration-300 ${
+                        style={{
+                          width: `clamp(40px, ${Math.max(40, windowWidth * 0.15)}px, 80px)`,
+                          height: `clamp(40px, ${Math.max(40, windowWidth * 0.15)}px, 80px)`,
+                          borderRadius: '50%',
+                          border: '2px solid',
+                          fontWeight: 'bold',
+                          fontSize: `clamp(14px, ${Math.max(14, windowWidth * 0.04)}px, 24px)`,
+                          transition: 'all 0.3s',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer'
+                        }}
+                        className={`${
                           revealedBalls[`main-${index}`] 
                             ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-black border-yellow-300 shadow-lg' 
                             : 'bg-gradient-to-br from-orange-400/30 to-yellow-400/30 text-orange-200 border-orange-300 hover:scale-110'
@@ -2991,12 +3180,42 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                   </div>
                   
                   <h4 className="text-orange-200 font-bold text-center mb-6">💰 Liczba dodatkowa (1-4) - wybierz 1</h4>
-                  <div className="grid grid-cols-4 gap-2 max-w-md mx-auto">
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: windowWidth <= 321 ? 'repeat(4, 1fr)' : 
+                                       windowWidth <= 639 ? 'repeat(4, 1fr)' :
+                                       windowWidth <= 768 ? 'repeat(6, 1fr)' :
+                                       windowWidth <= 1024 ? 'repeat(8, 1fr)' :
+                                       windowWidth <= 1099 ? 'repeat(10, 1fr)' :
+                                       windowWidth <= 1299 ? 'repeat(7, 1fr)' : 'repeat(8, 1fr)',
+                    gap: `clamp(4px, ${Math.max(4, windowWidth * 0.01)}px, 40px)`,
+                    maxWidth: windowWidth <= 321 ? '320px' : 
+                              windowWidth <= 639 ? '320px' :
+                              windowWidth <= 768 ? '672px' :
+                              windowWidth <= 1024 ? '1024px' :
+                              windowWidth <= 1099 ? '1024px' :
+                              windowWidth <= 1299 ? '1024px' : '1152px',
+                    margin: '0 auto 32px auto',
+                    padding: windowWidth <= 310 ? '12px' : `clamp(4px, ${Math.max(4, windowWidth * 0.02)}px, 32px)`
+                  }}>
                     {Array.from({ length: 4 }, (_, index) => (
                       <motion.button
                         key={`extra-${index}`}
                         onClick={() => handleNumberPickerBallClick(`extra-${index}`)}
-                        className={`w-10 h-10 rounded-full border-2 font-bold text-sm transition-all duration-300 ${
+                        style={{
+                          width: `clamp(40px, ${Math.max(40, windowWidth * 0.15)}px, 80px)`,
+                          height: `clamp(40px, ${Math.max(40, windowWidth * 0.15)}px, 80px)`,
+                          borderRadius: '50%',
+                          border: '2px solid',
+                          fontWeight: 'bold',
+                          fontSize: `clamp(14px, ${Math.max(14, windowWidth * 0.04)}px, 24px)`,
+                          transition: 'all 0.3s',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer'
+                        }}
+                        className={`${
                           revealedBalls[`extra-${index}`] 
                             ? 'bg-gradient-to-br from-green-400 to-green-500 text-white border-green-300 shadow-lg' 
                             : 'bg-gradient-to-br from-green-400/30 to-green-500/30 text-green-200 border-green-300 hover:scale-110'
@@ -3014,12 +3233,42 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                   <h4 className="text-orange-200 font-bold text-center mb-6">
                     🎯 Liczby (1-{getGameRange(selectedGame).max}) - wybierz {getGameRange(selectedGame).count}
                   </h4>
-                  <div className="grid grid-cols-10 gap-2 max-w-2xl mx-auto">
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: windowWidth <= 321 ? 'repeat(4, 1fr)' : 
+                                       windowWidth <= 639 ? 'repeat(4, 1fr)' :
+                                       windowWidth <= 768 ? 'repeat(6, 1fr)' :
+                                       windowWidth <= 1024 ? 'repeat(8, 1fr)' :
+                                       windowWidth <= 1099 ? 'repeat(10, 1fr)' :
+                                       windowWidth <= 1299 ? 'repeat(7, 1fr)' : 'repeat(8, 1fr)',
+                    gap: `clamp(4px, ${Math.max(4, windowWidth * 0.01)}px, 40px)`,
+                    maxWidth: windowWidth <= 321 ? '320px' : 
+                              windowWidth <= 639 ? '320px' :
+                              windowWidth <= 768 ? '672px' :
+                              windowWidth <= 1024 ? '1024px' :
+                              windowWidth <= 1099 ? '1024px' :
+                              windowWidth <= 1299 ? '1024px' : '1152px',
+                    margin: '0 auto 32px auto',
+                    padding: windowWidth <= 310 ? '12px' : `clamp(4px, ${Math.max(4, windowWidth * 0.02)}px, 32px)`
+                  }}>
                     {Array.from({ length: getGameRange(selectedGame).max }, (_, index) => (
                       <motion.button
                         key={index}
                         onClick={() => handleNumberPickerBallClick(index)}
-                        className={`w-10 h-10 rounded-full border-2 font-bold text-sm transition-all duration-300 ${
+                        style={{
+                          width: `clamp(40px, ${Math.max(40, windowWidth * 0.15)}px, 80px)`,
+                          height: `clamp(40px, ${Math.max(40, windowWidth * 0.15)}px, 80px)`,
+                          borderRadius: '50%',
+                          border: '2px solid',
+                          fontWeight: 'bold',
+                          fontSize: `clamp(14px, ${Math.max(14, windowWidth * 0.04)}px, 24px)`,
+                          transition: 'all 0.3s',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer'
+                        }}
+                        className={`${
                           revealedBalls[index] 
                             ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-black border-yellow-300 shadow-lg' 
                             : 'bg-gradient-to-br from-orange-400/30 to-yellow-400/30 text-orange-200 border-orange-300 hover:scale-110'
@@ -3039,7 +3288,7 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
             {luckyNumbers.length > 0 && (
               <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-lg p-6 border-2 border-green-400">
                 <h4 className="text-green-200 font-bold text-center mb-4">🎯 Twoje wybrane liczby:</h4>
-                <div className="flex flex-wrap justify-center gap-3">
+                <div className="flex flex-wrap justify-center gap-3 mb-6">
                   {luckyNumbers.map((num, index) => (
                     <motion.div
                       key={index}
@@ -3051,6 +3300,54 @@ const GryPoZalogowaniu = ({ user, userSubscription }) => {
                       {num}
                     </motion.div>
                   ))}
+                </div>
+                
+                {/* Przyciski akcji */}
+                <div className="flex flex-wrap justify-center gap-4">
+                  <motion.button
+                    onClick={() => {
+                      // Funkcja dodawania do ulubionych
+                      const favorites = JSON.parse(localStorage.getItem('lottoFavorites') || '[]');
+                      const newFavorite = {
+                        id: Date.now(),
+                        numbers: [...luckyNumbers],
+                        game: selectedGame,
+                        date: new Date().toISOString()
+                      };
+                      favorites.push(newFavorite);
+                      localStorage.setItem('lottoFavorites', JSON.stringify(favorites));
+                      alert('Dodano do ulubionych!');
+                    }}
+                    className="bg-gradient-to-r from-pink-500 to-pink-600 text-white px-4 py-2 rounded-lg font-bold hover:from-pink-600 hover:to-pink-700 transition-all duration-300 flex items-center gap-2"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    ⭐ Ulubione
+                  </motion.button>
+                  
+                  <motion.button
+                    onClick={() => {
+                      // Funkcja kopiowania liczb
+                      const numbersText = luckyNumbers.join(', ');
+                      navigator.clipboard.writeText(numbersText).then(() => {
+                        alert('Liczby skopiowane do schowka!');
+                      }).catch(() => {
+                        // Fallback dla starszych przeglądarek
+                        const textArea = document.createElement('textarea');
+                        textArea.value = numbersText;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        alert('Liczby skopiowane do schowka!');
+                      });
+                    }}
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center gap-2"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    📋 Kopiuj liczby
+                  </motion.button>
                 </div>
               </div>
             )}

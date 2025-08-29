@@ -124,3 +124,9 @@ echo "   - Nginx: tail -f /var/log/nginx/error.log"
 echo "   - System: journalctl -u nginx -f"
 
 
+
+
+
+
+
+

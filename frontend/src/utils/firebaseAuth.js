@@ -53,8 +53,8 @@ export const loginUser = async (email, password) => {
     // Zarejestruj logowanie w backendzie (dla żetonów dziennych)
     try {
       const backendUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://losuje.pl/api/auth/register-login'
-        : `${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/auth/register-login`;
+        ? '/api/auth/register-login'
+        : `${process.env.REACT_APP_API_URL || ''}/api/auth/register-login`;
         
       const response = await fetch(backendUrl, {
         method: 'POST',
@@ -368,8 +368,8 @@ export const loginWithGoogle = async () => {
     // Zarejestruj logowanie w backendzie z tokenem Firebase
     try {
       const backendUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://losuje.pl/api/auth/firebase-login'
-        : `${process.env.REACT_APP_API_URL || 'https://losuje.pl'}/api/auth/firebase-login`;
+        ? '/api/auth/firebase-login'
+        : `${process.env.REACT_APP_API_URL || ''}/api/auth/firebase-login`;
         
       const response = await fetch(backendUrl, {
         method: 'POST',

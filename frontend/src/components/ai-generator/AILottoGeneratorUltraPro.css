@@ -1175,18 +1175,24 @@
 }
 
 .generated-numbers .number-ball {
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+  color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid #ffb300;
+  transition: all 0.3s ease;
+}
+
+.generated-numbers .number-ball:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 .rocket-progress {
@@ -1658,15 +1664,15 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #00ff00, #00cc00);
+  background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
   color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
   font-weight: bold;
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
-  border: 2px solid #00ff00;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid #ffb300;
 }
 
 /* Laser Animation */
@@ -1729,15 +1735,15 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  color: white;
+  background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+  color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   font-size: 1.4rem;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-  border: 3px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid #ffb300;
   z-index: 3;
 }
 
@@ -1873,15 +1879,15 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #8b4513, #a0522d);
-  color: white;
+  background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+  color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.3rem;
   font-weight: bold;
-  box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
-  border: 3px solid rgba(255, 193, 7, 0.5);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid #ffb300;
 }
 
 .chess-text {
@@ -1946,21 +1952,21 @@
   width: 70px;
   height: 70px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+  color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.4rem;
   font-weight: 700;
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-  border: 3px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid #ffb300;
   transition: all 0.3s ease;
 }
 
 .number-ball:hover {
   transform: scale(1.1) rotate(5deg);
-  box-shadow: 0 12px 30px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 .ai-info {
@@ -2846,14 +2852,15 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
+  background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+  color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   font-size: 1.2rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid #ffb300;
   will-change: transform, opacity;
 }
 
@@ -2891,6 +2898,10 @@
     width: 40px;
     height: 40px;
     font-size: 1rem;
+    background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+    color: #000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 2px solid #ffb300;
   }
 }
 

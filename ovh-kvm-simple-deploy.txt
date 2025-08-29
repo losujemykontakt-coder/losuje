@@ -46,3 +46,9 @@ tail -f /var/log/nginx/error.log
 pm2 logs --lines 20
 
 
+
+
+
+
+
+
