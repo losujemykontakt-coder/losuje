@@ -149,6 +149,42 @@ const talismanDefinitions = [
     requirement: 28,
     color: '#E91E63',
     effect: 'phoenix'
+  },
+  {
+    id: 7,
+    name: 'Korona',
+    description: 'Królewskie szczęście',
+    icon: '👑',
+    requirement: 36,
+    color: '#FFD700',
+    effect: 'royal'
+  },
+  {
+    id: 8,
+    name: 'Gwiazda',
+    description: 'Magiczna siła kosmosu',
+    icon: '⭐',
+    requirement: 40,
+    color: '#FFC107',
+    effect: 'odd'
+  },
+  {
+    id: 9,
+    name: 'Słońce',
+    description: 'Im cieplejszy dzień tym większe szczęście',
+    icon: '☀️',
+    requirement: 44,
+    color: '#FF5722',
+    effect: 'medium'
+  },
+  {
+    id: 10,
+    name: 'Ostateczny talizman',
+    description: 'Przynosi szczęście we wszystkich liczbach',
+    icon: '⚡',
+    requirement: 50,
+    color: '#9C27B0',
+    effect: 'ultimate'
   }
 ];
 
@@ -1203,7 +1239,11 @@ function AppPWA() {
           
           console.log('🔍 Token otrzymany, długość:', token?.length);
           
-          const response = await fetch(`/api/auth/register-login`, {
+          const backendUrl = process.env.NODE_ENV === 'production' 
+            ? '/api/auth/register-login'
+            : `${process.env.REACT_APP_API_URL || 'http://localhost:3000'}/api/auth/register-login`;
+            
+          const response = await fetch(backendUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
