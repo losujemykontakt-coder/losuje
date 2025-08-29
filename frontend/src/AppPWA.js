@@ -5000,12 +5000,15 @@ function AppPWA() {
           } />
           
           <Route path="/explanations" element={
-            <div style={{ 
-              padding: window.innerWidth <= 768 ? "10px" : "20px",
-              maxWidth: "100%",
-              boxSizing: "border-box",
-              position: "relative"
-            }}>
+            <div 
+              className="explanations-container"
+              style={{ 
+                padding: window.innerWidth <= 768 ? "10px" : "20px",
+                maxWidth: "100%",
+                boxSizing: "border-box",
+                position: "relative"
+              }}
+            >
               <h2 style={{ 
                 color: "#222", 
                 marginBottom: window.innerWidth <= 768 ? "16px" : "24px", 
@@ -7299,10 +7302,64 @@ function AppPWA() {
       {location.pathname === '/explanations' && (
         <button
           onClick={() => {
-            window.scrollTo({ 
-              top: 0, 
-              behavior: 'smooth' 
-            });
+            console.log('🔄 Kliknięto przycisk przewijania!');
+            console.log('📊 Aktualna pozycja scroll:', window.scrollY);
+            
+            // Metoda 1: window.scrollTo z smooth
+            try {
+              window.scrollTo({ 
+                top: 0, 
+                behavior: 'smooth' 
+              });
+              console.log('✅ Metoda 1 wykonana');
+            } catch (error) {
+              console.log('❌ Metoda 1 nie działa:', error);
+            }
+            
+            // Metoda 2: window.scrollTo bez smooth
+            try {
+              window.scrollTo(0, 0);
+              console.log('✅ Metoda 2 wykonana');
+            } catch (error) {
+              console.log('❌ Metoda 2 nie działa:', error);
+            }
+            
+            // Metoda 3: document.documentElement.scrollTop
+            try {
+              document.documentElement.scrollTop = 0;
+              console.log('✅ Metoda 3 wykonana');
+            } catch (error) {
+              console.log('❌ Metoda 3 nie działa:', error);
+            }
+            
+            // Metoda 4: document.body.scrollTop
+            try {
+              document.body.scrollTop = 0;
+              console.log('✅ Metoda 4 wykonana');
+            } catch (error) {
+              console.log('❌ Metoda 4 nie działa:', error);
+            }
+            
+            // Metoda 5: Przewiń wszystkie możliwe kontenery
+            try {
+              const containers = [
+                document.querySelector('.main-container'),
+                document.querySelector('#root'),
+                document.querySelector('body'),
+                document.querySelector('html')
+              ];
+              
+              containers.forEach((container, index) => {
+                if (container) {
+                  container.scrollTop = 0;
+                  console.log(`✅ Kontener ${index + 1} przewinięty:`, container.tagName);
+                }
+              });
+            } catch (error) {
+              console.log('❌ Metoda 5 nie działa:', error);
+            }
+            
+            console.log('✅ Wszystkie metody przewijania wykonane');
           }}
           style={{
             position: 'fixed',
