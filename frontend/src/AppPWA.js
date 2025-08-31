@@ -53,6 +53,9 @@ const getCurrentDomain = () => {
   } else if (hostname === 'losuje-generator.pl' || hostname === 'www.losuje-generator.pl') {
     console.log('🎯 Detected: losuje-generator domain');
     return 'losuje-generator';
+  } else if (hostname === 'losuje-play.web.app') {
+    console.log('🎯 Detected: losuje-play PWA domain');
+    return 'losuje-play';
   } else {
     console.log('🎯 Detected: default domain');
     return 'default';
@@ -2424,6 +2427,27 @@ function AppPWA() {
               } else if (currentDomain === 'losuje-generator') {
                 // losuje-generator.pl - tylko logowanie
                 console.log('🎯 losuje-generator.pl - Showing AuthContainer/HomePage');
+                return user ? (
+                  <HomePage
+                    user={user}
+                    userStatus={userStatus}
+                    subscription={subscription}
+                    activeTalisman={activeTalisman}
+                    onShowPayments={() => setShowPayments(true)}
+                    onShowStatistics={() => setShowStatistics(true)}
+                    onShowMyLuckyNumbers={() => setShowMyLuckyNumbers(true)}
+                    onShowTalizmany={() => setShowTalizmany(true)}
+                    onShowAIGenerator={() => setShowAIGenerator(true)}
+                    onShowHarmonicAnalyzer={() => setShowHarmonicAnalyzer(true)}
+                    onShowSchonheimGenerator={() => setShowSchonheimGenerator(true)}
+                    checkAccess={checkAccess}
+                  />
+                ) : (
+                  <AuthContainer />
+                );
+              } else if (currentDomain === 'losuje-play') {
+                // losuje-play.web.app - tylko logowanie i animacja (bez landing page)
+                console.log('🎯 losuje-play.web.app - Showing AuthContainer/HomePage (PWA)');
                 return user ? (
                   <HomePage
                     user={user}
