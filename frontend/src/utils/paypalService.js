@@ -1,7 +1,7 @@
-// Dynamiczny URL API - localhost w development, losuje.pl w produkcji
+// Dynamiczny URL API - Firebase Functions URL
 const API_BASE_URL = process.env.REACT_APP_API_URL 
   ? process.env.REACT_APP_API_URL
-  : '';
+  : 'https://us-central1-losujemy.cloudfunctions.net/api';
 
 class PayPalService {
   // Tworzenie zamówienia PayPal
@@ -9,10 +9,10 @@ class PayPalService {
     try {
       console.log('🔄 [PAYPAL] Tworzenie zamówienia...');
       console.log('📋 Dane zamówienia:', { amount, currency, description });
-      console.log('🌐 API URL:', `${API_BASE_URL}/api/paypal/create-order`);
+      console.log('🌐 API URL:', `${API_BASE_URL}/api/paypal/create`);
       console.log('🔧 Environment:', process.env.NODE_ENV);
       
-      const response = await fetch(`${API_BASE_URL}/api/paypal/create-order`, {
+      const response = await fetch(`${API_BASE_URL}/api/paypal/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -79,7 +79,7 @@ class PayPalService {
   // Finalizacja płatności PayPal
   async capturePayment(orderId) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/paypal/capture-payment`, {
+      const response = await fetch(`${API_BASE_URL}/api/paypal/capture`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

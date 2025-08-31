@@ -257,3 +257,4 @@ Jeśli masz problemy:
 1. Sprawdź [Firebase Hosting Docs](https://firebase.google.com/docs/hosting)
 2. Sprawdź [Firebase Custom Domains](https://firebase.google.com/docs/hosting/custom-domain)
 3. Skontaktuj się z Firebase Support
+

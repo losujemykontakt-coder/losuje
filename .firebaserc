@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "losujemy"
-  }
+  },
+  "targets": {
+    "losujemy": {
+      "hosting": {
+        "losujemy": [
+          "losujemy"
+        ],
+        "losuje-pl": [
+          "losuje-pl"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

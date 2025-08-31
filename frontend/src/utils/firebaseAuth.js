@@ -129,7 +129,7 @@ export const onAuthStateChange = (callback) => {
   console.log('🔍 auth.currentUser:', auth.currentUser);
   
   const unsubscribe = onAuthStateChanged(auth, (user) => {
-    console.log('🔍 onAuthStateChanged callback wywołane:', user ? `Zalogowany: ${user.email}` : 'Niezalogowany');
+    console.log('🔍 onAuthStateChanged callback wywołane:', user ? 'Zalogowany' : 'Niezalogowany');
     callback(user);
   });
   
@@ -324,7 +324,7 @@ export const checkAndBlockExpiredTrials = async () => {
         is_blocked: true,
         updated_at: now.toISOString()
       });
-      console.log(`Użytkownik ${doc.data().email} został zablokowany - okres próbny wygasł`);
+      console.log(`Użytkownik został zablokowany - okres próbny wygasł`);
     }
     
     return { success: true, blockedCount: querySnapshot.docs.length };

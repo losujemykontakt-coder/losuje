@@ -61,10 +61,10 @@ const PayPalButtonWrapper = ({
 
   const handleCreateOrder = (data, actions) => {
     // W produkcji użyj bezpośredniego URL funkcji jako fallback
-    const apiUrl = process.env.NODE_ENV === 'development' ? '' : 'https://api-ocwyh3krkq-uc.a.run.app';
-    console.log('🔍 PayPal Create Order API URL:', `${apiUrl}/api/paypal/create`);
+    const apiUrl = process.env.NODE_ENV === 'development' ? '' : 'https://us-central1-losujemy.cloudfunctions.net/api';
+    console.log('🔍 PayPal Create Order API URL:', `${apiUrl}/paypal/create`);
     
-    return fetch(`${apiUrl}/api/paypal/create`, {
+    return fetch(`${apiUrl}/paypal/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -93,10 +93,10 @@ const PayPalButtonWrapper = ({
 
   const handleApprove = (data, actions) => {
     // W produkcji użyj bezpośredniego URL funkcji jako fallback
-    const apiUrl = process.env.NODE_ENV === 'development' ? '' : 'https://api-ocwyh3krkq-uc.a.run.app';
-    console.log('🔍 PayPal Capture API URL:', `${apiUrl}/api/paypal/capture/${data.orderID}`);
+    const apiUrl = process.env.NODE_ENV === 'development' ? '' : 'https://us-central1-losujemy.cloudfunctions.net/api';
+    console.log('🔍 PayPal Capture API URL:', `${apiUrl}/paypal/capture/${data.orderID}`);
     
-    return fetch(`${apiUrl}/api/paypal/capture/${data.orderID}`, {
+    return fetch(`${apiUrl}/paypal/capture/${data.orderID}`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',

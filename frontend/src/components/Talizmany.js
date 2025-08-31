@@ -6,7 +6,6 @@ const Talizmany = ({ user, talismanDefinitions }) => {
   console.log('🔍 Talizmany component rendered with:', { 
     user: user ? {
       uid: user.uid,
-      email: user.email,
       hasGetIdToken: typeof user.getIdToken === 'function',
       type: typeof user,
       keys: Object.keys(user || {})
@@ -296,8 +295,8 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       
       // Najpierw sprawdź czy backend działa
       try {
-        const baseUrl = process.env.NODE_ENV === 'development' ? '' : 'https://api-ocwyh3krkq-uc.a.run.app';
-        const testResponse = await fetch(`${baseUrl}/api/test`, {
+        const baseUrl = process.env.NODE_ENV === 'development' ? '' : 'https://us-central1-losujemy.cloudfunctions.net/api';
+        const testResponse = await fetch(`${baseUrl}/test`, {
           method: 'GET',
           signal: AbortSignal.timeout(10000) // 10 sekund timeout
         });
@@ -317,7 +316,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 sekund timeout
       
       // W produkcji użyj bezpośredniego URL funkcji jako fallback
-      const baseUrl = process.env.NODE_ENV === 'development' ? '' : 'https://api-ocwyh3krkq-uc.a.run.app';
+      const baseUrl = process.env.NODE_ENV === 'development' ? '' : 'https://us-central1-losujemy.cloudfunctions.net/api';
       
       // Pobierz token Firebase Auth
       let token;
@@ -355,7 +354,7 @@ const Talizmany = ({ user, talismanDefinitions }) => {
         throw tokenError;
       }
       
-      const response = await fetch(`${baseUrl}/api/talismans/${uid}`, {
+      const response = await fetch(`${baseUrl}/talismans/${uid}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

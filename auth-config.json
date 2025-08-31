@@ -1,0 +1,239 @@
+{"users": [
+{
+  "localId": "1nL1hW4QNhVGsfvPVHIDH1wM11I3",
+  "email": "michaljedynasty@gmail.com",
+  "emailVerified": true,
+  "displayName": "Michał Jedynasty",
+  "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocJoD9zEAKEoSisqY3hfqlmPri0Jd4GZnQ9soaJe90e2WNaISQ=s96-c",
+  "lastSignedInAt": "1756321574179",
+  "createdAt": "1756227851505",
+  "providerUserInfo": [
+    {
+      "providerId": "google.com",
+      "rawId": "104689561657747366436",
+      "email": "michaljedynasty@gmail.com",
+      "displayName": "Michał Jedynasty",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocJoD9zEAKEoSisqY3hfqlmPri0Jd4GZnQ9soaJe90e2WNaISQ=s96-c"
+    }
+  ]
+},
+{
+  "localId": "1yy1ZiGHNBOKHXtcWcrSx6hP0643",
+  "email": "olipower.kontakt@gmail.com",
+  "emailVerified": true,
+  "displayName": "Michał Jedynasty",
+  "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocJu6k2LGUsLM8kWONi7Of-357JuHSJLx0dx01AbEnuVwZyl8Q=s96-c",
+  "lastSignedInAt": "1756236282914",
+  "createdAt": "1756236282914",
+  "providerUserInfo": [
+    {
+      "providerId": "google.com",
+      "rawId": "106590342606226422003",
+      "email": "olipower.kontakt@gmail.com",
+      "displayName": "Michał Jedynasty",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocJu6k2LGUsLM8kWONi7Of-357JuHSJLx0dx01AbEnuVwZyl8Q=s96-c"
+    }
+  ]
+},
+{
+  "localId": "3IOE3RSLzCWawSBhVKV49lTIBDJ3",
+  "email": "saton@onet.eu",
+  "emailVerified": false,
+  "passwordHash": "cOAuaYS+UOKMSurJw4HYfLNQ1J07MyLPkgapMjTAIYO2424toEteO/UWkEfFPMS1o71nM4F1v+zF3V0JXiLoIQ==",
+  "salt": "ZUk3i1uWbhF4RQ==",
+  "lastSignedInAt": "1756053392236",
+  "createdAt": "1756053392236",
+  "providerUserInfo": []
+},
+{
+  "localId": "403pUqj7s4d0UAXgy0cKLeDRpqs1",
+  "email": "jedynastymichal@gmail.com",
+  "emailVerified": false,
+  "passwordHash": "1IiBWXlFSZIDfCTXnS+D7/wWE0ygWpJ674WHHdKdv2t9dNN+xVaOCc05Kaqzg/d8WSCZyXWTYEV0DwToRpiTvg==",
+  "salt": "akyJdL3PCajPcA==",
+  "lastSignedInAt": "1756229614266",
+  "createdAt": "1756227439136",
+  "providerUserInfo": []
+},
+{
+  "localId": "Ep2WGy0PKbQt8i9uOw77b06JxRv1",
+  "email": "janmorski9@gmail.com",
+  "emailVerified": true,
+  "displayName": "Jan Morski",
+  "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocKWm-RW64kKiQhEoDzLeQ88hatRiMOMarkH3gEzukDzRtLCyw=s96-c",
+  "lastSignedInAt": "1756236263999",
+  "createdAt": "1756059229755",
+  "providerUserInfo": [
+    {
+      "providerId": "google.com",
+      "rawId": "108492721438991636659",
+      "email": "janmorski9@gmail.com",
+      "displayName": "Jan Morski",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocKWm-RW64kKiQhEoDzLeQ88hatRiMOMarkH3gEzukDzRtLCyw=s96-c"
+    }
+  ]
+},
+{
+  "localId": "RCWyN9hjhBQuXU8L2HNyeFu4qd22",
+  "email": "grochowska.m.93@gmail.com",
+  "emailVerified": true,
+  "displayName": "Monika Grochowska",
+  "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocJtLfvS1Sih4ciUECWBUtnFQwxgULvxbWu6Cjd7dYjIEIdIiQ=s96-c",
+  "lastSignedInAt": "1755774050264",
+  "createdAt": "1755774050264",
+  "providerUserInfo": [
+    {
+      "providerId": "google.com",
+      "rawId": "109152988418124056917",
+      "email": "grochowska.m.93@gmail.com",
+      "displayName": "Monika Grochowska",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocJtLfvS1Sih4ciUECWBUtnFQwxgULvxbWu6Cjd7dYjIEIdIiQ=s96-c"
+    }
+  ]
+},
+{
+  "localId": "RLKl3GKfQTh0JItzs2NpYPyR33J2",
+  "email": "briken.kontakt@gmail.com",
+  "emailVerified": true,
+  "displayName": "Żaneta Jedynasty",
+  "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocK2nlgPEhSo2kxI45rzTnPMHH-lBj5rFscMpdR0Y2LBMEH3ow=s96-c",
+  "lastSignedInAt": "1756230577625",
+  "createdAt": "1756227978049",
+  "providerUserInfo": [
+    {
+      "providerId": "google.com",
+      "rawId": "108905288452606933454",
+      "email": "briken.kontakt@gmail.com",
+      "displayName": "Żaneta Jedynasty",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocK2nlgPEhSo2kxI45rzTnPMHH-lBj5rFscMpdR0Y2LBMEH3ow=s96-c"
+    }
+  ]
+},
+{
+  "localId": "bNH9YkdplZSi4De0AsofBGZkfbn2",
+  "email": "olipower.sklep@gmail.com",
+  "emailVerified": true,
+  "displayName": "Żaneta Gładyszewska",
+  "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocLnSbYHY2MkrxZDYBLgusHkCA1IVku6_IOC_3gmQ1b21MP0mA=s96-c",
+  "lastSignedInAt": "1756228580573",
+  "createdAt": "1756228580572",
+  "providerUserInfo": [
+    {
+      "providerId": "google.com",
+      "rawId": "101619124825289322650",
+      "email": "olipower.sklep@gmail.com",
+      "displayName": "Żaneta Gładyszewska",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocLnSbYHY2MkrxZDYBLgusHkCA1IVku6_IOC_3gmQ1b21MP0mA=s96-c"
+    }
+  ]
+},
+{
+  "localId": "dkBKywVN0TdO7AqfEvyprykp6LB2",
+  "email": "michaljedy11@gmail.com",
+  "emailVerified": true,
+  "displayName": "Żaneta Gładyszewska",
+  "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocLFwKval8mCh5dT3aBQtjlPUInoPyToOQ2PZNNs8_OcpVl99Q=s96-c",
+  "lastSignedInAt": "1756228662729",
+  "createdAt": "1756228662729",
+  "providerUserInfo": [
+    {
+      "providerId": "google.com",
+      "rawId": "111280310913754782748",
+      "email": "michaljedy11@gmail.com",
+      "displayName": "Żaneta Gładyszewska",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocLFwKval8mCh5dT3aBQtjlPUInoPyToOQ2PZNNs8_OcpVl99Q=s96-c"
+    }
+  ]
+},
+{
+  "localId": "g0UzwDctOOZdjZuH7pYRhUBajTP2",
+  "email": "losujemy.kontakt@gmail.com",
+  "emailVerified": true,
+  "displayName": "Michał",
+  "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocJqTW3Rd267XkpZhLu4AmkhkEk9x_D_EHXiQ6EDF1ZsXO_gwg=s96-c",
+  "lastSignedInAt": "1756229270090",
+  "createdAt": "1756228163530",
+  "providerUserInfo": [
+    {
+      "providerId": "google.com",
+      "rawId": "107036440900137173030",
+      "email": "losujemy.kontakt@gmail.com",
+      "displayName": "Michał",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocJqTW3Rd267XkpZhLu4AmkhkEk9x_D_EHXiQ6EDF1ZsXO_gwg=s96-c"
+    }
+  ]
+},
+{
+  "localId": "g5UywgWEo1RSlz7Ne5A6lWbGLtM2",
+  "email": "giezek.mariusz@wp.pl",
+  "emailVerified": false,
+  "passwordHash": "KBtKFuiiy6frPmSAoeTv6b1bTUAEjAUsATjDDSvaKTKhQtIdZvnNOhFQEf6rn4PbqDrOu4spJjtxc5drkEgKYg==",
+  "salt": "ib006p0VpDy9Lg==",
+  "lastSignedInAt": "1756592414072",
+  "createdAt": "1756592414072",
+  "providerUserInfo": []
+},
+{
+  "localId": "glqALsJCLBUEwcWTUJcMfDDHyaA3",
+  "email": "margiezek@gmail.com",
+  "emailVerified": true,
+  "displayName": "Mariusz Giezek",
+  "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocKdRb2lOUXj1AxL9FlfJF1uBhYLv2gBz-T1kemtsAcTJWuGKA=s96-c",
+  "lastSignedInAt": "1756592201155",
+  "createdAt": "1756592201154",
+  "providerUserInfo": [
+    {
+      "providerId": "google.com",
+      "rawId": "103234176899663255310",
+      "email": "margiezek@gmail.com",
+      "displayName": "Mariusz Giezek",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocKdRb2lOUXj1AxL9FlfJF1uBhYLv2gBz-T1kemtsAcTJWuGKA=s96-c"
+    }
+  ]
+},
+{
+  "localId": "goYXsHHlBuemceb4urZJXsqPEr13",
+  "email": "olipower.office@gmail.com",
+  "emailVerified": true,
+  "displayName": "Żaneta Gładyszewska",
+  "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocLjRxO0-0IZmbH4hlG62GQvnK6DyBY7APVhRdTtTZPvrPaUBQ=s96-c",
+  "lastSignedInAt": "1756228000074",
+  "createdAt": "1756228000073",
+  "providerUserInfo": [
+    {
+      "providerId": "google.com",
+      "rawId": "104509106513181069563",
+      "email": "olipower.office@gmail.com",
+      "displayName": "Żaneta Gładyszewska",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocLjRxO0-0IZmbH4hlG62GQvnK6DyBY7APVhRdTtTZPvrPaUBQ=s96-c"
+    }
+  ]
+},
+{
+  "localId": "jHCtGV9drBWqJA78DM3atX4wXUp2",
+  "email": "zanet.2502@gmail.com",
+  "emailVerified": false,
+  "passwordHash": "B5dSOruUmc7T8ozqHLJfz2GmMCykXRVYBTTkT8Qjr4HEgM/vnWmXGuEiYw8KIDNgIG2jCzRK0572S3IpaLTgYw==",
+  "salt": "lNXYZ2/w+9IK3g==",
+  "lastSignedInAt": "1756497526827",
+  "createdAt": "1756228681151",
+  "providerUserInfo": []
+},
+{
+  "localId": "zjCyYf28d5Sv4mFeFSsviSWrBEa2",
+  "email": "allegromaster.kontakt@gmail.com",
+  "emailVerified": true,
+  "displayName": "Allegromaster",
+  "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocJ7QEWtKKm2sYIF3i73JHhuXzwdUXB5O4F4HqtTHxqgaa_3fg=s96-c",
+  "lastSignedInAt": "1756228797732",
+  "createdAt": "1756056800576",
+  "providerUserInfo": [
+    {
+      "providerId": "google.com",
+      "rawId": "102529113458327990326",
+      "email": "allegromaster.kontakt@gmail.com",
+      "displayName": "Allegromaster",
+      "photoUrl": "https://lh3.googleusercontent.com/a/ACg8ocJ7QEWtKKm2sYIF3i73JHhuXzwdUXB5O4F4HqtTHxqgaa_3fg=s96-c"
+    }
+  ]
+}]}

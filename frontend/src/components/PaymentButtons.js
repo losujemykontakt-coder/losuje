@@ -131,11 +131,11 @@ const PaymentButtons = ({
     }, timeoutDuration);
     
     try {
-      const apiUrl = process.env.NODE_ENV === 'development' ? '' : 'https://api-ocwyh3krkq-uc.a.run.app';
+      const apiUrl = process.env.NODE_ENV === 'development' ? '' : 'https://us-central1-losujemy.cloudfunctions.net/api';
       
       // Test połączenia z backendem
       console.log('🔄 Test połączenia z backendem...');
-      const testResponse = await fetch(`${apiUrl}/api/health`, {
+      const testResponse = await fetch(`${apiUrl}/health`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -150,7 +150,7 @@ const PaymentButtons = ({
       
       console.log('✅ Backend odpowiada poprawnie');
       
-      const response = await fetch(`${apiUrl}/api/paypal/create`, {
+      const response = await fetch(`${apiUrl}/paypal/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -248,8 +248,8 @@ const PaymentButtons = ({
     // Sprawdź status backendu
     const checkBackendStatus = async () => {
       try {
-        const apiUrl = process.env.NODE_ENV === 'development' ? '' : 'https://api-ocwyh3krkq-uc.a.run.app';
-        const response = await fetch(`${apiUrl}/api/health`, {
+        const apiUrl = process.env.NODE_ENV === 'development' ? '' : 'https://us-central1-losujemy.cloudfunctions.net/api';
+        const response = await fetch(`${apiUrl}/health`, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',

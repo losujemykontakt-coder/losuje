@@ -8,7 +8,8 @@ const getAuthDomain = () => {
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     return "losujemy.firebaseapp.com"; // Dla development
   }
-  return hostname; // Dla produkcji (losuje.pl, losuje-generator.pl)
+  // Dla produkcji zawsze używaj losujemy.firebaseapp.com
+  return "losujemy.firebaseapp.com";
 };
 
 const firebaseConfig = {

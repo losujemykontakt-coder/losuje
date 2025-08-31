@@ -339,7 +339,7 @@ const HarmonicAnalyzer = ({ activeTalisman, talismanDefinitions }) => {
         throw new Error('API URL not configured');
       }
       
-      const response = await fetch(`${apiUrl}/api/harmonic/stats`, { 
+      const response = await fetch(`${apiUrl}/harmonic/stats`, { 
         signal: abortControllerRef.current.signal,
         timeout: 5000
       });

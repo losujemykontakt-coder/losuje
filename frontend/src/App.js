@@ -551,7 +551,7 @@ function App() {
   
   // Routing - sprawdź czy użytkownik jest zalogowany
   const isLoggedIn = !!user;
-  console.log('🔍 isLoggedIn check:', { isLoggedIn, user: user ? user.email : 'null', userObject: user });
+  console.log('🔍 isLoggedIn check:', { isLoggedIn, userObject: user });
   
   // Obsługa parametrów URL dla stron landing page - tylko dla niezalogowanych użytkowników
   useEffect(() => {
@@ -588,12 +588,12 @@ function App() {
     
     // 1. Nasłuchiwanie zmian stanu użytkownika
     const unsubscribe = onAuthStateChange((user) => {
-      console.log('🔍 onAuthStateChange callback:', user ? `Zalogowany: ${user.email}` : 'Niezalogowany');
+      console.log('🔍 onAuthStateChange callback:', user ? 'Zalogowany' : 'Niezalogowany');
       console.log('🔍 onAuthStateChange - pełny user object:', user);
       
       setUser(user);
       if (user) {
-        console.log('✅ Ustawiam zalogowanego użytkownika:', user.email);
+        console.log('✅ Ustawiam zalogowanego użytkownika');
         setUserName(user.displayName || user.email?.split('@')[0] || 'Użytkownik');
         setUserEmail(user.email || '');
       } else {
@@ -607,7 +607,7 @@ function App() {
     // 2. Obsługa logowania przez redirect
     getRedirectResult(auth).then((result) => {
       if (result?.user) {
-        console.log('✅ Zalogowany przez redirect:', result.user.email);
+        console.log('✅ Zalogowany przez redirect');
         setUser(result.user);
         setUserName(result.user.displayName || result.user.email?.split('@')[0] || 'Użytkownik');
         setUserEmail(result.user.email || '');
@@ -660,8 +660,8 @@ function App() {
     const loadActiveTalisman = async () => {
       if (user && user.uid) {
         try {
-          const apiUrl = process.env.NODE_ENV === 'development' ? '' : 'https://api-ocwyh3krkq-uc.a.run.app';
-          const response = await fetch(`${apiUrl}/api/talismans/${user.uid}`);
+          const apiUrl = process.env.NODE_ENV === 'development' ? '' : 'https://us-central1-losujemy.cloudfunctions.net/api';
+                      const response = await fetch(`${apiUrl}/talismans/${user.uid}`);
           const data = await response.json();
           
           if (data.success && data.activeTalisman) {

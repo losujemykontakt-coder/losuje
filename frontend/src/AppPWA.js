@@ -13,6 +13,7 @@ import Talizmany from './components/Talizmany';
 import ActiveTalismanDisplay from './components/ActiveTalismanDisplay';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import HomePage from './components/HomePage';
+import LandingPage from './LandingPage';
 import SchonheimGenerator from './components/SchonheimGenerator';
 import { logoutUser, onAuthStateChange } from './utils/firebaseAuth';
 import { getRedirectResult } from 'firebase/auth';
@@ -39,6 +40,24 @@ const games = [
   { value: "kaskada", label: "Kaskada" },
   { value: "keno", label: "Keno" },
 ];
+
+// Funkcja wykrywania domeny
+const getCurrentDomain = () => {
+  const hostname = window.location.hostname;
+  console.log('🌐 Current hostname:', hostname);
+  console.log('🌐 Full URL:', window.location.href);
+  
+  if (hostname === 'losuje.pl' || hostname === 'www.losuje.pl') {
+    console.log('🎯 Detected: losuje-pl domain');
+    return 'losuje-pl';
+  } else if (hostname === 'losuje-generator.pl' || hostname === 'www.losuje-generator.pl') {
+    console.log('🎯 Detected: losuje-generator domain');
+    return 'losuje-generator';
+  } else {
+    console.log('🎯 Detected: default domain');
+    return 'default';
+  }
+};
 
 // Style CSS
 const inputStyle = {
@@ -1218,7 +1237,6 @@ function AppPWA() {
           console.log('🔍 Wywołuję API żetonów w onAuthStateChange dla użytkownika:', user.uid);
           console.log('🔍 User object:', {
             uid: user.uid,
-            email: user.email,
             hasGetIdToken: typeof user.getIdToken === 'function',
             type: typeof user
           });
@@ -2395,20 +2413,58 @@ function AppPWA() {
           <Route path="/" element={<Navigate to="/home" replace />} />
           
           <Route path="/home" element={
-            <HomePage
-              user={user}
-              userStatus={userStatus}
-              subscription={subscription}
-              activeTalisman={activeTalisman}
-              onShowPayments={() => setShowPayments(true)}
-              onShowStatistics={() => setShowStatistics(true)}
-              onShowMyLuckyNumbers={() => setShowMyLuckyNumbers(true)}
-              onShowTalizmany={() => setShowTalizmany(true)}
-              onShowAIGenerator={() => setShowAIGenerator(true)}
-              onShowHarmonicAnalyzer={() => setShowHarmonicAnalyzer(true)}
-              onShowSchonheimGenerator={() => setShowSchonheimGenerator(true)}
-              checkAccess={checkAccess}
-            />
+            (() => {
+              const currentDomain = getCurrentDomain();
+              console.log('🏠 Home route - Domain:', currentDomain, 'User:', !!user);
+              
+              if (currentDomain === 'losuje-pl') {
+                // losuje.pl - zawsze pokazuje LandingPage
+                console.log('🎯 losuje.pl - Showing LandingPage');
+                return <LandingPage />;
+              } else if (currentDomain === 'losuje-generator') {
+                // losuje-generator.pl - tylko logowanie
+                console.log('🎯 losuje-generator.pl - Showing AuthContainer/HomePage');
+                return user ? (
+                  <HomePage
+                    user={user}
+                    userStatus={userStatus}
+                    subscription={subscription}
+                    activeTalisman={activeTalisman}
+                    onShowPayments={() => setShowPayments(true)}
+                    onShowStatistics={() => setShowStatistics(true)}
+                    onShowMyLuckyNumbers={() => setShowMyLuckyNumbers(true)}
+                    onShowTalizmany={() => setShowTalizmany(true)}
+                    onShowAIGenerator={() => setShowAIGenerator(true)}
+                    onShowHarmonicAnalyzer={() => setShowHarmonicAnalyzer(true)}
+                    onShowSchonheimGenerator={() => setShowSchonheimGenerator(true)}
+                    checkAccess={checkAccess}
+                  />
+                ) : (
+                  <AuthContainer />
+                );
+              } else {
+                // Domyślne zachowanie (losujemy.web.app)
+                console.log('🎯 default domain - Showing LandingPage/HomePage');
+                return user ? (
+                  <HomePage
+                    user={user}
+                    userStatus={userStatus}
+                    subscription={subscription}
+                    activeTalisman={activeTalisman}
+                    onShowPayments={() => setShowPayments(true)}
+                    onShowStatistics={() => setShowStatistics(true)}
+                    onShowMyLuckyNumbers={() => setShowMyLuckyNumbers(true)}
+                    onShowTalizmany={() => setShowTalizmany(true)}
+                    onShowAIGenerator={() => setShowAIGenerator(true)}
+                    onShowHarmonicAnalyzer={() => setShowHarmonicAnalyzer(true)}
+                    onShowSchonheimGenerator={() => setShowSchonheimGenerator(true)}
+                    checkAccess={checkAccess}
+                  />
+                ) : (
+                  <LandingPage />
+                );
+              }
+            })()
           } />
           
           <Route path="/gry" element={

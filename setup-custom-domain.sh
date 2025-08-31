@@ -313,3 +313,4 @@ main() {
 
 # Uruchom główną funkcję
 main "$@"
+
